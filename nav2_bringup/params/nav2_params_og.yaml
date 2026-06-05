@@ -5,12 +5,12 @@ amcl:
     alpha3: 0.2
     alpha4: 0.2
     alpha5: 0.2
-    base_frame_id: "j100_0288/base_link"
+    base_frame_id: "base_footprint"
     beam_skip_distance: 0.5
     beam_skip_error_threshold: 0.9
     beam_skip_threshold: 0.3
     do_beamskip: false
-    global_frame_id: "j100_0288/odom"
+    global_frame_id: "map"
     lambda_short: 0.1
     laser_likelihood_max_dist: 2.0
     laser_max_range: 100.0
@@ -19,7 +19,7 @@ amcl:
     max_beams: 60
     max_particles: 2000
     min_particles: 500
-    odom_frame_id: "j100_0288/odom"
+    odom_frame_id: "odom"
     pf_err: 0.05
     pf_z: 0.99
     recovery_alpha_fast: 0.0
@@ -42,15 +42,9 @@ amcl:
 
 bt_navigator:
   ros__parameters:
-<<<<<<< Updated upstream
     global_frame: map
     robot_base_frame: base_link
     odom_topic: odom
-=======
-    global_frame: j100_0288/odom
-    robot_base_frame: j100_0288/base_link
-    odom_topic: /j100_0288/odom
->>>>>>> Stashed changes
     bt_loop_duration: 10
     filter_duration: 0.3
     default_server_timeout: 20
@@ -98,11 +92,9 @@ bt_navigator:
 controller_server:
   ros__parameters:
     controller_frequency: 20.0
-    enable_stamped_cmd_vel: true
-    odom_topic: "/j100_0288/odom"
     costmap_update_timeout: 0.30
     min_x_velocity_threshold: 0.001
-    min_y_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.5
     min_theta_velocity_threshold: 0.001
     failure_tolerance: 0.3
     progress_checker_plugins: ["progress_checker"]
@@ -150,11 +142,11 @@ controller_server:
       ay_min: -3.0
       az_max: 3.5
       vx_std: 0.2
-      vy_std: 0.0
+      vy_std: 0.2
       wz_std: 0.4
       vx_max: 0.5
       vx_min: -0.35
-      vy_max: 0.0
+      vy_max: 0.5
       wz_max: 1.9
       iteration_count: 1
       temperature: 0.3
@@ -246,8 +238,8 @@ local_costmap:
     ros__parameters:
       update_frequency: 5.0
       publish_frequency: 2.0
-      global_frame: j100_0288/odom
-      robot_base_frame: j100_0288/base_link
+      global_frame: odom
+      robot_base_frame: base_link
       rolling_window: true
       width: 3
       height: 3
@@ -276,7 +268,6 @@ local_costmap:
         mark_threshold: 0
         observation_sources: scan
         scan:
-<<<<<<< Updated upstream
           # A relative topic will be appended to the parent of the local_costmap namespace.
           # For example:
           #   * User chosen namespace is `tb4`.
@@ -284,9 +275,6 @@ local_costmap:
           #   * Topic will be remapped to `/tb4/scan` without `local_costmap`.
           #   * Use global topic `/scan` if you do not wish the node namespace to apply
           topic: scan
-=======
-          topic: /j100_0288/sensors/lidar3d_0/scan
->>>>>>> Stashed changes
           max_obstacle_height: 2.0
           clearing: true
           marking: true
@@ -306,12 +294,11 @@ global_costmap:
     ros__parameters:
       update_frequency: 1.0
       publish_frequency: 1.0
-      global_frame: j100_0288/odom
-      robot_base_frame: j100_0288/base_link
+      global_frame: map
+      robot_base_frame: base_link
       robot_radius: 0.22
       resolution: 0.05
       track_unknown_space: true
-<<<<<<< Updated upstream
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       filters: ["keepout_filter", "speed_filter"]
       keepout_filter:
@@ -325,18 +312,11 @@ global_costmap:
         enabled: SPEED_ZONE_ENABLED
         filter_info_topic: "speed_costmap_filter_info"
         speed_limit_topic: "speed_limit"
-=======
-      rolling_window: true
-      width: 30
-      height: 30
-      plugins: ["obstacle_layer", "inflation_layer"]
->>>>>>> Stashed changes
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: true
         observation_sources: scan
         scan:
-<<<<<<< Updated upstream
           # A relative topic will be appended to the parent of the global_costmap namespace.
           # For example:
           #   * User chosen namespace is `tb4`.
@@ -344,9 +324,6 @@ global_costmap:
           #   * Topic will be remapped to `/tb4/scan` without `global_costmap`.
           #   * Use global topic `/scan` if you do not wish the node namespace to apply
           topic: scan
-=======
-          topic: /j100_0288/sensors/lidar3d_0/scan
->>>>>>> Stashed changes
           max_obstacle_height: 2.0
           clearing: true
           marking: true
@@ -413,7 +390,10 @@ planner_server:
     expected_planner_frequency: 20.0
     planner_plugins: ["GridBased"]
     costmap_update_timeout: 1.0
+<<<<<<< HEAD
     introspection_mode: "disabled"
+=======
+>>>>>>> jazzy
     GridBased:
       plugin: "nav2_navfn_planner::NavfnPlanner"
       tolerance: 0.5
@@ -442,7 +422,6 @@ smoother_server:
 
 behavior_server:
   ros__parameters:
-    enable_stamped_cmd_vel: true
     local_costmap_topic: local_costmap/costmap_raw
     global_costmap_topic: global_costmap/costmap_raw
     local_footprint_topic: local_costmap/published_footprint
@@ -466,9 +445,9 @@ behavior_server:
       plugin: "nav2_behaviors::Wait"
     assisted_teleop:
       plugin: "nav2_behaviors::AssistedTeleop"
-    local_frame: j100_0288/odom
-    global_frame: j100_0288/odom
-    robot_base_frame: j100_0288/base_link
+    local_frame: odom
+    global_frame: map
+    robot_base_frame: base_link
     transform_tolerance: 0.1
     simulate_ahead_time: 2.0
     max_rotational_vel: 1.0
@@ -511,32 +490,30 @@ route_server:
 
 velocity_smoother:
   ros__parameters:
-    enable_stamped_cmd_vel: true
     smoothing_frequency: 20.0
+<<<<<<< HEAD
     scale_velocities: false
+=======
+    stamp_smoothed_velocity_with_smoothing_time: False
+    scale_velocities: False
+>>>>>>> jazzy
     feedback: "OPEN_LOOP"
     max_velocity: [0.5, 0.0, 2.0]
     min_velocity: [-0.5, 0.0, -2.0]
     max_accel: [2.5, 0.0, 3.2]
     max_decel: [-2.5, 0.0, -3.2]
-    odom_topic: "/j100_0288/odom"
+    odom_topic: "odom"
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]
     velocity_timeout: 1.0
 
 collision_monitor:
   ros__parameters:
-<<<<<<< Updated upstream
     enabled: true
     base_frame_id: "base_footprint"
     odom_frame_id: "odom"
-=======
-    enable_stamped_cmd_vel: true
-    base_frame_id: "j100_0288/base_link"
-    odom_frame_id: "j100_0288/odom"
->>>>>>> Stashed changes
     cmd_vel_in_topic: "cmd_vel_smoothed"
-    cmd_vel_out_topic: "/j100_0288/cmd_vel"
+    cmd_vel_out_topic: "cmd_vel"
     state_topic: "collision_monitor_state"
     transform_tolerance: 0.2
     source_timeout: 1.0
@@ -557,7 +534,7 @@ collision_monitor:
     observation_sources: ["scan"]
     scan:
       type: "scan"
-      topic: "/j100_0288/sensors/lidar3d_0/scan"
+      topic: "scan"
       min_height: 0.15
       max_height: 2.0
       enabled: true
@@ -571,14 +548,8 @@ docking_server:
     undock_linear_tolerance: 0.05
     undock_angular_tolerance: 0.1
     max_retries: 3
-<<<<<<< Updated upstream
     base_frame: "base_link"
     fixed_frame: "odom"
-=======
-    base_frame: "j100_0288/base_link"
-    fixed_frame: "j100_0288/odom"
-    dock_backwards: false
->>>>>>> Stashed changes
     dock_prestaging_tolerance: 0.5
     introspection_mode: "disabled"
 
@@ -627,7 +598,11 @@ loopback_simulator:
     base_frame_id: "base_footprint"
     odom_frame_id: "odom"
     map_frame_id: "map"
+<<<<<<< HEAD
     scan_frame_id: "base_scan" # tb4_loopback_simulator.launch.py remaps to 'rplidar_link'
+=======
+    scan_frame_id: "base_scan"  # tb4_loopback_simulator.launch.py remaps to 'rplidar_link'
+>>>>>>> jazzy
     update_duration: 0.02
     scan_range_min: 0.05
     scan_range_max: 30.0
