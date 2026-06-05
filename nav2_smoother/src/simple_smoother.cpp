@@ -128,7 +128,11 @@ void SimpleSmoother::smoothImpl(
         logger_,
         "Number of iterations has exceeded limit of %i.", max_its_);
       path = last_path;
+<<<<<<< HEAD
       nav2_util::updateApproximatePathOrientations(path, reversing_segment);
+=======
+      updateApproximatePathOrientations(path, reversing_segment);
+>>>>>>> jazzy
       return;
     }
 
@@ -174,7 +178,11 @@ void SimpleSmoother::smoothImpl(
           "Smoothing process resulted in an infeasible collision. "
           "Returning the last path before the infeasibility was introduced.");
         path = last_path;
+<<<<<<< HEAD
         nav2_util::updateApproximatePathOrientations(path, reversing_segment);
+=======
+        updateApproximatePathOrientations(path, reversing_segment);
+>>>>>>> jazzy
         return;
       }
     }

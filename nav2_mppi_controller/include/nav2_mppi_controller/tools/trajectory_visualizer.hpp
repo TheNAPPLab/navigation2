@@ -76,7 +76,11 @@ public:
     * @param trajectory Optimal trajectory
     */
   void add(
+<<<<<<< HEAD
     const Eigen::ArrayXXf & trajectory, const std::string & marker_namespace,
+=======
+    const xt::xtensor<float, 2> & trajectory, const std::string & marker_namespace,
+>>>>>>> jazzy
     const builtin_interfaces::msg::Time & cmd_stamp);
 
   /**
@@ -103,6 +107,7 @@ public:
   void reset();
 
 protected:
+<<<<<<< HEAD
   /**
     * @brief Create a LINE_STRIP marker for a single trajectory colored by normalized cost
     * @param trajectory_idx Row index into the trajectories arrays
@@ -130,6 +135,14 @@ protected:
     trajectories_publisher_;
   nav2::Publisher<nav_msgs::msg::Path>::SharedPtr optimal_path_pub_;
 
+=======
+  std::string frame_id_;
+  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<visualization_msgs::msg::MarkerArray>>
+  trajectories_publisher_;
+  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<nav_msgs::msg::Path>> transformed_path_pub_;
+  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<nav_msgs::msg::Path>> optimal_path_pub_;
+
+>>>>>>> jazzy
   std::unique_ptr<nav_msgs::msg::Path> optimal_path_;
   std::unique_ptr<visualization_msgs::msg::MarkerArray> points_;
   int marker_id_ = 0;

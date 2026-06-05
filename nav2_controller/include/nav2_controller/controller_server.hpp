@@ -269,7 +269,15 @@ protected:
   PathHandlerMap path_handlers_;
   std::string path_handler_ids_concat_, current_path_handler_;
 
+<<<<<<< HEAD
   size_t start_index_;
+=======
+  double failure_tolerance_;
+  bool use_realtime_priority_;
+  rclcpp::Duration costmap_update_timeout_;
+
+  // Whether we've published the single controller warning yet
+>>>>>>> jazzy
   geometry_msgs::msg::PoseStamped end_pose_;
   geometry_msgs::msg::PoseStamped transformed_end_pose_;
 

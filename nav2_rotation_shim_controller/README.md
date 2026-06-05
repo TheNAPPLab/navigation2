@@ -32,17 +32,27 @@ See its [Configuration Guide Page](https://docs.nav2.org/configuration/packages/
 | Parameter | Description |
 |-----|----|
 | `angular_dist_threshold` | Maximum angular distance, in radians, away from the path heading to trigger rotation until within. |
+<<<<<<< HEAD
 | `angular_disengage_threshold` | The threshold (in radians) to the path’s heading before disengagement. This allows for better alignment before passing control to the child controller. |
+=======
+>>>>>>> jazzy
 | `forward_sampling_distance` | Forward distance, in meters, along path to select a sampling point to use to approximate path heading |
 | `rotate_to_heading_angular_vel` | Angular rotational velocity, in rad/s, to rotate to the path heading |
 | `primary_controller` | Internal controller plugin to use for actual control behavior after rotating to heading |
 | `max_angular_accel` | Maximum angular acceleration for rotation to heading |
+<<<<<<< HEAD
 | `max_cost_threshold` | Maximum footprint cost threshold to detect a collision. Defaults to 254.0 i.e., LETHAL_OBSTACLE.
 | `simulate_ahead_time` | Time in seconds to forward simulate a rotation command to check for collisions. If a collision is found, forwards control back to the primary controller plugin. |
 | `rotate_to_goal_heading` | If true, the rotationShimController will take back control of the robot when in XY tolerance of the goal and start rotating to the goal heading |
 | `rotate_to_goal_heading_once` | If true, the rotationShimController will only rotate to heading once on a new goal, not each time a path is set. |
 | `closed_loop` | If false, the rotationShimController will use the last commanded velocity as the next iteration’s current velocity. When acceleration limits are set appropriately and the robot’s controllers are responsive, this can be a good assumption. If true, it will use odometry to estimate the robot’s current speed. In this case it is important that the source is high-rate and low-latency to account for control delay. |
 | `use_path_orientations` | If true, the controller will use the orientations of the path points to compute the heading of the path instead of computing the heading from the path point’s relative locations. If false, the controller will compute the heading from the path point’s relative locations instead of using the path point orientations. Use for feasible planners like the Smac Planner which generate feasible paths with orientations for forward and reverse motion. |
+=======
+| `max_cost_threshold` | Maximum footprint cost threshold to detect a collision. Defaults to 254.0 i.e., LETHAL_OBSTACLE. 
+| `simulate_ahead_time` | Time in seconds to forward simulate a rotation command to check for collisions. If a collision is found, forwards control back to the primary controller plugin. |
+| `rotate_to_goal_heading` | If true, the rotationShimController will take back control of the robot when in XY tolerance of the goal and start rotating to the goal heading |
+| `use_path_orientations` | If true, the controller will use the orientations of the path points to compute the heading of the path instead of computing the heading from the path points. If true, the controller will use the orientations of the path points to compute the heading of the path instead of computing the heading from the path points. Use for for feasible planners like the Smac Planner which generate feasible paths with orientations for forward and reverse motion. |
+>>>>>>> jazzy
 
 Example fully-described XML with default parameter values:
 
@@ -76,6 +86,7 @@ controller_server:
       max_cost_threshold: 254.0
       simulate_ahead_time: 1.0
       rotate_to_goal_heading: false
+      use_path_orientations: false
 
       # Primary controller params can be placed here below
       primary_controller:

@@ -111,6 +111,7 @@ public:
 
 protected:
   /**
+<<<<<<< HEAD
    * @brief Validate a given target pose for calculating command velocity
    * @param target_pose Target pose to validate
    * @param dist_to_target Distance to target pose
@@ -163,6 +164,8 @@ protected:
     geometry_msgs::msg::TwistStamped & best_cmd_vel);
 
   /**
+=======
+>>>>>>> jazzy
    * @brief Simulate trajectory calculating in every step the new velocity command based on
    * a new curvature value and checking for collisions.
    *
@@ -225,6 +228,21 @@ protected:
    */
   void validateOrientations(std::vector<geometry_msgs::msg::PoseStamped> & path);
 
+  /**
+   * @brief Compute the distance to each pose in a path
+   * @param poses Poses to compute distances with
+   * @param distances Computed distances
+   */
+  void computeDistanceAlongPath(
+    const std::vector<geometry_msgs::msg::PoseStamped> & poses,
+    std::vector<double> & distances);
+
+  /**
+   * @brief Control law requires proper orientations, not all planners provide them
+   * @param path Path to add orientations into, if required
+   */
+  void validateOrientations(std::vector<geometry_msgs::msg::PoseStamped> & path);
+
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   std::string plugin_name_;
   std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros_;
@@ -237,11 +255,21 @@ protected:
   // True from the time a new path arrives until we have completed an initial rotation
   bool do_initial_rotation_;
 
+<<<<<<< HEAD
   std::optional<double> safe_approach_angle_;
 
   nav2::Publisher<nav_msgs::msg::Path>::SharedPtr local_plan_pub_;
   nav2::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr motion_target_pub_;
   nav2::Publisher<visualization_msgs::msg::Marker>::SharedPtr slowdown_pub_;
+=======
+  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<nav_msgs::msg::Path>> transformed_plan_pub_;
+  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<nav_msgs::msg::Path>> local_plan_pub_;
+  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<geometry_msgs::msg::PoseStamped>>
+  motion_target_pub_;
+  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<visualization_msgs::msg::Marker>>
+  slowdown_pub_;
+  std::unique_ptr<nav2_graceful_controller::PathHandler> path_handler_;
+>>>>>>> jazzy
   std::unique_ptr<nav2_graceful_controller::ParameterHandler> param_handler_;
   std::unique_ptr<nav2_graceful_controller::SmoothControlLaw> control_law_;
 };

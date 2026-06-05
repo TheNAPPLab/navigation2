@@ -130,9 +130,13 @@ TEST(MotionModelTests, AckermannTest)
   std::string name = "test";
   ParametersHandler param_handler(node, name);
   std::unique_ptr<AckermannMotionModel> model =
+<<<<<<< HEAD
     std::make_unique<AckermannMotionModel>();
   // Initialize the plugin: parameters live under "test.ackermann"
   model->initialize(&param_handler, name + ".ackermann");
+=======
+    std::make_unique<AckermannMotionModel>(&param_handler, node->get_name());
+>>>>>>> jazzy
 
   // Check that predict properly populates the trajectory velocities with the control velocities
   state.cvx = 10 * Eigen::ArrayXXf::Ones(batches, timesteps);
@@ -158,9 +162,15 @@ TEST(MotionModelTests, AckermannTest)
   models::ControlSequence initial_control_sequence = control_sequence;
   model->applyConstraints(control_sequence);
   // VX equal since this doesn't change, the WZ is reduced if breaking the constraint
+<<<<<<< HEAD
   EXPECT_TRUE(initial_control_sequence.vx.isApprox(control_sequence.vx));
   EXPECT_FALSE(initial_control_sequence.wz.isApprox(control_sequence.wz));
   for (unsigned int i = 1; i != control_sequence.wz.rows(); i++) {
+=======
+  EXPECT_EQ(initial_control_sequence.vx, control_sequence.vx);
+  EXPECT_NE(initial_control_sequence.wz, control_sequence.wz);
+  for (unsigned int i = 1; i != control_sequence.wz.shape(0); i++) {
+>>>>>>> jazzy
     EXPECT_GT(control_sequence.wz(i), 0.0);
   }
 
@@ -187,6 +197,7 @@ TEST(MotionModelTests, AckermannReversingTest)
   control_sequence.reset(timesteps);  // populates with zeros
   control_sequence2.reset(timesteps);  // populates with zeros
   state.reset(batches, timesteps);  // populates with zeros
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("my_node");
   std::string name = "test";
   ParametersHandler param_handler(node, name);
@@ -212,6 +223,30 @@ TEST(MotionModelTests, AckermannReversingTest)
 
   // Check that application of constraints are non-empty for Ackermann Drive
   for (unsigned int i = 0; i != control_sequence.vx.rows(); i++) {
+=======
+  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("my_node");
+  ParametersHandler param_handler(node);
+  std::unique_ptr<AckermannMotionModel> model =
+    std::make_unique<AckermannMotionModel>(&param_handler, node->get_name());
+
+  // Check that predict properly populates the trajectory velocities with the control velocities
+  state.cvx = 10 * xt::ones<float>({batches, timesteps});
+  state.cvy = 5 * xt::ones<float>({batches, timesteps});
+  state.cwz = 1 * xt::ones<float>({batches, timesteps});
+
+  // Manually set state index 0 from initial conditions which would be the speed of the robot
+  xt::view(state.vx, xt::all(), 0) = 10;
+  xt::view(state.wz, xt::all(), 0) = 1;
+
+  model->predict(state);
+
+  EXPECT_EQ(state.vx, state.cvx);
+  EXPECT_EQ(state.vy, xt::zeros<float>({batches, timesteps}));  // non-holonomic
+  EXPECT_EQ(state.wz, state.cwz);
+
+  // Check that application of constraints are non-empty for Ackermann Drive
+  for (unsigned int i = 0; i != control_sequence.vx.shape(0); i++) {
+>>>>>>> jazzy
     float idx = static_cast<float>(i);
     control_sequence.vx(i) = -idx * idx * idx;  // now reversing
     control_sequence.wz(i) = idx * idx * idx * idx;
@@ -220,14 +255,24 @@ TEST(MotionModelTests, AckermannReversingTest)
   models::ControlSequence initial_control_sequence = control_sequence;
   model->applyConstraints(control_sequence);
   // VX equal since this doesn't change, the WZ is reduced if breaking the constraint
+<<<<<<< HEAD
   EXPECT_TRUE(initial_control_sequence.vx.isApprox(control_sequence.vx));
   EXPECT_FALSE(initial_control_sequence.wz.isApprox(control_sequence.wz));
   for (unsigned int i = 1; i != control_sequence.wz.rows(); i++) {
+=======
+  EXPECT_EQ(initial_control_sequence.vx, control_sequence.vx);
+  EXPECT_NE(initial_control_sequence.wz, control_sequence.wz);
+  for (unsigned int i = 1; i != control_sequence.wz.shape(0); i++) {
+>>>>>>> jazzy
     EXPECT_GT(control_sequence.wz(i), 0.0);
   }
 
   // Repeat with negative rotation direction
+<<<<<<< HEAD
   for (unsigned int i = 0; i != control_sequence2.vx.rows(); i++) {
+=======
+  for (unsigned int i = 0; i != control_sequence2.vx.shape(0); i++) {
+>>>>>>> jazzy
     float idx = static_cast<float>(i);
     control_sequence2.vx(i) = -idx * idx * idx;  // now reversing
     control_sequence2.wz(i) = -idx * idx * idx * idx;
@@ -236,15 +281,25 @@ TEST(MotionModelTests, AckermannReversingTest)
   models::ControlSequence initial_control_sequence2 = control_sequence2;
   model->applyConstraints(control_sequence2);
   // VX equal since this doesn't change, the WZ is reduced if breaking the constraint
+<<<<<<< HEAD
   EXPECT_TRUE(initial_control_sequence2.vx.isApprox(control_sequence2.vx));
   EXPECT_FALSE(initial_control_sequence2.wz.isApprox(control_sequence2.wz));
   for (unsigned int i = 1; i != control_sequence2.wz.rows(); i++) {
+=======
+  EXPECT_EQ(initial_control_sequence2.vx, control_sequence2.vx);
+  EXPECT_NE(initial_control_sequence2.wz, control_sequence2.wz);
+  for (unsigned int i = 1; i != control_sequence2.wz.shape(0); i++) {
+>>>>>>> jazzy
     EXPECT_LT(control_sequence2.wz(i), 0.0);
   }
 
   // Now, check the specifics of the minimum curvature constraint
   EXPECT_NEAR(model->getMinTurningRadius(), 0.2, 1e-6);
+<<<<<<< HEAD
   for (unsigned int i = 1; i != control_sequence2.vx.rows(); i++) {
+=======
+  for (unsigned int i = 1; i != control_sequence2.vx.shape(0); i++) {
+>>>>>>> jazzy
     EXPECT_TRUE(fabs(control_sequence2.vx(i)) / fabs(control_sequence2.wz(i)) >= 0.2);
   }
 
@@ -254,6 +309,7 @@ TEST(MotionModelTests, AckermannReversingTest)
   // Check it cleanly destructs
   model.reset();
 }
+<<<<<<< HEAD
 
 int main(int argc, char ** argv)
 {
@@ -267,3 +323,5 @@ int main(int argc, char ** argv)
 
   return result;
 }
+=======
+>>>>>>> jazzy

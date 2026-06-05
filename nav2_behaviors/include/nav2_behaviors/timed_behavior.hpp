@@ -242,7 +242,11 @@ protected:
     nav2::Rate loop_rate(node, cycle_frequency_);
 
     while (rclcpp::ok()) {
+<<<<<<< HEAD
       elapsed_time_ = clock_->now() - start_time;
+=======
+      elasped_time_ = clock_->now() - start_time;
+>>>>>>> jazzy
       // TODO(orduno) #868 Enable preempting a Behavior on-the-fly without stopping
       if (action_server_->is_preempt_requested()) {
         RCLCPP_ERROR(
@@ -259,7 +263,11 @@ protected:
       if (action_server_->is_cancel_requested()) {
         RCLCPP_INFO(logger_, "Canceling %s", behavior_name_.c_str());
         stopRobot();
+<<<<<<< HEAD
         result->total_elapsed_time = elapsed_time_;
+=======
+        result->total_elapsed_time = elasped_time_;
+>>>>>>> jazzy
         onActionCompletion(result);
         action_server_->terminate_all(result);
         return;

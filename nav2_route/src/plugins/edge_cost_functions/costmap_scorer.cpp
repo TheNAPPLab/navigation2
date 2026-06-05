@@ -21,7 +21,11 @@ namespace nav2_route
 {
 
 void CostmapScorer::configure(
+<<<<<<< HEAD
   const nav2::LifecycleNode::SharedPtr node,
+=======
+  const nav2_util::LifecycleNode::SharedPtr node,
+>>>>>>> jazzy
   const std::shared_ptr<tf2_ros::Buffer>/* tf_buffer */,
   std::shared_ptr<nav2_costmap_2d::CostmapSubscriber> costmap_subscriber,
   const std::string & name)
@@ -32,6 +36,7 @@ void CostmapScorer::configure(
   clock_ = node->get_clock();
 
   // Find whether to use average or maximum cost values
+<<<<<<< HEAD
   use_max_ = node->declare_or_get_parameter(getName() + ".use_maximum", true);
 
   // Edge is invalid if its in collision
@@ -59,6 +64,46 @@ void CostmapScorer::configure(
       node, costmap_topic);
     RCLCPP_INFO(
       node->get_logger(),
+=======
+  nav2_util::declare_parameter_if_not_declared(
+    node, getName() + ".use_maximum", rclcpp::ParameterValue(true));
+  use_max_ = node->get_parameter(getName() + ".use_maximum").as_bool();
+
+  // Edge is invalid if its in collision
+  nav2_util::declare_parameter_if_not_declared(
+    node, getName() + ".invalid_on_collision", rclcpp::ParameterValue(true));
+  invalid_on_collision_ =
+    node->get_parameter(getName() + ".invalid_on_collision").as_bool();
+
+  // Edge is invalid if edge is off the costmap
+  nav2_util::declare_parameter_if_not_declared(
+    node, getName() + ".invalid_off_map", rclcpp::ParameterValue(true));
+  invalid_off_map_ =
+    node->get_parameter(getName() + ".invalid_off_map").as_bool();
+
+  // Max cost to be considered valid
+  nav2_util::declare_parameter_if_not_declared(
+    node, getName() + ".max_cost", rclcpp::ParameterValue(253.0));
+  max_cost_ = static_cast<float>(node->get_parameter(getName() + ".max_cost").as_double());
+
+  // Resolution to check the costmap over (1=every cell, 2=every other cell, etc.)
+  nav2_util::declare_parameter_if_not_declared(
+    node, getName() + ".check_resolution", rclcpp::ParameterValue(2));
+  check_resolution_ = static_cast<unsigned int>(
+    node->get_parameter(getName() + ".check_resolution").as_int());
+
+  // Create costmap subscriber if not the same as the server costmap
+  std::string server_costmap_topic = node->get_parameter("costmap_topic").as_string();
+  nav2_util::declare_parameter_if_not_declared(
+    node, getName() + ".costmap_topic",
+    rclcpp::ParameterValue(std::string("global_costmap/costmap_raw")));
+  std::string costmap_topic =
+    node->get_parameter(getName() + ".costmap_topic").as_string();
+  if (costmap_topic != server_costmap_topic) {
+    costmap_subscriber_ = std::make_shared<nav2_costmap_2d::CostmapSubscriber>(
+      node, costmap_topic);
+    RCLCPP_INFO(node->get_logger(),
+>>>>>>> jazzy
       "Using costmap topic: %s instead of server costmap topic: %s for CostmapScorer.",
       costmap_topic.c_str(), server_costmap_topic.c_str());
   } else {
@@ -66,8 +111,14 @@ void CostmapScorer::configure(
   }
 
   // Find the proportional weight to apply, if multiple cost functions
+<<<<<<< HEAD
   weight_ = static_cast<float>(
     node->declare_or_get_parameter(getName() + ".weight", 1.0));
+=======
+  nav2_util::declare_parameter_if_not_declared(
+    node, getName() + ".weight", rclcpp::ParameterValue(1.0));
+  weight_ = static_cast<float>(node->get_parameter(getName() + ".weight").as_double());
+>>>>>>> jazzy
 }
 
 void CostmapScorer::prepare()

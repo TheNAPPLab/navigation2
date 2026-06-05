@@ -19,7 +19,11 @@
 #include <string>
 #include <vector>
 
+<<<<<<< HEAD
 #include "nav2_ros_common/lifecycle_node.hpp"
+=======
+#include "nav2_util/lifecycle_node.hpp"
+>>>>>>> jazzy
 #include "pluginlib/class_loader.hpp"
 #include "nav2_route/types.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
@@ -84,7 +88,11 @@ public:
    * to correlate an operation instance to the navigation graph operation calls
    */
   virtual void configure(
+<<<<<<< HEAD
     const nav2::LifecycleNode::SharedPtr node,
+=======
+    const nav2_util::LifecycleNode::SharedPtr node,
+>>>>>>> jazzy
     std::shared_ptr<nav2_costmap_2d::CostmapSubscriber> costmap_subscriber,
     const std::string & name) = 0;
 

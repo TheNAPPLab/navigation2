@@ -159,6 +159,15 @@ protected:
    * @param b Second double value
    * @param epsilon The tolerance for equality check
    * @return True if the values are equal within the tolerance, false otherwise
+<<<<<<< HEAD
+=======
+   */
+  bool isEqual(double a, double b, double epsilon);
+
+  /**
+   * @brief Callback executed when a parameter change is detected
+   * @param event ParameterEvent message
+>>>>>>> jazzy
    */
   bool isEqual(double a, double b, double epsilon);
 

@@ -206,7 +206,11 @@ TEST(PoseStampedVectorPortTest, test_wrong_syntax)
   BT::BehaviorTreeFactory factory;
   factory.registerNodeType<TestNode<std::vector<geometry_msgs::msg::PoseStamped>>>(
     "PoseStampedVectorPortTest");
+<<<<<<< HEAD
   EXPECT_THROW({auto unused = factory.createTreeFromText(xml_txt);}, std::exception);
+=======
+  EXPECT_THROW(factory.createTreeFromText(xml_txt), std::exception);
+>>>>>>> jazzy
 
   xml_txt =
     R"(
@@ -216,7 +220,11 @@ TEST(PoseStampedVectorPortTest, test_wrong_syntax)
         </BehaviorTree>
       </root>)";
 
+<<<<<<< HEAD
   EXPECT_THROW({auto unused = factory.createTreeFromText(xml_txt);}, std::exception);
+=======
+  EXPECT_THROW(factory.createTreeFromText(xml_txt), std::exception);
+>>>>>>> jazzy
 }
 
 TEST(PoseStampedVectorPortTest, test_correct_syntax)
@@ -257,6 +265,7 @@ TEST(PoseStampedVectorPortTest, test_correct_syntax)
   EXPECT_EQ(values[1].pose.orientation.w, 14.0);
 }
 
+<<<<<<< HEAD
 TEST(GoalsArrayPortTest, test_wrong_syntax)
 {
   std::string xml_txt =
@@ -321,6 +330,8 @@ TEST(GoalsArrayPortTest, test_correct_syntax)
   EXPECT_EQ(values.goals[1].pose.orientation.w, 14.0);
 }
 
+=======
+>>>>>>> jazzy
 TEST(PathPortTest, test_wrong_syntax)
 {
   std::string xml_txt =
@@ -334,7 +345,11 @@ TEST(PathPortTest, test_wrong_syntax)
   BT::BehaviorTreeFactory factory;
   factory.registerNodeType<TestNode<nav_msgs::msg::Path>>(
     "PathPortTest");
+<<<<<<< HEAD
   EXPECT_THROW({auto unused = factory.createTreeFromText(xml_txt);}, std::exception);
+=======
+  EXPECT_THROW(factory.createTreeFromText(xml_txt), std::exception);
+>>>>>>> jazzy
 
   xml_txt =
     R"(
@@ -344,7 +359,11 @@ TEST(PathPortTest, test_wrong_syntax)
         </BehaviorTree>
       </root>)";
 
+<<<<<<< HEAD
   EXPECT_THROW({auto unused = factory.createTreeFromText(xml_txt);}, std::exception);
+=======
+  EXPECT_THROW(factory.createTreeFromText(xml_txt), std::exception);
+>>>>>>> jazzy
 }
 
 TEST(PathPortTest, test_correct_syntax)
@@ -387,6 +406,7 @@ TEST(PathPortTest, test_correct_syntax)
   EXPECT_EQ(path.poses[1].pose.orientation.w, 14.0);
 }
 
+<<<<<<< HEAD
 TEST(WaypointStatusPortTest, test_wrong_syntax)
 {
   std::string xml_txt =
@@ -513,6 +533,8 @@ TEST(WaypointStatusVectorPortTest, test_correct_syntax)
   EXPECT_EQ(values[1].error_msg, "msg");
 }
 
+=======
+>>>>>>> jazzy
 TEST(MillisecondsPortTest, test_correct_syntax)
 {
   std::string xml_txt =

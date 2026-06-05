@@ -54,6 +54,9 @@ list(APPEND plugin_libs nav2_compute_path_to_pose_action_bt_node)
 add_library(nav2_compute_path_through_poses_action_bt_node SHARED plugins/action/compute_path_through_poses_action.cpp)
 list(APPEND plugin_libs nav2_compute_path_through_poses_action_bt_node)
 
+add_library(nav2_concatenate_paths_action_bt_node SHARED plugins/action/concatenate_paths_action.cpp)
+list(APPEND plugin_libs nav2_concatenate_paths_action_bt_node)
+
 add_library(nav2_controller_cancel_bt_node SHARED plugins/action/controller_cancel_node.cpp)
 list(APPEND plugin_libs nav2_controller_cancel_bt_node)
 
@@ -135,6 +138,9 @@ list(APPEND plugin_libs nav2_is_battery_low_condition_bt_node)
 add_library(nav2_are_error_codes_active_condition_bt_node SHARED plugins/condition/are_error_codes_present_condition.cpp)
 list(APPEND plugin_libs nav2_are_error_codes_active_condition_bt_node)
 
+add_library(nav2_are_poses_near_condition_bt_node SHARED plugins/condition/are_poses_near_condition.cpp)
+list(APPEND plugin_libs nav2_are_poses_near_condition_bt_node)
+
 add_library(nav2_would_a_controller_recovery_help_condition_bt_node SHARED plugins/condition/would_a_controller_recovery_help_condition.cpp)
 list(APPEND plugin_libs nav2_would_a_controller_recovery_help_condition_bt_node)
 
@@ -192,15 +198,21 @@ list(APPEND plugin_libs nav2_navigate_through_poses_action_bt_node)
 add_library(nav2_remove_passed_goals_action_bt_node SHARED plugins/action/remove_passed_goals_action.cpp)
 list(APPEND plugin_libs nav2_remove_passed_goals_action_bt_node)
 
+<<<<<<< HEAD
 add_library(nav2_remove_in_collision_goals_action_bt_node SHARED plugins/action/remove_in_collision_goals_action.cpp)
 list(APPEND plugin_libs nav2_remove_in_collision_goals_action_bt_node)
 
 add_library(nav2_append_goal_pose_to_goals_action_bt_node SHARED plugins/action/append_goal_pose_to_goals_action.cpp)
 list(APPEND plugin_libs nav2_append_goal_pose_to_goals_action_bt_node)
+=======
+add_library(nav2_get_current_pose_action_bt_node SHARED plugins/action/get_current_pose_action.cpp)
+list(APPEND plugin_libs nav2_get_current_pose_action_bt_node)
+>>>>>>> jazzy
 
 add_library(nav2_get_pose_from_path_action_bt_node SHARED plugins/action/get_pose_from_path_action.cpp)
 list(APPEND plugin_libs nav2_get_pose_from_path_action_bt_node)
 
+<<<<<<< HEAD
 add_library(nav2_extract_route_nodes_as_goals_action_bt_node SHARED plugins/action/extract_route_nodes_as_goals_action.cpp)
 list(APPEND plugin_libs nav2_extract_route_nodes_as_goals_action_bt_node)
 
@@ -210,6 +222,8 @@ list(APPEND plugin_libs nav2_get_next_few_goals_action_bt_node)
 add_library(nav2_get_current_pose_action_bt_node SHARED plugins/action/get_current_pose_action.cpp)
 list(APPEND plugin_libs nav2_get_current_pose_action_bt_node)
 
+=======
+>>>>>>> jazzy
 add_library(nav2_pipeline_sequence_bt_node SHARED plugins/control/pipeline_sequence.cpp)
 list(APPEND plugin_libs nav2_pipeline_sequence_bt_node)
 
@@ -258,6 +272,7 @@ list(APPEND plugin_libs nav2_compute_and_track_route_bt_node)
 add_library(nav2_compute_route_bt_node SHARED plugins/action/compute_route_action.cpp)
 list(APPEND plugin_libs nav2_compute_route_bt_node)
 
+<<<<<<< HEAD
 add_library(nav2_toggle_collision_monitor_service_bt_node SHARED plugins/action/toggle_collision_monitor_service.cpp)
 list(APPEND plugin_libs nav2_toggle_collision_monitor_service_bt_node)
 
@@ -276,6 +291,8 @@ list(APPEND plugin_libs check_pose_occupancy_action_bt_node)
 add_library(validate_path_action_bt_node SHARED plugins/action/validate_path_action.cpp)
 list(APPEND plugin_libs validate_path_action_bt_node)
 
+=======
+>>>>>>> jazzy
 foreach(bt_plugin ${plugin_libs})
   target_include_directories(${bt_plugin}
     PRIVATE
@@ -323,6 +340,10 @@ install(TARGETS generate_nav2_tree_nodes_xml DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY include/
   DESTINATION include/${PROJECT_NAME}
+)
+
+install(DIRECTORY test/utils/
+  DESTINATION include/${PROJECT_NAME}/nav2_behavior_tree/test/utils
 )
 
 install(DIRECTORY test/utils/

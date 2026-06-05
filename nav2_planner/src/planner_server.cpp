@@ -46,9 +46,32 @@ namespace nav2_planner
 PlannerServer::PlannerServer(const rclcpp::NodeOptions & options)
 : nav2::LifecycleNode("planner_server", "", options),
   gp_loader_("nav2_core", "nav2_core::GlobalPlanner"),
+<<<<<<< HEAD
   costmap_(nullptr)
 {
   RCLCPP_INFO(get_logger(), "Creating");
+=======
+  default_ids_{"GridBased"},
+  default_types_{"nav2_navfn_planner::NavfnPlanner"},
+  costmap_update_timeout_(1s),
+  costmap_(nullptr)
+{
+  RCLCPP_INFO(get_logger(), "Creating");
+
+  // Declare this node's parameters
+  declare_parameter("planner_plugins", default_ids_);
+  declare_parameter("expected_planner_frequency", 1.0);
+  declare_parameter("action_server_result_timeout", 10.0);
+  declare_parameter("costmap_update_timeout", 1.0);
+
+  get_parameter("planner_plugins", planner_ids_);
+  if (planner_ids_ == default_ids_) {
+    for (size_t i = 0; i < default_ids_.size(); ++i) {
+      declare_parameter(default_ids_[i] + ".plugin", default_types_[i]);
+    }
+  }
+
+>>>>>>> jazzy
   // Setup the global costmap
   costmap_ros_ = std::make_shared<nav2_costmap_2d::Costmap2DROS>(
     "global_costmap", std::string{get_namespace()},
@@ -65,7 +88,11 @@ PlannerServer::~PlannerServer()
   costmap_thread_.reset();
 }
 
+<<<<<<< HEAD
 nav2::CallbackReturn
+=======
+nav2_util::CallbackReturn
+>>>>>>> jazzy
 PlannerServer::on_configure(const rclcpp_lifecycle::State & state)
 {
   RCLCPP_INFO(get_logger(), "Configuring");
@@ -106,7 +133,11 @@ PlannerServer::on_configure(const rclcpp_lifecycle::State & state)
         get_logger(), "Failed to create global planner. Exception: %s",
         ex.what());
       on_cleanup(state);
+<<<<<<< HEAD
       return nav2::CallbackReturn::FAILURE;
+=======
+      return nav2_util::CallbackReturn::FAILURE;
+>>>>>>> jazzy
     }
   }
 
@@ -124,6 +155,10 @@ PlannerServer::on_configure(const rclcpp_lifecycle::State & state)
   // Create is path valid service
   is_path_valid_service_ = std::make_unique<IsPathValidService>(
     shared_from_this(), costmap_ros_, params_->costmap_update_timeout);
+
+  double costmap_update_timeout_dbl;
+  get_parameter("costmap_update_timeout", costmap_update_timeout_dbl);
+  costmap_update_timeout_ = rclcpp::Duration::from_seconds(costmap_update_timeout_dbl);
 
   // Create the action servers for path planning to a pose and through poses
   action_server_pose_ = create_action_server<ActionToPose>(
@@ -247,6 +282,7 @@ bool PlannerServer::isServerInactive(
 
 double PlannerServer::waitForCostmap()
 {
+<<<<<<< HEAD
   if (params_->costmap_update_timeout > rclcpp::Duration(0, 0)) {
     auto waiting_start = now();
     bool was_waiting = !costmap_ros_->isCurrent();
@@ -258,6 +294,16 @@ double PlannerServer::waitForCostmap()
     if (was_waiting) {
       return (now() - waiting_start).seconds();
     }
+=======
+  // Don't compute a plan until costmap is valid (after clear costmap)
+  rclcpp::Rate r(100);
+  auto waiting_start = now();
+  while (!costmap_ros_->isCurrent()) {
+    if (now() - waiting_start > costmap_update_timeout_) {
+      throw nav2_core::PlannerTimedOut("Costmap timed out waiting for update");
+    }
+    r.sleep();
+>>>>>>> jazzy
   }
   return 0.0;
 }
@@ -408,6 +454,7 @@ void PlannerServer::computePlanThroughPoses()
         break;
       }
 
+<<<<<<< HEAD
       if (!validatePath<ActionThroughPoses>(curr_goal, curr_path, goal->planner_id)) {
         auto exception =
           nav2_core::NoValidPathCouldBeFound(goal->planner_id + " generated a empty path");
@@ -422,6 +469,8 @@ void PlannerServer::computePlanThroughPoses()
         break;
       }
 
+=======
+>>>>>>> jazzy
       // Concatenate paths together, but skip the first pose of subsequent paths
       // to avoid duplicating the connection point
       if (i == 0) {

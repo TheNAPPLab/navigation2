@@ -22,6 +22,7 @@
 #include <unordered_map>
 #include <mutex>
 
+<<<<<<< HEAD
 #include "nav2_ros_common/lifecycle_node.hpp"
 #include "tf2_ros/transform_listener.hpp"
 #include "tf2_ros/create_timer_ros.hpp"
@@ -29,6 +30,14 @@
 #include "nav2_ros_common/node_utils.hpp"
 #include "nav2_util/robot_utils.hpp"
 #include "nav2_ros_common/service_server.hpp"
+=======
+#include "nav2_util/lifecycle_node.hpp"
+#include "tf2_ros/transform_listener.h"
+#include "tf2_ros/create_timer_ros.h"
+#include "nav2_util/simple_action_server.hpp"
+#include "nav2_util/node_utils.hpp"
+#include "nav2_util/robot_utils.hpp"
+>>>>>>> jazzy
 #include "nav2_msgs/action/compute_route.hpp"
 #include "nav2_msgs/action/compute_and_track_route.hpp"
 #include "nav2_msgs/msg/route.hpp"
@@ -52,19 +61,31 @@ namespace nav2_route
  * @brief An action server implements a Navigation Route-Graph planner
  * to compliment free-space planning in the Planner Server
  */
+<<<<<<< HEAD
 class RouteServer : public nav2::LifecycleNode
+=======
+class RouteServer : public nav2_util::LifecycleNode
+>>>>>>> jazzy
 {
 public:
   using ComputeRoute = nav2_msgs::action::ComputeRoute;
   using ComputeRouteGoal = ComputeRoute::Goal;
   using ComputeRouteResult = ComputeRoute::Result;
+<<<<<<< HEAD
   using ComputeRouteServer = nav2::SimpleActionServer<ComputeRoute>;
+=======
+  using ComputeRouteServer = nav2_util::SimpleActionServer<ComputeRoute>;
+>>>>>>> jazzy
 
   using ComputeAndTrackRoute = nav2_msgs::action::ComputeAndTrackRoute;
   using ComputeAndTrackRouteGoal = ComputeAndTrackRoute::Goal;
   using ComputeAndTrackRouteFeedback = ComputeAndTrackRoute::Feedback;
   using ComputeAndTrackRouteResult = ComputeAndTrackRoute::Result;
+<<<<<<< HEAD
   using ComputeAndTrackRouteServer = nav2::SimpleActionServer<ComputeAndTrackRoute>;
+=======
+  using ComputeAndTrackRouteServer = nav2_util::SimpleActionServer<ComputeAndTrackRoute>;
+>>>>>>> jazzy
 
   /**
    * @brief A constructor for nav2_route::RouteServer
@@ -82,35 +103,55 @@ protected:
    * @param state Reference to LifeCycle node state
    * @return SUCCESS or FAILURE
    */
+<<<<<<< HEAD
   nav2::CallbackReturn on_configure(const rclcpp_lifecycle::State & state) override;
+=======
+  nav2_util::CallbackReturn on_configure(const rclcpp_lifecycle::State & state) override;
+>>>>>>> jazzy
 
   /**
    * @brief Activate member variables
    * @param state Reference to LifeCycle node state
    * @return SUCCESS or FAILURE
    */
+<<<<<<< HEAD
   nav2::CallbackReturn on_activate(const rclcpp_lifecycle::State & state) override;
+=======
+  nav2_util::CallbackReturn on_activate(const rclcpp_lifecycle::State & state) override;
+>>>>>>> jazzy
 
   /**
    * @brief Deactivate member variables
    * @param state Reference to LifeCycle node state
    * @return SUCCESS or FAILURE
    */
+<<<<<<< HEAD
   nav2::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & state) override;
+=======
+  nav2_util::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & state) override;
+>>>>>>> jazzy
 
   /**
    * @brief Reset member variables
    * @param state Reference to LifeCycle node state
    * @return SUCCESS or FAILURE
    */
+<<<<<<< HEAD
   nav2::CallbackReturn on_cleanup(const rclcpp_lifecycle::State & state) override;
+=======
+  nav2_util::CallbackReturn on_cleanup(const rclcpp_lifecycle::State & state) override;
+>>>>>>> jazzy
 
   /**
    * @brief Called when in shutdown state
    * @param state Reference to LifeCycle node state
    * @return SUCCESS or FAILURE
    */
+<<<<<<< HEAD
   nav2::CallbackReturn on_shutdown(const rclcpp_lifecycle::State & state) override;
+=======
+  nav2_util::CallbackReturn on_shutdown(const rclcpp_lifecycle::State & state) override;
+>>>>>>> jazzy
 
   /**
    * @brief Main route action server callbacks for computing and tracking a route
@@ -141,12 +182,28 @@ protected:
     ReroutingState & rerouting_info);
 
   /**
+<<<<<<< HEAD
+=======
+   * @brief Compute a route to the goal.
+   *
+   * @param goal The request goal information.
+   * @return A route from the selected start node to the goal.
+   */
+  template<typename GoalT>
+  Route findRoute(const std::shared_ptr<const GoalT> goal);
+
+  /**
+>>>>>>> jazzy
    * @brief Main processing called by both action server callbacks to centralize
    * the great deal of shared code between them
    */
   template<typename ActionT>
   void processRouteRequest(
+<<<<<<< HEAD
     typename nav2::SimpleActionServer<ActionT>::SharedPtr & action_server);
+=======
+    std::shared_ptr<nav2_util::SimpleActionServer<ActionT>> & action_server);
+>>>>>>> jazzy
 
   /**
    * @brief Find the planning duration of the request and log warnings
@@ -161,7 +218,11 @@ protected:
    * @return if the request is valid
    */
   template<typename ActionT>
+<<<<<<< HEAD
   bool isRequestValid(typename nav2::SimpleActionServer<ActionT>::SharedPtr & action_server);
+=======
+  bool isRequestValid(std::shared_ptr<nav2_util::SimpleActionServer<ActionT>> & action_server);
+>>>>>>> jazzy
 
   /**
    * @brief Populate result for compute route action
@@ -201,12 +262,15 @@ protected:
     std::shared_ptr<nav2_msgs::srv::SetRouteGraph::Response> response);
 
   /**
+<<<<<<< HEAD
    * @brief Publish the route msg
    * @param route to create message from and publish
    */
   void publishRoute(const Route & route);
 
   /**
+=======
+>>>>>>> jazzy
    * @brief Log exception warnings, templated by action message type
    * @param goal Goal that failed
    * @param exception Exception message
@@ -214,13 +278,19 @@ protected:
   template<typename GoalT>
   void exceptionWarning(const std::shared_ptr<const GoalT> goal, const std::exception & ex);
 
+<<<<<<< HEAD
   typename ComputeRouteServer::SharedPtr compute_route_server_;
   typename ComputeAndTrackRouteServer::SharedPtr compute_and_track_route_server_;
+=======
+  std::shared_ptr<ComputeRouteServer> compute_route_server_;
+  std::shared_ptr<ComputeAndTrackRouteServer> compute_and_track_route_server_;
+>>>>>>> jazzy
 
   // TF
   std::shared_ptr<tf2_ros::Buffer> tf_;
   std::shared_ptr<tf2_ros::TransformListener> transform_listener_;
 
+<<<<<<< HEAD
   // Publish the route graph for visualization
   nav2::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr
     graph_vis_publisher_;
@@ -230,6 +300,14 @@ protected:
 
   // Set or modify graph
   nav2::ServiceServer<nav2_msgs::srv::SetRouteGraph>::SharedPtr set_graph_service_;
+=======
+  // Publish the route for visualization
+  rclcpp_lifecycle::LifecyclePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr
+    graph_vis_publisher_;
+
+  // Set or modify graph
+  rclcpp::Service<nav2_msgs::srv::SetRouteGraph>::SharedPtr set_graph_service_;
+>>>>>>> jazzy
 
   // Internal tools
   std::shared_ptr<GraphLoader> graph_loader_;
@@ -243,7 +321,11 @@ protected:
   // State Data
   Graph graph_;
   GraphToIDMap id_to_graph_map_;
+<<<<<<< HEAD
   std::string route_frame_, base_frame_;
+=======
+  std::string route_frame_, base_frame_, global_frame_;
+>>>>>>> jazzy
   double max_planning_time_;
 };
 

@@ -96,6 +96,50 @@ TEST(DatabaseTests, findTests)
 }
 
 TEST(DatabaseTests, getDockInstancesBadConversionFile)
+<<<<<<< HEAD
+=======
+{
+  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("test");
+  std::vector<std::string> plugins{"dockv1"};
+  node->declare_parameter("dock_plugins", rclcpp::ParameterValue(plugins));
+  node->declare_parameter(
+    "dockv1.plugin",
+    rclcpp::ParameterValue("opennav_docking::SimpleChargingDock"));
+
+  // Set a valid path with a malformed file
+  node->declare_parameter(
+    "dock_database",
+    rclcpp::ParameterValue(ament_index_cpp::get_package_share_directory("opennav_docking") +
+    "/dock_files/test_dock_bad_conversion_file.yaml"));
+
+  opennav_docking::DockDatabase db;
+  db.initialize(node, nullptr);
+
+  EXPECT_EQ(db.plugin_size(), 1u);
+  EXPECT_EQ(db.instance_size(), 0u);
+}
+
+TEST(DatabaseTests, getDockInstancesWrongPath)
+{
+  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("test");
+  std::vector<std::string> plugins{"dockv1"};
+  node->declare_parameter("dock_plugins", rclcpp::ParameterValue(plugins));
+  node->declare_parameter(
+    "dockv1.plugin",
+    rclcpp::ParameterValue("opennav_docking::SimpleChargingDock"));
+
+  // Set a wrong path
+  node->declare_parameter("dock_database", rclcpp::ParameterValue("file_does_not_exist.yaml"));
+
+  opennav_docking::DockDatabase db;
+  db.initialize(node, nullptr);
+
+  EXPECT_EQ(db.plugin_size(), 1u);
+  EXPECT_EQ(db.instance_size(), 0u);
+}
+
+TEST(DatabaseTests, reloadDbService)
+>>>>>>> jazzy
 {
   auto node = std::make_shared<nav2::LifecycleNode>("test");
   std::vector<std::string> plugins{"dockv1"};
@@ -155,7 +199,11 @@ TEST(DatabaseTests, reloadDbService)
     node->create_client<nav2_msgs::srv::ReloadDockDatabase>("test/reload_database");
 
   auto request = std::make_shared<nav2_msgs::srv::ReloadDockDatabase::Request>();
+<<<<<<< HEAD
   request->filepath = nav2::get_package_share_directory("opennav_docking") +
+=======
+  request->filepath = ament_index_cpp::get_package_share_directory("opennav_docking") +
+>>>>>>> jazzy
     "/dock_files/test_dock_file.yaml";
   EXPECT_TRUE(client->wait_for_service(1s));
   auto result = client->async_call(request);
@@ -178,7 +226,11 @@ TEST(DatabaseTests, reloadDbService)
 
 TEST(DatabaseTests, reloadDbMutexLocked)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("test");
+=======
+  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("test");
+>>>>>>> jazzy
   std::vector<std::string> plugins{"dockv1"};
   node->declare_parameter("dock_plugins", rclcpp::ParameterValue(plugins));
   node->declare_parameter(
@@ -186,8 +238,13 @@ TEST(DatabaseTests, reloadDbMutexLocked)
     rclcpp::ParameterValue("opennav_docking::SimpleChargingDock"));
 
   // This mutex is locked when dock / undock is called
+<<<<<<< HEAD
   std::mutex mutex;
   mutex.lock();
+=======
+  auto mutex = std::make_shared<std::mutex>();
+  mutex->lock();
+>>>>>>> jazzy
   opennav_docking::DockDatabase db(mutex);
   db.initialize(node, nullptr);
 
@@ -196,16 +253,27 @@ TEST(DatabaseTests, reloadDbMutexLocked)
     node->create_client<nav2_msgs::srv::ReloadDockDatabase>("test/reload_database");
 
   auto request = std::make_shared<nav2_msgs::srv::ReloadDockDatabase::Request>();
+<<<<<<< HEAD
   request->filepath = nav2::get_package_share_directory("opennav_docking") +
     "/dock_files/test_dock_file.yaml";
   EXPECT_TRUE(client->wait_for_service(1s));
   auto result = client->async_call(request);
+=======
+  request->filepath = ament_index_cpp::get_package_share_directory("opennav_docking") +
+    "/dock_files/test_dock_file.yaml";
+  EXPECT_TRUE(client->wait_for_service(1s));
+  auto result = client->async_send_request(request);
+>>>>>>> jazzy
   EXPECT_EQ(
     rclcpp::spin_until_future_complete(node, result, 2s),
     rclcpp::FutureReturnCode::SUCCESS);
   EXPECT_FALSE(result.get()->success);
 
+<<<<<<< HEAD
   mutex.unlock();
+=======
+  mutex->unlock();
+>>>>>>> jazzy
 }
 
 }  // namespace opennav_docking

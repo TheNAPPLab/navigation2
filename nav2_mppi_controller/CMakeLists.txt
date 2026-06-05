@@ -161,8 +161,24 @@ target_link_libraries(mppi_trajectory_validators PRIVATE
   pluginlib::pluginlib
 )
 
+<<<<<<< HEAD
 install(TARGETS mppi_controller mppi_motion_models mppi_critics mppi_trajectory_validators
   EXPORT nav2_mppi_controller
+=======
+foreach(lib IN LISTS libraries)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    # Clang: use C++20 and optimization, omit -fconcepts
+    target_compile_features(${lib} PUBLIC cxx_std_20)
+  else()
+    target_compile_options(${lib} PUBLIC -fconcepts)
+  endif()
+  target_include_directories(${lib} PUBLIC ${xsimd_INCLUDE_DIRS})  #  ${OpenMP_INCLUDE_DIRS}
+  target_link_libraries(${lib} xtensor xtensor::optimize xtensor::use_xsimd)
+  ament_target_dependencies(${lib} ${dependencies_pkgs})
+endforeach()
+
+install(TARGETS mppi_controller mppi_critics
+>>>>>>> jazzy
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin

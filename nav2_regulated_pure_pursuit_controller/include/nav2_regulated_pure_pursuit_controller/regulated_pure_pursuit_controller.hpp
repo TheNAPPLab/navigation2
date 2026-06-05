@@ -194,7 +194,11 @@ protected:
   bool cancelling_ = false;
   bool finished_cancelling_ = false;
   bool is_rotating_to_heading_ = false;
+<<<<<<< HEAD
   geometry_msgs::msg::Twist last_command_velocity_;
+=======
+  bool has_reached_xy_tolerance_ = false;
+>>>>>>> jazzy
 
   nav2::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr carrot_pub_;
   nav2::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr curvature_carrot_pub_;

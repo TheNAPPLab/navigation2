@@ -62,11 +62,27 @@ void VoxelLayer::onInitialize()
 {
   ObstacleLayer::onInitialize();
 
+<<<<<<< HEAD
+=======
+  declareParameter("enabled", rclcpp::ParameterValue(true));
+  declareParameter("footprint_clearing_enabled", rclcpp::ParameterValue(true));
+  declareParameter("min_obstacle_height", rclcpp::ParameterValue(0.0));
+  declareParameter("max_obstacle_height", rclcpp::ParameterValue(2.0));
+  declareParameter("z_voxels", rclcpp::ParameterValue(10));
+  declareParameter("origin_z", rclcpp::ParameterValue(0.0));
+  declareParameter("z_resolution", rclcpp::ParameterValue(0.2));
+  declareParameter("unknown_threshold", rclcpp::ParameterValue(15));
+  declareParameter("mark_threshold", rclcpp::ParameterValue(0));
+  declareParameter("combination_method", rclcpp::ParameterValue(1));
+  declareParameter("publish_voxel_map", rclcpp::ParameterValue(false));
+
+>>>>>>> jazzy
   auto node = node_.lock();
   if (!node) {
     throw std::runtime_error{"Failed to lock node"};
   }
 
+<<<<<<< HEAD
   enabled_ = node->declare_or_get_parameter(name_ + "." + "enabled", true);
   footprint_clearing_enabled_ = node->declare_or_get_parameter(
     name_ + "." + "footprint_clearing_enabled", true);
@@ -84,6 +100,21 @@ void VoxelLayer::onInitialize()
     name_ + "." + "combination_method", 1);
   publish_voxel_ = node->declare_or_get_parameter(
     name_ + "." + "publish_voxel_map", false);
+=======
+  node->get_parameter(name_ + "." + "enabled", enabled_);
+  node->get_parameter(name_ + "." + "footprint_clearing_enabled", footprint_clearing_enabled_);
+  node->get_parameter(name_ + "." + "min_obstacle_height", min_obstacle_height_);
+  node->get_parameter(name_ + "." + "max_obstacle_height", max_obstacle_height_);
+  node->get_parameter(name_ + "." + "z_voxels", size_z_);
+  node->get_parameter(name_ + "." + "origin_z", origin_z_);
+  node->get_parameter(name_ + "." + "z_resolution", z_resolution_);
+  node->get_parameter(name_ + "." + "unknown_threshold", unknown_threshold_);
+  node->get_parameter(name_ + "." + "mark_threshold", mark_threshold_);
+  node->get_parameter(name_ + "." + "publish_voxel_map", publish_voxel_);
+
+  int combination_method_param{};
+  node->get_parameter(name_ + "." + "combination_method", combination_method_param);
+>>>>>>> jazzy
   combination_method_ = combination_method_from_int(combination_method_param);
 
   if (publish_voxel_) {
@@ -131,6 +162,14 @@ void VoxelLayer::deactivate()
 
 VoxelLayer::~VoxelLayer()
 {
+<<<<<<< HEAD
+=======
+  auto node = node_.lock();
+  if (dyn_params_handler_ && node) {
+    node->remove_on_set_parameters_callback(dyn_params_handler_.get());
+  }
+  dyn_params_handler_.reset();
+>>>>>>> jazzy
 }
 
 void VoxelLayer::matchSize()
@@ -554,6 +593,7 @@ VoxelLayer::updateParametersCallback(
     }
 
     if (param_type == ParameterType::PARAMETER_DOUBLE) {
+<<<<<<< HEAD
       if (param_name == name_ + "." + "min_obstacle_height" &&
         min_obstacle_height_ != parameter.as_double())
       {
@@ -562,6 +602,11 @@ VoxelLayer::updateParametersCallback(
       } else if (param_name == name_ + "." + "max_obstacle_height" &&  // NOLINT(readability/braces)
         max_obstacle_height_ != parameter.as_double())
       {
+=======
+      if (param_name == name_ + "." + "min_obstacle_height") {
+        min_obstacle_height_ = parameter.as_double();
+      } else if (param_name == name_ + "." + "max_obstacle_height") {
+>>>>>>> jazzy
         max_obstacle_height_ = parameter.as_double();
         setCurrent(false);
       } else if (param_name == name_ + "." + "origin_z" &&  // NOLINT(readability/braces)

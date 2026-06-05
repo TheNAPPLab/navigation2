@@ -22,12 +22,17 @@
 
 #include "behaviortree_cpp/action_node.h"
 #include "behaviortree_cpp/json_export.h"
+<<<<<<< HEAD
 #include "nav_msgs/msg/path.hpp"
 #include "nav2_behavior_tree/bt_utils.hpp"
 #include "nav2_behavior_tree/json_utils.hpp"
 #include "tf2_ros/buffer.hpp"
 #include "nav2_ros_common/lifecycle_node.hpp"
 
+=======
+#include "nav2_behavior_tree/json_utils.hpp"
+#include "tf2_ros/buffer.h"
+>>>>>>> jazzy
 
 namespace nav2_behavior_tree
 {

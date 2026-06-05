@@ -19,6 +19,7 @@
 #include <memory>
 #include <string>
 
+<<<<<<< HEAD
 #include "behaviortree_cpp/action_node.h"
 #include "behaviortree_cpp/json_export.h"
 #include "geometry_msgs/msg/pose_stamped.hpp"
@@ -28,16 +29,28 @@
 #include "nav2_util/geometry_utils.hpp"
 #include "nav2_util/robot_utils.hpp"
 #include "nav2_ros_common/lifecycle_node.hpp"
+=======
+#include "behaviortree_cpp/json_export.h"
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "nav2_util/geometry_utils.hpp"
+#include "nav2_util/robot_utils.hpp"
+#include "behaviortree_cpp/action_node.h"
+#include "nav2_behavior_tree/json_utils.hpp"
+#include "nav_msgs/msg/path.h"
+>>>>>>> jazzy
 
 namespace nav2_behavior_tree
 {
 
+<<<<<<< HEAD
 /**
  * Usage in XML:
  * @code
  * <GetPoseFromPath path="{path}" index="-1" pose="{goal}"/>
  * @endcode
  */
+=======
+>>>>>>> jazzy
 class GetPoseFromPath : public BT::ActionNodeBase
 {
 public:

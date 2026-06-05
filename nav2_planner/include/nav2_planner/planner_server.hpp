@@ -226,6 +226,15 @@ protected:
   // Planner
   PlannerMap planners_;
   pluginlib::ClassLoader<nav2_core::GlobalPlanner> gp_loader_;
+<<<<<<< HEAD
+=======
+  std::vector<std::string> default_ids_;
+  std::vector<std::string> default_types_;
+  std::vector<std::string> planner_ids_;
+  std::vector<std::string> planner_types_;
+  double max_planner_duration_;
+  rclcpp::Duration costmap_update_timeout_;
+>>>>>>> jazzy
   std::string planner_ids_concat_;
 
   // TF buffer

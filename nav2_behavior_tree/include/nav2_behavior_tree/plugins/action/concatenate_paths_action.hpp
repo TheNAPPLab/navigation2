@@ -15,6 +15,7 @@
 #ifndef NAV2_BEHAVIOR_TREE__PLUGINS__ACTION__CONCATENATE_PATHS_ACTION_HPP_
 #define NAV2_BEHAVIOR_TREE__PLUGINS__ACTION__CONCATENATE_PATHS_ACTION_HPP_
 
+<<<<<<< HEAD
 #include <memory>
 #include <vector>
 #include <string>
@@ -23,17 +24,31 @@
 
 #include "behaviortree_cpp/action_node.h"
 #include "nav2_ros_common/lifecycle_node.hpp"
+=======
+#include <string>
+#include <memory>
+#include <limits>
+
+#include "nav_msgs/msg/path.hpp"
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "nav2_util/geometry_utils.hpp"
+
+#include "behaviortree_cpp/action_node.h"
+>>>>>>> jazzy
 
 namespace nav2_behavior_tree
 {
 
 /**
  * @brief A BT::ActionNodeBase to shorten path by some distance
+<<<<<<< HEAD
  *
  * Usage in XML:
  * @code
  * <ConcatenatePaths input_path1="{main_path}" input_path2="{last_mile_path}" output_path="{path}"/>
  * @endcode
+=======
+>>>>>>> jazzy
  */
 class ConcatenatePaths : public BT::ActionNodeBase
 {

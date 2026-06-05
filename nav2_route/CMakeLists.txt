@@ -14,13 +14,20 @@ find_package(pluginlib REQUIRED)
 find_package(nav2_core REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
+<<<<<<< HEAD
+=======
+find_package(tf2 REQUIRED)
+>>>>>>> jazzy
 find_package(nav2_util REQUIRED)
 find_package(angles REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
 find_package(nanoflann REQUIRED)
 find_package(nlohmann_json REQUIRED)
+<<<<<<< HEAD
 find_package(nav2_ros_common REQUIRED)
+=======
+>>>>>>> jazzy
 
 nav2_package()
 
@@ -31,6 +38,29 @@ include_directories(
   include
 )
 
+<<<<<<< HEAD
+=======
+set(dependencies
+  nav2_core
+  rclcpp
+  rclcpp_action
+  rclcpp_components
+  nav2_costmap_2d
+  nav2_msgs
+  nav2_util
+  pluginlib
+  rcl_interfaces
+  geometry_msgs
+  visualization_msgs
+  std_msgs
+  nav_msgs
+  tf2_ros
+  tf2
+  angles
+  nlohmann_json
+)
+
+>>>>>>> jazzy
 # Main library
 add_library(${library_name} SHARED
   src/route_server.cpp
@@ -44,6 +74,7 @@ add_library(${library_name} SHARED
   src/graph_saver.cpp
   src/goal_intent_extractor.cpp
 )
+<<<<<<< HEAD
 
 target_include_directories(${library_name}
   PUBLIC
@@ -72,6 +103,10 @@ target_link_libraries(${library_name} PRIVATE
   ${lifecycle_msgs_TARGETS}
   rclcpp_components::component
   tf2::tf2
+=======
+ament_target_dependencies(${library_name}
+  ${dependencies}
+>>>>>>> jazzy
 )
 
 # Main executable
@@ -79,7 +114,11 @@ add_executable(${executable_name}
   src/main.cpp
 )
 
+<<<<<<< HEAD
 target_link_libraries(${executable_name} PRIVATE ${library_name} rclcpp::rclcpp)
+=======
+target_link_libraries(${executable_name} PRIVATE ${library_name})
+>>>>>>> jazzy
 
 rclcpp_components_register_nodes(${library_name} "nav2_route::RouteServer")
 
@@ -94,6 +133,7 @@ add_library(edge_scorers SHARED
   src/plugins/edge_cost_functions/goal_orientation_scorer.cpp
   src/plugins/edge_cost_functions/start_pose_orientation_scorer.cpp
 )
+<<<<<<< HEAD
 target_include_directories(edge_scorers
   PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
@@ -122,6 +162,10 @@ target_link_libraries(edge_scorers PRIVATE
   ${lifecycle_msgs_TARGETS}
   rclcpp_components::component
   tf2::tf2
+=======
+ament_target_dependencies(edge_scorers
+  ${dependencies}
+>>>>>>> jazzy
 )
 
 # Route operations plugins
@@ -132,6 +176,7 @@ add_library(route_operations SHARED
   src/plugins/route_operations/collision_monitor.cpp
   src/plugins/route_operations/time_marker.cpp
 )
+<<<<<<< HEAD
 target_include_directories(route_operations
   PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
@@ -159,12 +204,17 @@ target_link_libraries(route_operations PRIVATE
   ${lifecycle_msgs_TARGETS}
   rclcpp_components::component
   tf2::tf2
+=======
+ament_target_dependencies(route_operations
+  ${dependencies}
+>>>>>>> jazzy
 )
 
 # Graph Parser plugins
 add_library(graph_file_loaders SHARED
     src/plugins/graph_file_loaders/geojson_graph_file_loader.cpp
 )
+<<<<<<< HEAD
 target_include_directories(graph_file_loaders
   PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
@@ -192,11 +242,16 @@ target_link_libraries(graph_file_loaders PRIVATE
   ${lifecycle_msgs_TARGETS}
   rclcpp_components::component
   tf2::tf2
+=======
+ament_target_dependencies(graph_file_loaders
+  ${dependencies}
+>>>>>>> jazzy
 )
 
 add_library(graph_file_savers SHARED
     src/plugins/graph_file_savers/geojson_graph_file_saver.cpp
 )
+<<<<<<< HEAD
 target_include_directories(graph_file_savers
   PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
@@ -224,6 +279,10 @@ target_link_libraries(graph_file_savers PRIVATE
   ${lifecycle_msgs_TARGETS}
   rclcpp_components::component
   tf2::tf2
+=======
+ament_target_dependencies(graph_file_savers
+  ${dependencies}
+>>>>>>> jazzy
 )
 
 pluginlib_export_plugin_description_file(nav2_route plugins.xml)
@@ -256,6 +315,7 @@ if(BUILD_TESTING)
 endif()
 
 ament_export_include_directories(include/${PROJECT_NAME})
+<<<<<<< HEAD
 ament_export_dependencies(
   rclcpp
   rclcpp_lifecycle
@@ -272,6 +332,9 @@ ament_export_dependencies(
   nlohmann_json
   nav2_ros_common
 )
+=======
+ament_export_dependencies(${dependencies})
+>>>>>>> jazzy
 ament_export_libraries(${library_name} edge_scorers route_operations graph_file_loaders graph_file_savers)
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_package()

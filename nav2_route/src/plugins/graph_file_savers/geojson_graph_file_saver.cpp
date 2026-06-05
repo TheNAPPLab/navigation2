@@ -23,7 +23,11 @@ namespace nav2_route
 {
 
 void GeoJsonGraphFileSaver::configure(
+<<<<<<< HEAD
   const nav2::LifecycleNode::SharedPtr node)
+=======
+  const nav2_util::LifecycleNode::SharedPtr node)
+>>>>>>> jazzy
 {
   RCLCPP_INFO(node->get_logger(), "Configuring geojson graph file saver");
   logger_ = node->get_logger();

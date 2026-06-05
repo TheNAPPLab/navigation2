@@ -51,8 +51,13 @@
 #include "nav2_costmap_2d/clear_costmap_service.hpp"
 #include "nav2_costmap_2d/layered_costmap.hpp"
 #include "nav2_costmap_2d/layer.hpp"
+<<<<<<< HEAD
 #include "nav2_ros_common/lifecycle_node.hpp"
 #include "nav2_msgs/srv/get_costs.hpp"
+=======
+#include "nav2_util/lifecycle_node.hpp"
+#include "nav2_msgs/srv/get_cost.hpp"
+>>>>>>> jazzy
 #include "pluginlib/class_loader.hpp"
 #include "tf2/convert.hpp"
 #include "tf2/LinearMath/Transform.hpp"
@@ -344,10 +349,17 @@ public:
    * @param request x and y coordinates in map
    * @param response cost of the point
   */
+<<<<<<< HEAD
   void getCostsCallback(
     const std::shared_ptr<rmw_request_id_t>,
     const std::shared_ptr<nav2_msgs::srv::GetCosts::Request> request,
     const std::shared_ptr<nav2_msgs::srv::GetCosts::Response> response);
+=======
+  void getCostCallback(
+    const std::shared_ptr<rmw_request_id_t>,
+    const std::shared_ptr<nav2_msgs::srv::GetCost::Request> request,
+    const std::shared_ptr<nav2_msgs::srv::GetCost::Response> response);
+>>>>>>> jazzy
 
 protected:
   // Publishers and subscribers
@@ -415,8 +427,11 @@ protected:
   double transform_tolerance_{0};           ///< The timeout before transform errors
   double initial_transform_timeout_{0};   ///< The timeout before activation of the node errors
   double map_vis_z_{0};                 ///< The height of map, allows to avoid flickering at -0.008
+<<<<<<< HEAD
   /// If true, the footprint subscriber expects a PolygonStamped msg
   bool subscribe_to_stamped_footprint_{false};
+=======
+>>>>>>> jazzy
 
   bool is_lifecycle_follower_{true};   ///< whether is a child-LifecycleNode or an independent node
 
@@ -426,7 +441,11 @@ protected:
   std::vector<geometry_msgs::msg::Point> padded_footprint_;
 
   // Services
+<<<<<<< HEAD
   nav2::ServiceServer<nav2_msgs::srv::GetCosts>::SharedPtr get_cost_service_;
+=======
+  rclcpp::Service<nav2_msgs::srv::GetCost>::SharedPtr get_cost_service_;
+>>>>>>> jazzy
   std::unique_ptr<ClearCostmapService> clear_costmap_service_;
 
   // Dynamic parameters handler

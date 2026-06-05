@@ -83,6 +83,20 @@ public:
     double * min_x, double * min_y, double * max_x, double * max_y) override;
 
   /**
+   * @brief Update the bounds of the master costmap by this layer's update dimensions
+   * @param robot_x X pose of robot
+   * @param robot_y Y pose of robot
+   * @param robot_yaw Robot orientation
+   * @param min_x X min map coord of the window to update
+   * @param min_y Y min map coord of the window to update
+   * @param max_x X max map coord of the window to update
+   * @param max_y Y max map coord of the window to update
+   */
+  void updateBounds(
+    double robot_x, double robot_y, double robot_yaw,
+    double * min_x, double * min_y, double * max_x, double * max_y) override;
+
+  /**
    * @brief Process the keepout layer at the current pose / bounds / grid
    */
   void process(
@@ -120,9 +134,14 @@ protected:
   bool override_lethal_cost_{false};  // If true, lethal cost will be overridden
   unsigned char lethal_override_cost_{252};  // Value to override lethal cost with
   bool last_pose_lethal_{false};  // If true, last pose was lethal
+<<<<<<< HEAD
   bool is_pose_lethal_{false};
   double lethal_state_update_min_x_, lethal_state_update_min_y_;
   double lethal_state_update_max_x_, lethal_state_update_max_y_;
+=======
+  unsigned int lethal_state_update_min_x_{999999u}, lethal_state_update_min_y_{999999u};
+  unsigned int lethal_state_update_max_x_{0u}, lethal_state_update_max_y_{0u};
+>>>>>>> jazzy
 
   unsigned int x_{0};
   unsigned int y_{0};

@@ -61,6 +61,11 @@ public:
 
   bool getAllowBackward() {return params_->allow_backward;}
 
+<<<<<<< HEAD
+=======
+  nav_msgs::msg::Path getPlan() {return path_handler_->getPlan();}
+
+>>>>>>> jazzy
   visualization_msgs::msg::Marker createSlowdownMarker(
     const geometry_msgs::msg::PoseStamped & motion_target)
   {
@@ -238,7 +243,12 @@ TEST(GracefulControllerTest, dynamicParameters) {
 
   // Set parameters
   auto results = params->set_parameters_atomically(
+<<<<<<< HEAD
     {rclcpp::Parameter("test.min_lookahead", 1.0),
+=======
+    {rclcpp::Parameter("test.transform_tolerance", 1.0),
+      rclcpp::Parameter("test.min_lookahead", 1.0),
+>>>>>>> jazzy
       rclcpp::Parameter("test.max_lookahead", 2.0),
       rclcpp::Parameter("test.k_phi", 4.0),
       rclcpp::Parameter("test.k_delta", 5.0),
@@ -254,6 +264,7 @@ TEST(GracefulControllerTest, dynamicParameters) {
       rclcpp::Parameter("test.initial_rotation_tolerance", 12.0),
       rclcpp::Parameter("test.prefer_final_rotation", false),
       rclcpp::Parameter("test.rotation_scaling_factor", 13.0),
+<<<<<<< HEAD
       rclcpp::Parameter("test.allow_backward", false),
       rclcpp::Parameter("test.use_collision_detection", false),
       rclcpp::Parameter("test.in_place_collision_resolution", 15.0),
@@ -262,11 +273,19 @@ TEST(GracefulControllerTest, dynamicParameters) {
       rclcpp::Parameter("test.footprint_scaling_step", 18.0),
       rclcpp::Parameter("test.obstacle_cost_margin", 19),
       rclcpp::Parameter("test.final_rotation_search_step", 20.0)});
+=======
+      rclcpp::Parameter("test.allow_backward", true),
+      rclcpp::Parameter("test.in_place_collision_resolution", 15.0)});
+>>>>>>> jazzy
 
   // Spin
   rclcpp::spin_until_future_complete(node->get_node_base_interface(), results);
 
   // Check parameters
+<<<<<<< HEAD
+=======
+  EXPECT_EQ(node->get_parameter("test.transform_tolerance").as_double(), 1.0);
+>>>>>>> jazzy
   EXPECT_EQ(node->get_parameter("test.min_lookahead").as_double(), 1.0);
   EXPECT_EQ(node->get_parameter("test.max_lookahead").as_double(), 2.0);
   EXPECT_EQ(node->get_parameter("test.k_phi").as_double(), 4.0);
@@ -283,6 +302,7 @@ TEST(GracefulControllerTest, dynamicParameters) {
   EXPECT_EQ(node->get_parameter("test.initial_rotation_tolerance").as_double(), 12.0);
   EXPECT_EQ(node->get_parameter("test.prefer_final_rotation").as_bool(), false);
   EXPECT_EQ(node->get_parameter("test.rotation_scaling_factor").as_double(), 13.0);
+<<<<<<< HEAD
   EXPECT_EQ(node->get_parameter("test.allow_backward").as_bool(), false);
   EXPECT_EQ(node->get_parameter("test.use_collision_detection").as_bool(), false);
   EXPECT_EQ(node->get_parameter("test.in_place_collision_resolution").as_double(), 15.0);
@@ -298,6 +318,10 @@ TEST(GracefulControllerTest, dynamicParameters) {
   rclcpp::spin_until_future_complete(node->get_node_base_interface(), results);
   EXPECT_EQ(controller->getInitialRotation(), false);
   EXPECT_EQ(controller->getAllowBackward(), true);
+=======
+  EXPECT_EQ(node->get_parameter("test.allow_backward").as_bool(), true);
+  EXPECT_EQ(node->get_parameter("test.in_place_collision_resolution").as_double(), 15.0);
+>>>>>>> jazzy
 
   // Set initial rotation to true
   results = params->set_parameters_atomically(
@@ -816,6 +840,7 @@ TEST(GracefulControllerTest, computeVelocityCommandFinal) {
   EXPECT_EQ(cmd_vel.twist.linear.x, 0.0);
   EXPECT_GE(cmd_vel.twist.angular.z, 0.0);
   EXPECT_LE(cmd_vel.twist.angular.z, 0.5);
+<<<<<<< HEAD
 }
 
 TEST(GracefulControllerTest, slowDownForObstacle) {
@@ -1066,6 +1091,8 @@ TEST(GracefulControllerTest, computeVelocityCommandObstacleMargin) {
 
   // It is likely to turn, so angular z should be non-zero (or larger than safe case)
   EXPECT_GT(std::abs(cmd_vel_risky.twist.angular.z), 1e-3);
+=======
+>>>>>>> jazzy
 }
 
 int main(int argc, char ** argv)

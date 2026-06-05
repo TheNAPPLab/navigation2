@@ -97,6 +97,7 @@ public:
     BT::Blackboard::Ptr blackboard);
 
   /**
+<<<<<<< HEAD
    * @brief Function to parse Behavior Tree information from an XML file
    * @param filename Path to BT XML file
    * @return BTInfo Struct containing BT ID information
@@ -114,6 +115,8 @@ public:
     BT::Blackboard::Ptr blackboard);
 
   /**
+=======
+>>>>>>> jazzy
    * @brief Add Groot2 monitor to publish BT status changes
    * @param tree BT to monitor
    * @param server_port Groot2 Server port, first of the pair (server_port, publisher_port)
@@ -126,12 +129,15 @@ public:
   void resetGrootMonitor();
 
   /**
+<<<<<<< HEAD
    * @brief Function to register a BT from an XML file
    * @param file_path Path to BT XML file
    */
   void registerTreeFromFile(const std::string & file_path);
 
   /**
+=======
+>>>>>>> jazzy
    * @brief Function to explicitly reset all BT nodes to initial state
    * @param tree Tree to halt
    */
@@ -141,8 +147,13 @@ protected:
   // The factory that will be used to dynamically construct the behavior tree
   BT::BehaviorTreeFactory factory_;
 
+<<<<<<< HEAD
   // Node handle used to obtain clocks at run time
   nav2::LifecycleNode::WeakPtr node_;
+=======
+  // Clock
+  rclcpp::Clock::SharedPtr clock_;
+>>>>>>> jazzy
 
   // Groot2 monitor
   std::unique_ptr<BT::Groot2Publisher> groot_monitor_;

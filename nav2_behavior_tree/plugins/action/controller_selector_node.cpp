@@ -54,12 +54,25 @@ void ControllerSelector::createROSInterfaces()
       false);
     callback_group_executor_.add_callback_group(callback_group_, node_->get_node_base_interface());
 
+<<<<<<< HEAD
     controller_selector_sub_ = node_->create_subscription<std_msgs::msg::String>(
       topic_name_,
       std::bind(&ControllerSelector::callbackControllerSelect, this, _1),
       nav2::qos::LatchedSubscriptionQoS(),
       callback_group_);
   }
+=======
+  rclcpp::SubscriptionOptions sub_option;
+  sub_option.callback_group = callback_group_;
+  controller_selector_sub_ = node_->create_subscription<std_msgs::msg::String>(
+    topic_name_,
+    qos,
+    std::bind(&ControllerSelector::callbackControllerSelect, this, _1),
+    sub_option);
+
+  // Spin multiple times due to rclcpp regression in Jazzy requiring a 'warm up' spin
+  callback_group_executor_.spin_some(std::chrono::nanoseconds(1));
+>>>>>>> jazzy
 }
 
 BT::NodeStatus ControllerSelector::tick()

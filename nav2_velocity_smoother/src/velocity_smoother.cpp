@@ -42,7 +42,11 @@ VelocitySmoother::~VelocitySmoother()
   }
 }
 
+<<<<<<< HEAD
 nav2::CallbackReturn
+=======
+nav2_util::CallbackReturn
+>>>>>>> jazzy
 VelocitySmoother::on_configure(const rclcpp_lifecycle::State & state)
 {
   RCLCPP_INFO(get_logger(), "Configuring velocity smoother");
@@ -56,6 +60,7 @@ VelocitySmoother::on_configure(const rclcpp_lifecycle::State & state)
   scale_velocities_ = node->declare_or_get_parameter("scale_velocities", false);
 
   // Kinematics
+<<<<<<< HEAD
   max_velocities_ = node->declare_or_get_parameter(
     "max_velocity", std::vector<double>{0.50, 0.0, 2.5});
   min_velocities_ = node->declare_or_get_parameter(
@@ -64,6 +69,54 @@ VelocitySmoother::on_configure(const rclcpp_lifecycle::State & state)
     "max_accel", std::vector<double>{2.5, 0.0, 3.2});
   max_decels_ = node->declare_or_get_parameter(
     "max_decel", std::vector<double>{-2.5, 0.0, -3.2});
+=======
+  declare_parameter_if_not_declared(
+    node, "max_velocity", rclcpp::ParameterValue(std::vector<double>{0.50, 0.0, 2.5}));
+  declare_parameter_if_not_declared(
+    node, "min_velocity", rclcpp::ParameterValue(std::vector<double>{-0.50, 0.0, -2.5}));
+  declare_parameter_if_not_declared(
+    node, "max_accel", rclcpp::ParameterValue(std::vector<double>{2.5, 0.0, 3.2}));
+  declare_parameter_if_not_declared(
+    node, "max_decel", rclcpp::ParameterValue(std::vector<double>{-2.5, 0.0, -3.2}));
+  node->get_parameter("max_velocity", max_velocities_);
+  node->get_parameter("min_velocity", min_velocities_);
+  node->get_parameter("max_accel", max_accels_);
+  node->get_parameter("max_decel", max_decels_);
+
+  for (unsigned int i = 0; i != 3; i++) {
+    if (max_decels_[i] > 0.0) {
+      RCLCPP_ERROR(
+        get_logger(),
+        "Positive values set of deceleration! These should be negative to slow down!");
+      on_cleanup(state);
+      return nav2_util::CallbackReturn::FAILURE;
+    }
+    if (max_accels_[i] < 0.0) {
+      RCLCPP_ERROR(
+        get_logger(),
+        "Negative values set of acceleration! These should be positive to speed up!");
+      on_cleanup(state);
+      return nav2_util::CallbackReturn::FAILURE;
+    }
+    if (min_velocities_[i] > 0.0) {
+      RCLCPP_ERROR(
+        get_logger(), "Positive values set of min_velocities! These should be negative!");
+      on_cleanup(state);
+      return nav2_util::CallbackReturn::FAILURE;
+    }
+    if (max_velocities_[i] < 0.0) {
+      RCLCPP_ERROR(
+        get_logger(), "Negative values set of max_velocities! These should be positive!");
+      on_cleanup(state);
+      return nav2_util::CallbackReturn::FAILURE;
+    }
+    if (min_velocities_[i] > max_velocities_[i]) {
+      RCLCPP_ERROR(get_logger(), "Min velocities are higher than max velocities!");
+      on_cleanup(state);
+      return nav2_util::CallbackReturn::FAILURE;
+    }
+  }
+>>>>>>> jazzy
 
   // Get feature parameters
   odom_topic_ = node->declare_or_get_parameter("odom_topic", std::string("odom"));
@@ -87,6 +140,7 @@ VelocitySmoother::on_configure(const rclcpp_lifecycle::State & state)
     RCLCPP_ERROR(
       get_logger(),
       "Invalid setting of kinematic and/or deadband limits!"
+<<<<<<< HEAD
       " All limits must be size of 3 (x, y, theta) or 6 (x, y, z, r, p, y)");
     on_cleanup(state);
     return nav2::CallbackReturn::FAILURE;
@@ -124,6 +178,11 @@ VelocitySmoother::on_configure(const rclcpp_lifecycle::State & state)
       on_cleanup(state);
       return nav2::CallbackReturn::FAILURE;
     }
+=======
+      " All limits must be size of 3 representing (x, y, theta).");
+    on_cleanup(state);
+    return nav2_util::CallbackReturn::FAILURE;
+>>>>>>> jazzy
   }
 
   // Get control type
@@ -136,8 +195,18 @@ VelocitySmoother::on_configure(const rclcpp_lifecycle::State & state)
       get_logger(),
       "Invalid feedback_type, options are OPEN_LOOP and CLOSED_LOOP.");
     on_cleanup(state);
+<<<<<<< HEAD
     return nav2::CallbackReturn::FAILURE;
+=======
+    return nav2_util::CallbackReturn::FAILURE;
+>>>>>>> jazzy
   }
+
+  // Define option to overwrite the timestamp of the message containing the smoothed velocity
+  declare_parameter_if_not_declared(
+    node, "stamp_smoothed_velocity_with_smoothing_time", rclcpp::ParameterValue(false));
+  node->get_parameter(
+    "stamp_smoothed_velocity_with_smoothing_time", stamp_smoothed_velocity_with_smoothing_time_);
 
   // Setup inputs / outputs
   smoothed_cmd_pub_ = std::make_unique<nav2_util::TwistPublisher>(node, "cmd_vel_smoothed");
@@ -154,7 +223,11 @@ VelocitySmoother::on_configure(const rclcpp_lifecycle::State & state)
     } catch (const std::runtime_error & e) {
       RCLCPP_ERROR(get_logger(), "%s", e.what());
       on_cleanup(state);
+<<<<<<< HEAD
       return nav2::CallbackReturn::FAILURE;
+=======
+      return nav2_util::CallbackReturn::FAILURE;
+>>>>>>> jazzy
     }
   }
 
@@ -197,6 +270,7 @@ VelocitySmoother::on_deactivate(const rclcpp_lifecycle::State &)
   }
   smoothed_cmd_pub_->on_deactivate();
 
+<<<<<<< HEAD
   auto node = shared_from_this();
   if (post_set_params_handler_ && node) {
     node->remove_post_set_parameters_callback(post_set_params_handler_.get());
@@ -206,6 +280,10 @@ VelocitySmoother::on_deactivate(const rclcpp_lifecycle::State &)
     node->remove_on_set_parameters_callback(on_set_params_handler_.get());
   }
   on_set_params_handler_.reset();
+=======
+  remove_on_set_parameters_callback(dyn_params_handler_.get());
+  dyn_params_handler_.reset();
+>>>>>>> jazzy
 
   // destroy bond connection
   destroyBond();
@@ -320,11 +398,23 @@ void VelocitySmoother::smootherTimer()
   auto const delta_time_since_last_command = now() - last_command_time_;
 
   auto cmd_vel = std::make_unique<geometry_msgs::msg::TwistStamped>();
+<<<<<<< HEAD
   cmd_vel->header.frame_id = command_.header.frame_id;
   // Smooth the timestamp of the smoothed message
   // Do not keep the same timestamp of the last command; this causes jerky behavior
   // See https://github.com/ros-navigation/navigation2/issues/5857
   cmd_vel->header.stamp = command_.header.stamp + delta_time_since_last_command;
+=======
+  cmd_vel->header.frame_id = command_->header.frame_id;
+  if (stamp_smoothed_velocity_with_smoothing_time_) {
+    // Smooth the timestamp of the smoothed message
+    // Do not keep the same timestamp of the last command; this causes jerky behavior
+    // See https://github.com/ros-navigation/navigation2/issues/5857
+    cmd_vel->header.stamp = command_->header.stamp + delta_time_since_last_command;
+  } else {
+    cmd_vel->header.stamp = command_->header.stamp;
+  }
+>>>>>>> jazzy
 
   // Check for velocity timeout. If nothing received, publish zeros to apply deceleration
   if (delta_time_since_last_command > velocity_timeout_) {
@@ -332,8 +422,13 @@ void VelocitySmoother::smootherTimer()
       stopped_ = true;
       return;
     }
+<<<<<<< HEAD
     command_ = geometry_msgs::msg::TwistStamped();
     command_.header.stamp = now();
+=======
+    *command_ = geometry_msgs::msg::TwistStamped();
+    command_->header.stamp = now();
+>>>>>>> jazzy
   }
 
   stopped_ = false;

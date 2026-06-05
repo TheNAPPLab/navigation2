@@ -335,13 +335,28 @@ void Tester::setCommonParameters(
 
   test_node_->declare_parameter(
     polygon_name + ".polygon_pub_topic", rclcpp::ParameterValue(POLYGON_PUB_TOPIC));
+<<<<<<< HEAD
 
   test_node_->declare_parameter(
     "observation_sources", rclcpp::ParameterValue(observation_sources));
+=======
+  test_node_->set_parameter(
+    rclcpp::Parameter(polygon_name + ".polygon_pub_topic", POLYGON_PUB_TOPIC));
+
+  test_node_->declare_parameter(
+    "observation_sources", rclcpp::ParameterValue(observation_sources));
+  test_node_->set_parameter(
+    rclcpp::Parameter("observation_sources", observation_sources));
+>>>>>>> jazzy
 
   if (!sources_names.empty()) {
     test_node_->declare_parameter(
       polygon_name + ".sources_names", rclcpp::ParameterValue(sources_names));
+<<<<<<< HEAD
+=======
+    test_node_->set_parameter(
+      rclcpp::Parameter(polygon_name + ".sources_names", sources_names));
+>>>>>>> jazzy
   }
 }
 
@@ -920,11 +935,17 @@ TEST_F(Tester, testPolygonGetCollisionTime)
   nav2_collision_monitor::Velocity vel{0.5, 0.0, 0.0};  // 0.5 m/s forward movement
   // Two points 0.2 m ahead the footprint (0.5 m)
   std::unordered_map<std::string, std::vector<nav2_collision_monitor::Point>> points_map;
+<<<<<<< HEAD
   std::vector<nav2_collision_monitor::Point> triggering_points;
   points_map.insert({OBSERVATION_SOURCE_NAME, {{0.7, -0.01}, {0.7, 0.01}}});
   // Collision is expected to be ~= 0.2 m / 0.5 m/s seconds
   EXPECT_NEAR(
     polygon_->getCollisionTime(points_map, vel, triggering_points), 0.4, SIMULATION_TIME_STEP);
+=======
+  points_map.insert({OBSERVATION_SOURCE_NAME, {{0.7, -0.01}, {0.7, 0.01}}});
+  // Collision is expected to be ~= 0.2 m / 0.5 m/s seconds
+  EXPECT_NEAR(polygon_->getCollisionTime(points_map, vel), 0.4, SIMULATION_TIME_STEP);
+>>>>>>> jazzy
 
   // Backward movement check
   vel = {-0.5, 0.0, 0.0};  // 0.5 m/s backward movement
@@ -932,8 +953,12 @@ TEST_F(Tester, testPolygonGetCollisionTime)
   points_map.clear();
   points_map.insert({OBSERVATION_SOURCE_NAME, {{-0.7, -0.01}, {-0.7, 0.01}}});
   // Collision is expected to be in ~= 0.2 m / 0.5 m/s seconds
+<<<<<<< HEAD
   EXPECT_NEAR(
     polygon_->getCollisionTime(points_map, vel, triggering_points), 0.4, SIMULATION_TIME_STEP);
+=======
+  EXPECT_NEAR(polygon_->getCollisionTime(points_map, vel), 0.4, SIMULATION_TIME_STEP);
+>>>>>>> jazzy
 
   // Sideway movement check
   vel = {0.0, 0.5, 0.0};  // 0.5 m/s sideway movement
@@ -941,8 +966,12 @@ TEST_F(Tester, testPolygonGetCollisionTime)
   points_map.clear();
   points_map.insert({OBSERVATION_SOURCE_NAME, {{-0.01, 0.6}, {0.01, 0.6}}});
   // Collision is expected to be in ~= 0.1 m / 0.5 m/s seconds
+<<<<<<< HEAD
   EXPECT_NEAR(
     polygon_->getCollisionTime(points_map, vel, triggering_points), 0.2, SIMULATION_TIME_STEP);
+=======
+  EXPECT_NEAR(polygon_->getCollisionTime(points_map, vel), 0.2, SIMULATION_TIME_STEP);
+>>>>>>> jazzy
 
   // Rotation check
   vel = {0.0, 0.0, 1.0};  // 1.0 rad/s rotation
@@ -957,6 +986,7 @@ TEST_F(Tester, testPolygonGetCollisionTime)
   //     -----------
   //          '
   points_map.clear();
+<<<<<<< HEAD
   triggering_points.clear();
   points_map.insert({OBSERVATION_SOURCE_NAME, {{0.49, -0.01}, {0.49, 0.01}}});
   // Collision is expected to be in ~= 45 degrees * M_PI / (180 degrees * 1.0 rad/s) seconds
@@ -967,11 +997,18 @@ TEST_F(Tester, testPolygonGetCollisionTime)
   EXPECT_NEAR(triggering_points[0].y, -0.01, EPSILON);
   EXPECT_NEAR(triggering_points[1].x, 0.49, EPSILON);
   EXPECT_NEAR(triggering_points[1].y, 0.01, EPSILON);
+=======
+  points_map.insert({OBSERVATION_SOURCE_NAME, {{0.49, -0.01}, {0.49, 0.01}}});
+  // Collision is expected to be in ~= 45 degrees * M_PI / (180 degrees * 1.0 rad/s) seconds
+  double exp_res = 45 / 180 * M_PI;
+  EXPECT_NEAR(polygon_->getCollisionTime(points_map, vel), exp_res, EPSILON);
+>>>>>>> jazzy
 
   // Two points are already inside footprint
   vel = {0.5, 0.0, 0.0};  // 0.5 m/s forward movement
   // Two points inside
   points_map.clear();
+<<<<<<< HEAD
   triggering_points.clear();
   points_map.insert({OBSERVATION_SOURCE_NAME, {{0.1, -0.01}, {0.1, 0.01}}});
   // Collision already appeared: collision time should be 0
@@ -981,16 +1018,27 @@ TEST_F(Tester, testPolygonGetCollisionTime)
   EXPECT_NEAR(triggering_points[0].y, -0.01, EPSILON);
   EXPECT_NEAR(triggering_points[1].x, 0.1, EPSILON);
   EXPECT_NEAR(triggering_points[1].y, 0.01, EPSILON);
+=======
+  points_map.insert({OBSERVATION_SOURCE_NAME, {{0.1, -0.01}, {0.1, 0.01}}});
+  // Collision already appeared: collision time should be 0
+  EXPECT_NEAR(polygon_->getCollisionTime(points_map, vel), 0.0, EPSILON);
+>>>>>>> jazzy
 
   // All points are out of simulation prediction
   vel = {0.5, 0.0, 0.0};  // 0.5 m/s forward movement
   // Two points 0.6 m ahead the footprint (0.5 m)
   points_map.clear();
+<<<<<<< HEAD
   triggering_points.clear();
   points_map.insert({OBSERVATION_SOURCE_NAME, {{1.1, -0.01}, {1.1, 0.01}}});
   // There is no collision: return value should be negative
   EXPECT_LT(polygon_->getCollisionTime(points_map, vel, triggering_points), 0.0);
   EXPECT_TRUE(triggering_points.empty());
+=======
+  points_map.insert({OBSERVATION_SOURCE_NAME, {{1.1, -0.01}, {1.1, 0.01}}});
+  // There is no collision: return value should be negative
+  EXPECT_LT(polygon_->getCollisionTime(points_map, vel), 0.0);
+>>>>>>> jazzy
 }
 
 TEST_F(Tester, testPolygonPublish)
@@ -1018,8 +1066,16 @@ TEST_F(Tester, testPolygonDefaultVisualize)
   // Use default parameters, visualize should be false by-default
   test_node_->declare_parameter(
     std::string(POLYGON_NAME) + ".action_type", rclcpp::ParameterValue("stop"));
+<<<<<<< HEAD
   std::vector<std::string> observation_sources = {OBSERVATION_SOURCE_NAME};
   test_node_->declare_parameter("observation_sources", rclcpp::ParameterValue(observation_sources));
+=======
+  test_node_->set_parameter(
+    rclcpp::Parameter(std::string(POLYGON_NAME) + ".action_type", "stop"));
+  std::vector<std::string> observation_sources = {OBSERVATION_SOURCE_NAME};
+  test_node_->declare_parameter("observation_sources", rclcpp::ParameterValue(observation_sources));
+  test_node_->set_parameter(rclcpp::Parameter("observation_sources", observation_sources));
+>>>>>>> jazzy
   setPolygonParameters(SQUARE_POLYGON_STR, true);
 
   // Create new polygon
@@ -1057,7 +1113,11 @@ TEST_F(Tester, testPolygonSourceDefaultAssociation)
   setCommonParameters(POLYGON_NAME, "stop", all_sources);  // no polygon sources names specified
   setPolygonParameters(SQUARE_POLYGON_STR, true);
   polygon_ = std::make_shared<PolygonWrapper>(
+<<<<<<< HEAD
     test_node_->weak_from_this(), POLYGON_NAME,
+=======
+    test_node_, POLYGON_NAME,
+>>>>>>> jazzy
     tf_buffer_, BASE_FRAME_ID, TRANSFORM_TOLERANCE);
   ASSERT_TRUE(polygon_->configure());
   ASSERT_EQ(polygon_->getSourcesNames(), all_sources);
@@ -1070,7 +1130,11 @@ TEST_F(Tester, testPolygonSourceInvalidAssociation)
     POLYGON_NAME, "stop", {"source_1", "source_2", "source_3"}, {"source_1", "source_4"});
   setPolygonParameters(SQUARE_POLYGON_STR, true);
   polygon_ = std::make_shared<PolygonWrapper>(
+<<<<<<< HEAD
     test_node_->weak_from_this(), POLYGON_NAME,
+=======
+    test_node_, POLYGON_NAME,
+>>>>>>> jazzy
     tf_buffer_, BASE_FRAME_ID, TRANSFORM_TOLERANCE);
   ASSERT_FALSE(polygon_->configure());
 }
@@ -1082,12 +1146,17 @@ TEST_F(Tester, testPolygonSourceAssociation)
   setCommonParameters(POLYGON_NAME, "stop", {"source_1", "source_2", "source_3"}, poly_sources);
   setPolygonParameters(SQUARE_POLYGON_STR, true);
   polygon_ = std::make_shared<PolygonWrapper>(
+<<<<<<< HEAD
     test_node_->weak_from_this(), POLYGON_NAME,
+=======
+    test_node_, POLYGON_NAME,
+>>>>>>> jazzy
     tf_buffer_, BASE_FRAME_ID, TRANSFORM_TOLERANCE);
   ASSERT_TRUE(polygon_->configure());
   ASSERT_EQ(polygon_->getSourcesNames(), poly_sources);
 }
 
+<<<<<<< HEAD
 TEST_F(Tester, testPolygonDebounceDefaultBehavior)
 {
   createPolygon("stop", true);
@@ -1182,6 +1251,8 @@ TEST_F(Tester, testPolygonDebounceRejectsInvalidDynamicParameters)
     rclcpp::exceptions::InvalidParameterValueException);
 }
 
+=======
+>>>>>>> jazzy
 int main(int argc, char ** argv)
 {
   // Initialize the system

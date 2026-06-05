@@ -55,6 +55,33 @@ void StandardTrajectoryGenerator::initialize(
   kinematics_handler_->initialize(nh, plugin_name_);
   initializeIterator(nh);
 
+<<<<<<< HEAD
+=======
+  nav2_util::declare_parameter_if_not_declared(
+    nh,
+    plugin_name + ".sim_time", rclcpp::ParameterValue(1.7));
+  nav2_util::declare_parameter_if_not_declared(
+    nh,
+    plugin_name + ".discretize_by_time", rclcpp::ParameterValue(false));
+
+  nav2_util::declare_parameter_if_not_declared(
+    nh,
+    plugin_name + ".time_granularity", rclcpp::ParameterValue(0.5));
+  nav2_util::declare_parameter_if_not_declared(
+    nh,
+    plugin_name + ".linear_granularity", rclcpp::ParameterValue(0.5));
+  nav2_util::declare_parameter_if_not_declared(
+    nh,
+    plugin_name + ".angular_granularity", rclcpp::ParameterValue(0.025));
+  nav2_util::declare_parameter_if_not_declared(
+    nh,
+    plugin_name + ".include_last_point", rclcpp::ParameterValue(true));
+
+  nav2_util::declare_parameter_if_not_declared(
+    nh,
+    plugin_name + ".limit_vel_cmd_in_traj", rclcpp::ParameterValue(false));
+
+>>>>>>> jazzy
   /*
    * If discretize_by_time, then sim_granularity represents the amount of time that should be between
    *  two successive points on the trajectory.
@@ -63,6 +90,7 @@ void StandardTrajectoryGenerator::initialize(
    *  two successive points on the trajectory, and angular_sim_granularity is the maximum amount of
    *  angular distance between two successive points.
    */
+<<<<<<< HEAD
   sim_time_ = nh->declare_or_get_parameter(
     plugin_name + ".sim_time", 1.7);
   discretize_by_time_ = nh->declare_or_get_parameter(
@@ -87,6 +115,15 @@ void StandardTrajectoryGenerator::activate()
 void StandardTrajectoryGenerator::deactivate()
 {
   kinematics_handler_->deactivate();
+=======
+  nh->get_parameter(plugin_name + ".sim_time", sim_time_);
+  nh->get_parameter(plugin_name + ".discretize_by_time", discretize_by_time_);
+  nh->get_parameter(plugin_name + ".time_granularity", time_granularity_);
+  nh->get_parameter(plugin_name + ".linear_granularity", linear_granularity_);
+  nh->get_parameter(plugin_name + ".angular_granularity", angular_granularity_);
+  nh->get_parameter(plugin_name + ".include_last_point", include_last_point_);
+  nh->get_parameter(plugin_name + ".limit_vel_cmd_in_traj", limit_vel_cmd_in_traj_);
+>>>>>>> jazzy
 }
 
 void StandardTrajectoryGenerator::initializeIterator(

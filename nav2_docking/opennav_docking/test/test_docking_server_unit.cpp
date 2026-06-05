@@ -268,6 +268,7 @@ TEST(DockingServerTests, testDynamicParams)
   EXPECT_EQ(node->get_parameter("base_frame").as_string(), std::string("hi"));
   EXPECT_EQ(node->get_parameter("fixed_frame").as_string(), std::string("hi"));
   EXPECT_EQ(node->get_parameter("max_retries").as_int(), 7);
+<<<<<<< HEAD
   EXPECT_EQ(node->get_parameter("rotation_angular_tolerance").as_double(), 0.42);
 
   // Test setting invalid value
@@ -280,11 +281,14 @@ TEST(DockingServerTests, testDynamicParams)
     {rclcpp::Parameter("initial_perception_timeout", -1.0)});
   rclcpp::spin_until_future_complete(node->get_node_base_interface(), results);
   EXPECT_EQ(node->get_parameter("initial_perception_timeout").as_double(), 1.0);
+=======
+>>>>>>> jazzy
 
   node->on_deactivate(rclcpp_lifecycle::State());
   node->on_cleanup(rclcpp_lifecycle::State());
   node->on_shutdown(rclcpp_lifecycle::State());
   node.reset();
+<<<<<<< HEAD
 }
 
 TEST(DockingServerTests, testDockBackward)
@@ -484,6 +488,8 @@ TEST(DockingServerTests, HandlesPluginStartFailure)
   node->on_deactivate(rclcpp_lifecycle::State());
   node->on_cleanup(rclcpp_lifecycle::State());
   node->shutdown();
+=======
+>>>>>>> jazzy
 }
 
 }  // namespace opennav_docking

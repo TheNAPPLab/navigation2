@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 
+#include "behaviortree_cpp/json_export.h"
 #include "nav2_msgs/action/compute_path_to_pose.hpp"
 #include "nav_msgs/msg/path.hpp"
 #include "nav2_behavior_tree/bt_action_node.hpp"
@@ -101,10 +102,14 @@ public:
         BT::InputPort<geometry_msgs::msg::PoseStamped>(
           "start",
           "Used as the planner start pose instead of the current robot pose, if use_start is"
+<<<<<<< HEAD
           " not false (i.e. not provided or set to true)"),
         BT::InputPort<std::vector<geometry_msgs::msg::PoseStamped>>(
           "viapoints",
           "A list of intermediate viapoints (excluding goal) to consider for planning"),
+=======
+                   " not false (i.e. not provided or set to true)"),
+>>>>>>> jazzy
         BT::InputPort<bool>(
           "use_start", "For using or not using (i.e. ignoring) the provided start pose"),
         BT::InputPort<std::string>(

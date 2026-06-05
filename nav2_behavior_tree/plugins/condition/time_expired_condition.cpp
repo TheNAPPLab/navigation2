@@ -40,6 +40,13 @@ void TimeExpiredCondition::initialize()
 
 BT::NodeStatus TimeExpiredCondition::tick()
 {
+<<<<<<< HEAD
+=======
+  if (!BT::isStatusActive(status())) {
+    initialize();
+  }
+
+>>>>>>> jazzy
   if (!BT::isStatusActive(status())) {
     initialize();
     start_ = node_->now();

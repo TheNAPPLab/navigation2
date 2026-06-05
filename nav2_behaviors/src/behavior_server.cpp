@@ -53,7 +53,11 @@ BehaviorServer::~BehaviorServer()
   behaviors_.clear();
 }
 
+<<<<<<< HEAD
 nav2::CallbackReturn
+=======
+nav2_util::CallbackReturn
+>>>>>>> jazzy
 BehaviorServer::on_configure(const rclcpp_lifecycle::State & state)
 {
   RCLCPP_INFO(get_logger(), "Configuring");
@@ -68,7 +72,11 @@ BehaviorServer::on_configure(const rclcpp_lifecycle::State & state)
   behavior_types_.resize(behavior_ids_.size());
   if (!loadBehaviorPlugins()) {
     on_cleanup(state);
+<<<<<<< HEAD
     return nav2::CallbackReturn::FAILURE;
+=======
+    return nav2_util::CallbackReturn::FAILURE;
+>>>>>>> jazzy
   }
   setupResourcesForBehaviorPlugins();
   configureBehaviorPlugins();

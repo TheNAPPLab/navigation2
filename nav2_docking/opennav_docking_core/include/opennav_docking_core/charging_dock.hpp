@@ -125,6 +125,7 @@ public:
   virtual bool hasStoppedCharging() = 0;
 
   /**
+<<<<<<< HEAD
    * @brief Start any detection pipelines required for pose refinement.
    */
   virtual bool startDetectionProcess() = 0;
@@ -135,10 +136,13 @@ public:
   virtual bool stopDetectionProcess() = 0;
 
   /**
+=======
+>>>>>>> jazzy
    * @brief Gets if this is a charging-typed dock
    */
   virtual bool isCharger() {return true;}
 
+<<<<<<< HEAD
   /**
    * @brief Indicates the direction of the dock. This is used to determine if the
    * robot should drive forwards or backwards onto the dock.
@@ -153,6 +157,8 @@ public:
    */
   bool shouldRotateToDock() {return rotate_to_dock_;}
 
+=======
+>>>>>>> jazzy
   std::string getName() {return name_;}
 
 protected:

@@ -19,7 +19,11 @@
 
 #include "gtest/gtest.h"
 #include "rclcpp/rclcpp.hpp"
+<<<<<<< HEAD
 #include "nav2_ros_common/lifecycle_node.hpp"
+=======
+#include "nav2_util/lifecycle_node.hpp"
+>>>>>>> jazzy
 #include "nav2_route/utils.hpp"
 #include "nav2_route/types.hpp"
 
@@ -167,8 +171,13 @@ TEST(UtilsTest, test_to_visualization_msg_conversion)
     expected_edge_markers + expected_node_markers +
     expected_edge_id_text_markers + expected_node_id_text_markers;
 
+<<<<<<< HEAD
   EXPECT_EQ(graph_msg->markers.size(), expected_total_markers);
   for (auto & marker : graph_msg->markers) {
+=======
+  EXPECT_EQ(graph_msg.markers.size(), expected_total_markers);
+  for (auto & marker : graph_msg.markers) {
+>>>>>>> jazzy
     if (marker.ns == "route_graph_ids") {
       EXPECT_EQ(marker.type, visualization_msgs::msg::Marker::TEXT_VIEW_FACING);
     } else if (marker.ns == "route_graph") {

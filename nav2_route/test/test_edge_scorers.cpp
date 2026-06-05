@@ -19,16 +19,27 @@
 
 #include "gtest/gtest.h"
 #include "rclcpp/rclcpp.hpp"
+<<<<<<< HEAD
 #include "nav2_ros_common/lifecycle_node.hpp"
 #include "nav2_ros_common/service_client.hpp"
 #include "nav2_ros_common/node_thread.hpp"
+=======
+#include "nav2_util/lifecycle_node.hpp"
+#include "nav2_util/service_client.hpp"
+#include "nav2_util/node_thread.hpp"
+>>>>>>> jazzy
 #include "nav2_route/edge_scorer.hpp"
 #include "nav2_msgs/srv/dynamic_edges.hpp"
 #include "nav2_costmap_2d/costmap_2d.hpp"
 #include "nav2_costmap_2d/costmap_2d_publisher.hpp"
 #include "nav2_core/route_exceptions.hpp"
+<<<<<<< HEAD
 #include "tf2_ros/static_transform_broadcaster.hpp"
 #include "tf2_ros/transform_listener.hpp"
+=======
+#include "tf2_ros/static_transform_broadcaster.h"
+#include "tf2_ros/transform_listener.h"
+>>>>>>> jazzy
 
 class RclCppFixture
 {
@@ -42,7 +53,11 @@ using namespace nav2_route;  // NOLINT
 
 TEST(EdgeScorersTest, test_lifecycle)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("edge_scorer_test");
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("edge_scorer_test");
+>>>>>>> jazzy
   std::shared_ptr<tf2_ros::Buffer> tf_buffer;
   std::shared_ptr<nav2_costmap_2d::CostmapSubscriber> costmap_subscriber;
   EdgeScorer scorer(node, tf_buffer, costmap_subscriber);
@@ -51,7 +66,11 @@ TEST(EdgeScorersTest, test_lifecycle)
 TEST(EdgeScorersTest, test_api)
 {
   // Tests basic API and default behavior. Also covers the DistanceScorer plugin.
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("edge_scorer_test");
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("edge_scorer_test");
+>>>>>>> jazzy
   std::shared_ptr<tf2_ros::Buffer> tf_buffer;
   std::shared_ptr<nav2_costmap_2d::CostmapSubscriber> costmap_subscriber;
   EdgeScorer scorer(node, tf_buffer, costmap_subscriber);
@@ -87,12 +106,20 @@ TEST(EdgeScorersTest, test_api)
 TEST(EdgeScorersTest, test_failed_api)
 {
   // Expect failure since plugin does not exist
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("edge_scorer_test");
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("edge_scorer_test");
+>>>>>>> jazzy
   std::shared_ptr<tf2_ros::Buffer> tf_buffer;
 
   node->declare_parameter(
     "edge_cost_functions", rclcpp::ParameterValue(std::vector<std::string>{"FakeScorer"}));
+<<<<<<< HEAD
   nav2::declare_parameter_if_not_declared(
+=======
+  nav2_util::declare_parameter_if_not_declared(
+>>>>>>> jazzy
     node, "FakeScorer.plugin", rclcpp::ParameterValue(std::string{"FakePluginPath"}));
 
   std::shared_ptr<nav2_costmap_2d::CostmapSubscriber> costmap_subscriber;
@@ -104,14 +131,23 @@ TEST(EdgeScorersTest, test_invalid_edge_scoring)
 {
   // Test API for the edge scorer to maintain proper state when a plugin
   // rejects and edge. Also covers the DynamicEdgesScorer plugin to demonstrate.
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("route_server");
   auto node_thread = std::make_unique<nav2::NodeThread>(node);
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("route_server");
+  auto node_thread = std::make_unique<nav2_util::NodeThread>(node);
+>>>>>>> jazzy
   auto node2 = std::make_shared<rclcpp::Node>("my_node2");
   std::shared_ptr<tf2_ros::Buffer> tf_buffer;
 
   node->declare_parameter(
     "edge_cost_functions", rclcpp::ParameterValue(std::vector<std::string>{"DynamicEdgesScorer"}));
+<<<<<<< HEAD
   nav2::declare_parameter_if_not_declared(
+=======
+  nav2_util::declare_parameter_if_not_declared(
+>>>>>>> jazzy
     node, "DynamicEdgesScorer.plugin",
     rclcpp::ParameterValue(std::string{"nav2_route::DynamicEdgesScorer"}));
 
@@ -121,7 +157,11 @@ TEST(EdgeScorersTest, test_invalid_edge_scoring)
 
   // Send service to set an edge as invalid
   auto srv_client =
+<<<<<<< HEAD
     nav2::ServiceClient<nav2_msgs::srv::DynamicEdges>(
+=======
+    nav2_util::ServiceClient<nav2_msgs::srv::DynamicEdges>(
+>>>>>>> jazzy
     "route_server/DynamicEdgesScorer/adjust_edges", node2);
   auto req = std::make_shared<nav2_msgs::srv::DynamicEdges::Request>();
   req->closed_edges.push_back(10u);
@@ -174,12 +214,20 @@ TEST(EdgeScorersTest, test_invalid_edge_scoring)
 TEST(EdgeScorersTest, test_penalty_scoring)
 {
   // Test Penalty scorer plugin loading + penalizing on metadata values
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("edge_scorer_test");
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("edge_scorer_test");
+>>>>>>> jazzy
   std::shared_ptr<tf2_ros::Buffer> tf_buffer;
 
   node->declare_parameter(
     "edge_cost_functions", rclcpp::ParameterValue(std::vector<std::string>{"PenaltyScorer"}));
+<<<<<<< HEAD
   nav2::declare_parameter_if_not_declared(
+=======
+  nav2_util::declare_parameter_if_not_declared(
+>>>>>>> jazzy
     node, "PenaltyScorer.plugin",
     rclcpp::ParameterValue(std::string{"nav2_route::PenaltyScorer"}));
   std::shared_ptr<nav2_costmap_2d::CostmapSubscriber> costmap_subscriber;
@@ -211,14 +259,24 @@ TEST(EdgeScorersTest, test_penalty_scoring)
 TEST(EdgeScorersTest, test_costmap_scoring)
 {
   // Test Penalty scorer plugin loading + penalizing on metadata values
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("edge_scorer_test");
   node->declare_parameter("costmap_topic", "dummy_topic");
   auto node_thread = std::make_unique<nav2::NodeThread>(node);
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("edge_scorer_test");
+  node->declare_parameter("costmap_topic", "dummy_topic");
+  auto node_thread = std::make_unique<nav2_util::NodeThread>(node);
+>>>>>>> jazzy
   std::shared_ptr<tf2_ros::Buffer> tf_buffer;
 
   node->declare_parameter(
     "edge_cost_functions", rclcpp::ParameterValue(std::vector<std::string>{"CostmapScorer"}));
+<<<<<<< HEAD
   nav2::declare_parameter_if_not_declared(
+=======
+  nav2_util::declare_parameter_if_not_declared(
+>>>>>>> jazzy
     node, "CostmapScorer.plugin",
     rclcpp::ParameterValue(std::string{"nav2_route::CostmapScorer"}));
 
@@ -326,14 +384,24 @@ TEST(EdgeScorersTest, test_costmap_scoring)
 TEST(EdgeScorersTest, test_costmap_scoring_alt_profile)
 {
   // Test Penalty scorer plugin loading + penalizing on metadata values
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("edge_scorer_test");
   node->declare_parameter("costmap_topic", "dummy_costmap/costmap_raw");
   auto node_thread = std::make_unique<nav2::NodeThread>(node);
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("edge_scorer_test");
+  node->declare_parameter("costmap_topic", "dummy_costmap/costmap_raw");
+  auto node_thread = std::make_unique<nav2_util::NodeThread>(node);
+>>>>>>> jazzy
   std::shared_ptr<tf2_ros::Buffer> tf_buffer;
 
   node->declare_parameter(
     "edge_cost_functions", rclcpp::ParameterValue(std::vector<std::string>{"CostmapScorer"}));
+<<<<<<< HEAD
   nav2::declare_parameter_if_not_declared(
+=======
+  nav2_util::declare_parameter_if_not_declared(
+>>>>>>> jazzy
     node, "CostmapScorer.plugin",
     rclcpp::ParameterValue(std::string{"nav2_route::CostmapScorer"}));
   node->declare_parameter(
@@ -429,12 +497,20 @@ TEST(EdgeScorersTest, test_costmap_scoring_alt_profile)
 TEST(EdgeScorersTest, test_time_scoring)
 {
   // Test Time scorer plugin loading
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("edge_scorer_test");
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("edge_scorer_test");
+>>>>>>> jazzy
   std::shared_ptr<tf2_ros::Buffer> tf_buffer;
 
   node->declare_parameter(
     "edge_cost_functions", rclcpp::ParameterValue(std::vector<std::string>{"TimeScorer"}));
+<<<<<<< HEAD
   nav2::declare_parameter_if_not_declared(
+=======
+  nav2_util::declare_parameter_if_not_declared(
+>>>>>>> jazzy
     node, "TimeScorer.plugin",
     rclcpp::ParameterValue(std::string{"nav2_route::TimeScorer"}));
 
@@ -487,12 +563,20 @@ TEST(EdgeScorersTest, test_time_scoring)
 TEST(EdgeScorersTest, test_semantic_scoring_key)
 {
   // Test Time scorer plugin loading
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("edge_scorer_test");
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("edge_scorer_test");
+>>>>>>> jazzy
   std::shared_ptr<tf2_ros::Buffer> tf_buffer;
 
   node->declare_parameter(
     "edge_cost_functions", rclcpp::ParameterValue(std::vector<std::string>{"SemanticScorer"}));
+<<<<<<< HEAD
   nav2::declare_parameter_if_not_declared(
+=======
+  nav2_util::declare_parameter_if_not_declared(
+>>>>>>> jazzy
     node, "SemanticScorer.plugin",
     rclcpp::ParameterValue(std::string{"nav2_route::SemanticScorer"}));
 
@@ -500,12 +584,20 @@ TEST(EdgeScorersTest, test_semantic_scoring_key)
   classes.push_back("Test");
   classes.push_back("Test1");
   classes.push_back("Test2");
+<<<<<<< HEAD
   nav2::declare_parameter_if_not_declared(
+=======
+  nav2_util::declare_parameter_if_not_declared(
+>>>>>>> jazzy
     node, "SemanticScorer.semantic_classes",
     rclcpp::ParameterValue(classes));
 
   for (unsigned int i = 0; i != classes.size(); i++) {
+<<<<<<< HEAD
     nav2::declare_parameter_if_not_declared(
+=======
+    nav2_util::declare_parameter_if_not_declared(
+>>>>>>> jazzy
       node, "SemanticScorer." + classes[i],
       rclcpp::ParameterValue(static_cast<float>(i)));
   }
@@ -560,15 +652,26 @@ TEST(EdgeScorersTest, test_semantic_scoring_key)
 TEST(EdgeScorersTest, test_semantic_scoring_keys)
 {
   // Test Time scorer plugin loading
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("edge_scorer_test");
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("edge_scorer_test");
+>>>>>>> jazzy
   std::shared_ptr<tf2_ros::Buffer> tf_buffer;
 
   node->declare_parameter(
     "edge_cost_functions", rclcpp::ParameterValue(std::vector<std::string>{"SemanticScorer"}));
+<<<<<<< HEAD
   nav2::declare_parameter_if_not_declared(
     node, "SemanticScorer.plugin",
     rclcpp::ParameterValue(std::string{"nav2_route::SemanticScorer"}));
   nav2::declare_parameter_if_not_declared(
+=======
+  nav2_util::declare_parameter_if_not_declared(
+    node, "SemanticScorer.plugin",
+    rclcpp::ParameterValue(std::string{"nav2_route::SemanticScorer"}));
+  nav2_util::declare_parameter_if_not_declared(
+>>>>>>> jazzy
     node, "SemanticScorer.semantic_key",
     rclcpp::ParameterValue(std::string{""}));
 
@@ -576,12 +679,20 @@ TEST(EdgeScorersTest, test_semantic_scoring_keys)
   classes.push_back("Test");
   classes.push_back("Test1");
   classes.push_back("Test2");
+<<<<<<< HEAD
   nav2::declare_parameter_if_not_declared(
+=======
+  nav2_util::declare_parameter_if_not_declared(
+>>>>>>> jazzy
     node, "SemanticScorer.semantic_classes",
     rclcpp::ParameterValue(classes));
 
   for (unsigned int i = 0; i != classes.size(); i++) {
+<<<<<<< HEAD
     nav2::declare_parameter_if_not_declared(
+=======
+    nav2_util::declare_parameter_if_not_declared(
+>>>>>>> jazzy
       node, "SemanticScorer." + classes[i],
       rclcpp::ParameterValue(static_cast<float>(i)));
   }
@@ -639,12 +750,17 @@ TEST(EdgeScorersTest, test_semantic_scoring_keys)
 TEST(EdgeScorersTest, test_goal_orientation_threshold)
 {
   // Test Penalty scorer plugin loading + penalizing on metadata values
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("edge_scorer_test");
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("edge_scorer_test");
+>>>>>>> jazzy
   std::shared_ptr<tf2_ros::Buffer> tf_buffer;
 
   node->declare_parameter(
     "edge_cost_functions",
     rclcpp::ParameterValue(std::vector<std::string>{"GoalOrientationScorer"}));
+<<<<<<< HEAD
   nav2::declare_parameter_if_not_declared(
     node, "GoalOrientationScorer.plugin",
     rclcpp::ParameterValue(std::string{"nav2_route::GoalOrientationScorer"}));
@@ -652,6 +768,15 @@ TEST(EdgeScorersTest, test_goal_orientation_threshold)
     node, "GoalOrientationScorer.orientation_tolerance",
     rclcpp::ParameterValue(1.57));
   nav2::declare_parameter_if_not_declared(
+=======
+  nav2_util::declare_parameter_if_not_declared(
+    node, "GoalOrientationScorer.plugin",
+    rclcpp::ParameterValue(std::string{"nav2_route::GoalOrientationScorer"}));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "GoalOrientationScorer.orientation_tolerance",
+    rclcpp::ParameterValue(1.57));
+  nav2_util::declare_parameter_if_not_declared(
+>>>>>>> jazzy
     node, "GoalOrientationScorer.use_orientation_threshold",
     rclcpp::ParameterValue(true));
 
@@ -708,7 +833,11 @@ TEST(EdgeScorersTest, test_goal_orientation_threshold)
 TEST(EdgeScorersTest, test_goal_orientation_scoring)
 {
   // Test Penalty scorer plugin loading + penalizing on metadata values
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("edge_scorer_test");
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("edge_scorer_test");
+>>>>>>> jazzy
   std::shared_ptr<tf2_ros::Buffer> tf_buffer;
 
   double orientation_weight = 100.0;
@@ -716,6 +845,7 @@ TEST(EdgeScorersTest, test_goal_orientation_scoring)
   node->declare_parameter(
     "edge_cost_functions",
     rclcpp::ParameterValue(std::vector<std::string>{"GoalOrientationScorer"}));
+<<<<<<< HEAD
   nav2::declare_parameter_if_not_declared(
     node, "GoalOrientationScorer.plugin",
     rclcpp::ParameterValue(std::string{"nav2_route::GoalOrientationScorer"}));
@@ -726,6 +856,18 @@ TEST(EdgeScorersTest, test_goal_orientation_scoring)
     node, "GoalOrientationScorer.use_orientation_thershold",
     rclcpp::ParameterValue(false));
   nav2::declare_parameter_if_not_declared(
+=======
+  nav2_util::declare_parameter_if_not_declared(
+    node, "GoalOrientationScorer.plugin",
+    rclcpp::ParameterValue(std::string{"nav2_route::GoalOrientationScorer"}));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "GoalOrientationScorer.orientation_tolerance",
+    rclcpp::ParameterValue(1.57));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "GoalOrientationScorer.use_orientation_thershold",
+    rclcpp::ParameterValue(false));
+  nav2_util::declare_parameter_if_not_declared(
+>>>>>>> jazzy
     node, "GoalOrientationScorer.orientation_weight",
     rclcpp::ParameterValue(orientation_weight));
 
@@ -783,7 +925,11 @@ TEST(EdgeScorersTest, test_goal_orientation_scoring)
 TEST(EdgeScorersTest, test_start_pose_orientation_threshold)
 {
   // Test Penalty scorer plugin loading + penalizing on metadata values
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("edge_scorer_test");
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("edge_scorer_test");
+>>>>>>> jazzy
   std::shared_ptr<tf2_ros::Buffer> tf_buffer = std::make_shared<tf2_ros::Buffer>(node->get_clock());
   std::shared_ptr<tf2_ros::TransformListener> tf_listener =
     std::make_shared<tf2_ros::TransformListener>(*tf_buffer);
@@ -791,6 +937,7 @@ TEST(EdgeScorersTest, test_start_pose_orientation_threshold)
   node->declare_parameter(
     "edge_cost_functions",
     rclcpp::ParameterValue(std::vector<std::string>{"StartPoseOrientationScorer"}));
+<<<<<<< HEAD
   nav2::declare_parameter_if_not_declared(
     node, "StartPoseOrientationScorer.plugin",
     rclcpp::ParameterValue(std::string{"nav2_route::StartPoseOrientationScorer"}));
@@ -798,6 +945,15 @@ TEST(EdgeScorersTest, test_start_pose_orientation_threshold)
     node, "StartPoseOrientationScorer.orientation_tolerance",
     rclcpp::ParameterValue(1.57));
   nav2::declare_parameter_if_not_declared(
+=======
+  nav2_util::declare_parameter_if_not_declared(
+    node, "StartPoseOrientationScorer.plugin",
+    rclcpp::ParameterValue(std::string{"nav2_route::StartPoseOrientationScorer"}));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "StartPoseOrientationScorer.orientation_tolerance",
+    rclcpp::ParameterValue(1.57));
+  nav2_util::declare_parameter_if_not_declared(
+>>>>>>> jazzy
     node, "StartPoseOrientationScorer.use_orientation_threshold",
     rclcpp::ParameterValue(true));
 
@@ -869,7 +1025,11 @@ TEST(EdgeScorersTest, test_start_pose_orientation_threshold)
 TEST(EdgeScorersTest, test_start_pose_orientation_scoring)
 {
   // Test Penalty scorer plugin loading + penalizing on metadata values
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("edge_scorer_test");
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("edge_scorer_test");
+>>>>>>> jazzy
   std::shared_ptr<tf2_ros::Buffer> tf_buffer = std::make_shared<tf2_ros::Buffer>(node->get_clock());
   std::shared_ptr<tf2_ros::TransformListener> tf_listener =
     std::make_shared<tf2_ros::TransformListener>(*tf_buffer);
@@ -879,6 +1039,7 @@ TEST(EdgeScorersTest, test_start_pose_orientation_scoring)
   node->declare_parameter(
     "edge_cost_functions",
     rclcpp::ParameterValue(std::vector<std::string>{"StartPoseOrientationScorer"}));
+<<<<<<< HEAD
   nav2::declare_parameter_if_not_declared(
     node, "StartPoseOrientationScorer.plugin",
     rclcpp::ParameterValue(std::string{"nav2_route::StartPoseOrientationScorer"}));
@@ -889,6 +1050,18 @@ TEST(EdgeScorersTest, test_start_pose_orientation_scoring)
     node, "StartPoseOrientationScorer.use_orientation_thershold",
     rclcpp::ParameterValue(false));
   nav2::declare_parameter_if_not_declared(
+=======
+  nav2_util::declare_parameter_if_not_declared(
+    node, "StartPoseOrientationScorer.plugin",
+    rclcpp::ParameterValue(std::string{"nav2_route::StartPoseOrientationScorer"}));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "StartPoseOrientationScorer.orientation_tolerance",
+    rclcpp::ParameterValue(1.57));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "StartPoseOrientationScorer.use_orientation_thershold",
+    rclcpp::ParameterValue(false));
+  nav2_util::declare_parameter_if_not_declared(
+>>>>>>> jazzy
     node, "StartPoseOrientationScorer.orientation_weight",
     rclcpp::ParameterValue(orientation_weight));
 

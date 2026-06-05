@@ -16,6 +16,7 @@
 #define NAV2_BEHAVIOR_TREE__PLUGINS__ACTION__GET_CURRENT_POSE_ACTION_HPP_
 
 #include <memory>
+<<<<<<< HEAD
 #include <vector>
 #include <string>
 
@@ -27,23 +28,43 @@
 #include "nav2_ros_common/lifecycle_node.hpp"
 
 #include "behaviortree_cpp/action_node.h"
+=======
+#include <string>
+
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "tf2_ros/buffer.h"
+#include "rclcpp/rclcpp.hpp"
+#include "behaviortree_cpp/action_node.h"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
+#include "nav2_behavior_tree/bt_utils.hpp"
+#include "nav2_util/geometry_utils.hpp"
+#include "nav2_util/robot_utils.hpp"
+>>>>>>> jazzy
 
 namespace nav2_behavior_tree
 {
 
 /**
+<<<<<<< HEAD
  * @brief A BT::ActionNodeBase to shorten path by some distance
  *
  * Usage in XML:
  * @code
  * <GetCurrentPose current_pose="{current_pose}"/>
  * @endcode
+=======
+ * @brief Action Node to get the current robot pose from TF
+>>>>>>> jazzy
  */
 class GetCurrentPoseAction : public BT::ActionNodeBase
 {
 public:
   /**
+<<<<<<< HEAD
    * @brief A nav2_behavior_tree::GetCurrentPoseAction constructor
+=======
+   * @brief Constructor
+>>>>>>> jazzy
    * @param xml_tag_name Name for the XML tag for this node
    * @param conf BT node configuration
    */
@@ -53,19 +74,31 @@ public:
 
   /**
    * @brief Creates list of BT ports
+<<<<<<< HEAD
    * @return BT::PortsList Containing basic ports along with node-specific ports
+=======
+   * @return BT::PortsList
+>>>>>>> jazzy
    */
   static BT::PortsList providedPorts()
   {
     return {
       BT::InputPort<std::string>("global_frame", "Global reference frame"),
+<<<<<<< HEAD
       BT::InputPort<std::string>("robot_base_frame", "robot base frame"),
+=======
+      BT::InputPort<std::string>("robot_base_frame", "Robot base frame"),
+>>>>>>> jazzy
       BT::OutputPort<geometry_msgs::msg::PoseStamped>("current_pose", "Current pose output"),
     };
   }
 
 private:
+<<<<<<< HEAD
   /**
+=======
+   /**
+>>>>>>> jazzy
    * @brief The other (optional) override required by a BT action.
    */
   void halt() override {}

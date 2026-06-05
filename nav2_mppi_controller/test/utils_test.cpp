@@ -125,6 +125,59 @@ TEST(UtilsTests, ConversionTests)
   EXPECT_NEAR(path_t.yaws(2), 0.0, 1e-6);
 }
 
+<<<<<<< HEAD
+=======
+TEST(UtilsTests, WithTolTests)
+{
+  geometry_msgs::msg::Pose pose;
+  pose.position.x = 10.0;
+  pose.position.y = 1.0;
+
+  nav2_core::GoalChecker * goal_checker = new TestGoalChecker;
+
+  nav_msgs::msg::Path path;
+  path.poses.resize(2);
+  geometry_msgs::msg::Pose & goal = path.poses.back().pose;
+
+  // Create CriticData with state and goal initialized
+  models::State state;
+  state.pose.pose = pose;
+  models::Trajectories generated_trajectories;
+  models::Path path_critic;
+  xt::xtensor<float, 1> costs;
+  float model_dt;
+  CriticData data = {
+    state, generated_trajectories, path_critic, goal,
+    costs, model_dt, false, nullptr, nullptr, std::nullopt, std::nullopt};
+
+  // Test not in tolerance
+  goal.position.x = 0.0;
+  goal.position.y = 0.0;
+  EXPECT_FALSE(withinPositionGoalTolerance(goal_checker, pose, goal));
+  EXPECT_FALSE(withinPositionGoalTolerance(0.25, pose, goal));
+
+  // Test in tolerance
+  goal.position.x = 9.8;
+  goal.position.y = 0.95;
+  EXPECT_TRUE(withinPositionGoalTolerance(goal_checker, pose, goal));
+  EXPECT_TRUE(withinPositionGoalTolerance(0.25, pose, goal));
+
+  goal.position.x = 10.0;
+  goal.position.y = 0.76;
+  EXPECT_TRUE(withinPositionGoalTolerance(goal_checker, pose, goal));
+  EXPECT_TRUE(withinPositionGoalTolerance(0.25, pose, goal));
+
+  goal.position.x = 9.76;
+  goal.position.y = 1.0;
+  EXPECT_TRUE(withinPositionGoalTolerance(goal_checker, pose, goal));
+  EXPECT_TRUE(withinPositionGoalTolerance(0.25, pose, goal));
+
+  delete goal_checker;
+  goal_checker = nullptr;
+  EXPECT_FALSE(withinPositionGoalTolerance(goal_checker, pose, goal));
+}
+
+>>>>>>> jazzy
 TEST(UtilsTests, AnglesTests)
 {
   // Test angle normalization by creating insane angles
@@ -185,13 +238,21 @@ TEST(UtilsTests, FurthestAndClosestReachedPoint)
   generated_trajectories.reset(100, 2);
   models::Path path;
   geometry_msgs::msg::Pose goal;
+<<<<<<< HEAD
   path.reset(10);
   Eigen::ArrayXf costs;
+=======
+  xt::xtensor<float, 1> costs;
+>>>>>>> jazzy
   float model_dt = 0.1;
 
   CriticData data =
   {state, generated_trajectories, path, goal, costs, model_dt, false, nullptr, nullptr,
+<<<<<<< HEAD
     std::nullopt, std::nullopt, {}};  /// Caution, keep references
+=======
+    std::nullopt, std::nullopt};  /// Caution, keep references
+>>>>>>> jazzy
 
   // Attempt to set furthest point if notionally set, should not change
   data.furthest_reached_path_point = 99999;
@@ -201,7 +262,11 @@ TEST(UtilsTests, FurthestAndClosestReachedPoint)
   // Attempt to set if not set already with no other information, should fail
   CriticData data2 =
   {state, generated_trajectories, path, goal, costs, model_dt, false, nullptr, nullptr,
+<<<<<<< HEAD
     std::nullopt, std::nullopt, {}};  /// Caution, keep references
+=======
+    std::nullopt, std::nullopt};  /// Caution, keep references
+>>>>>>> jazzy
   setPathFurthestPointIfNotSet(data2);
   EXPECT_EQ(data2.furthest_reached_path_point, 0);
 
@@ -221,6 +286,7 @@ TEST(UtilsTests, FurthestAndClosestReachedPoint)
 
   CriticData data3 =
   {state, generated_trajectories, path, goal, costs, model_dt, false, nullptr, nullptr,
+<<<<<<< HEAD
     std::nullopt, std::nullopt, {}};  /// Caution, keep references
   EXPECT_EQ(findPathFurthestReachedPoint(data3), 5);
 }
@@ -264,6 +330,10 @@ TEST(UtilsTests, FurthestReachedPointUturn)
 
   size_t result = findPathFurthestReachedPoint(data);
   EXPECT_LE(result, 6u);
+=======
+    std::nullopt, std::nullopt};  /// Caution, keep references
+  EXPECT_EQ(findPathFurthestReachedPoint(data3), 5u);
+>>>>>>> jazzy
 }
 
 TEST(UtilsTests, findPathCosts)
@@ -272,13 +342,21 @@ TEST(UtilsTests, findPathCosts)
   models::Trajectories generated_trajectories;
   models::Path path;
   geometry_msgs::msg::Pose goal;
+<<<<<<< HEAD
   path.reset(50);
   Eigen::ArrayXf costs;
+=======
+  xt::xtensor<float, 1> costs;
+>>>>>>> jazzy
   float model_dt = 0.1;
 
   CriticData data =
   {state, generated_trajectories, path, goal, costs, model_dt, false, nullptr, nullptr,
+<<<<<<< HEAD
     std::nullopt, std::nullopt, {}};  /// Caution, keep references
+=======
+    std::nullopt, std::nullopt};  /// Caution, keep references
+>>>>>>> jazzy
 
   // Test not set if already set, should not change
   data.path_pts_valid = std::vector<bool>(10, false);
@@ -291,7 +369,11 @@ TEST(UtilsTests, findPathCosts)
 
   CriticData data3 =
   {state, generated_trajectories, path, goal, costs, model_dt, false, nullptr, nullptr,
+<<<<<<< HEAD
     std::nullopt, std::nullopt, {}};  /// Caution, keep references
+=======
+    std::nullopt, std::nullopt};  /// Caution, keep references
+>>>>>>> jazzy
 
   auto costmap_ros = std::make_shared<nav2_costmap_2d::Costmap2DROS>(
     "dummy_costmap", "", true);

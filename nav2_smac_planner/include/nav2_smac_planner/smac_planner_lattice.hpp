@@ -137,9 +137,15 @@ protected:
   bool _debug_visualizations;
   nav2::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr
     _planned_footprints_publisher;
+<<<<<<< HEAD
   nav2::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr
     _smoothed_footprints_publisher;
   nav2::Publisher<geometry_msgs::msg::PoseArray>::SharedPtr
+=======
+  rclcpp_lifecycle::LifecyclePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr
+    _smoothed_footprints_publisher;
+  rclcpp_lifecycle::LifecyclePublisher<geometry_msgs::msg::PoseArray>::SharedPtr
+>>>>>>> jazzy
     _expansions_publisher;
   GoalHeadingMode _goal_heading_mode;
   int _coarse_search_resolution;

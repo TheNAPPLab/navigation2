@@ -4,7 +4,12 @@ project(nav2_rviz_plugins)
 find_package(ament_cmake REQUIRED)
 find_package(backward_ros REQUIRED)
 find_package(geometry_msgs REQUIRED)
+<<<<<<< HEAD
 find_package(nav2_common REQUIRED)
+=======
+find_package(nav2_route REQUIRED)
+find_package(nav2_util REQUIRED)
+>>>>>>> jazzy
 find_package(nav2_lifecycle_manager REQUIRED)
 find_package(nav2_msgs REQUIRED)
 find_package(nav2_util REQUIRED)
@@ -68,6 +73,7 @@ set(nav2_rviz_plugins_headers_to_moc
   include/nav2_rviz_plugins/nav2_panel.hpp
   include/nav2_rviz_plugins/route_tool.hpp
   include/nav2_rviz_plugins/selector.hpp
+<<<<<<< HEAD
   include/nav2_rviz_plugins/particle_cloud_display/particle_cloud_display.hpp
 )
 
@@ -82,6 +88,18 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
+=======
+  include/nav2_rviz_plugins/utils.hpp
+  include/nav2_rviz_plugins/particle_cloud_display/flat_weighted_arrows_array.hpp
+  include/nav2_rviz_plugins/particle_cloud_display/particle_cloud_display.hpp
+)
+
+qt_wrap_ui(route_tool_UIS_H resource/route_tool.ui)
+
+include_directories(
+  include
+)
+>>>>>>> jazzy
 
 set(library_name ${PROJECT_NAME})
 
@@ -95,13 +113,48 @@ add_library(${library_name} SHARED
   src/utils.cpp
   src/particle_cloud_display/flat_weighted_arrows_array.cpp
   src/particle_cloud_display/particle_cloud_display.cpp
+<<<<<<< HEAD
   ${nav2_rviz_plugins_moc_files}
   ${route_tool_UIS_H}
 )
+=======
+  ${nav2_rviz_plugins_headers_to_moc}
+  ${route_tool_UIS_H}
+)
+
+set(dependencies
+  geometry_msgs
+  nav2_route
+  nav2_util
+  nav2_lifecycle_manager
+  nav2_msgs
+  nav_msgs
+  pluginlib
+  Qt5
+  rclcpp
+  rclcpp_lifecycle
+  rviz_common
+  rviz_default_plugins
+  rviz_ogre_vendor
+  rviz_rendering
+  std_msgs
+  tf2_geometry_msgs
+  yaml_cpp_vendor
+)
+
+ament_target_dependencies(${library_name}
+  ${dependencies}
+)
+
+>>>>>>> jazzy
 target_include_directories(${library_name} PUBLIC
   ${OGRE_INCLUDE_DIRS}
+<<<<<<< HEAD
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
   "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
+=======
+  ${nav2_route_INCLUDE_DIRS}
+>>>>>>> jazzy
 )
 target_link_libraries(${library_name} PUBLIC
   ${geometry_msgs_TARGETS}
@@ -113,6 +166,7 @@ target_link_libraries(${library_name} PUBLIC
   rclcpp::rclcpp
   rclcpp_action::rclcpp_action
   rviz_common::rviz_common
+<<<<<<< HEAD
   rviz_default_plugins::rviz_default_plugins
   rviz_rendering::rviz_rendering
   ${std_msgs_TARGETS}
@@ -123,6 +177,9 @@ target_link_libraries(${library_name} PUBLIC
 target_link_libraries(${library_name} PRIVATE
   pluginlib::pluginlib
   yaml-cpp::yaml-cpp
+=======
+  nav2_route::route_server_core
+>>>>>>> jazzy
 )
 
 pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
@@ -142,10 +199,19 @@ install(
 
 install(
   DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/icons"
+<<<<<<< HEAD
   DESTINATION "share/${PROJECT_NAME}"
 )
 
 install(DIRECTORY rviz launch DESTINATION share/${PROJECT_NAME})
+=======
+            "${CMAKE_CURRENT_SOURCE_DIR}/resource"
+            "${CMAKE_CURRENT_SOURCE_DIR}/rviz"
+            "${CMAKE_CURRENT_SOURCE_DIR}/launch"
+  DESTINATION "share/${PROJECT_NAME}"
+)
+
+>>>>>>> jazzy
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -162,6 +228,7 @@ ament_export_dependencies(
   nav2_util
   Qt${QT_VERSION_MAJOR}
   rclcpp
+<<<<<<< HEAD
   rclcpp_action
   rviz_common
   rviz_default_plugins
@@ -170,6 +237,9 @@ ament_export_dependencies(
   tf2_geometry_msgs
   nav2_ros_common
   visualization_msgs
+=======
+  nav2_route
+>>>>>>> jazzy
 )
 
 ament_package()

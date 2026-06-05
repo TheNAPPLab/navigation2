@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <cmath>
+<<<<<<< HEAD
 #include <chrono>
 
 #include "nav2_ros_common/node_utils.hpp"
@@ -20,12 +21,21 @@
 #include "opennav_docking/utils.hpp"
 
 using namespace std::chrono_literals;
+=======
+
+#include "nav2_util/node_utils.hpp"
+#include "opennav_docking/simple_non_charging_dock.hpp"
+>>>>>>> jazzy
 
 namespace opennav_docking
 {
 
 void SimpleNonChargingDock::configure(
+<<<<<<< HEAD
   const nav2::LifecycleNode::WeakPtr & parent,
+=======
+  const rclcpp_lifecycle::LifecycleNode::WeakPtr & parent,
+>>>>>>> jazzy
   const std::string & name, std::shared_ptr<tf2_ros::Buffer> tf)
 {
   name_ = name;
@@ -36,6 +46,7 @@ void SimpleNonChargingDock::configure(
   }
 
   // Parameters for optional external detection of dock pose
+<<<<<<< HEAD
   use_external_detection_pose_ = node_->declare_or_get_parameter(
     name + ".use_external_detection_pose", false);
   external_detection_timeout_ = node_->declare_or_get_parameter(
@@ -126,10 +137,87 @@ void SimpleNonChargingDock::configure(
 
   if (use_stall_detection) {
     is_stalled_ = false;
+=======
+  nav2_util::declare_parameter_if_not_declared(
+    node_, name + ".use_external_detection_pose", rclcpp::ParameterValue(false));
+  nav2_util::declare_parameter_if_not_declared(
+    node_, name + ".external_detection_timeout", rclcpp::ParameterValue(1.0));
+  nav2_util::declare_parameter_if_not_declared(
+    node_, name + ".external_detection_translation_x", rclcpp::ParameterValue(-0.20));
+  nav2_util::declare_parameter_if_not_declared(
+    node_, name + ".external_detection_translation_y", rclcpp::ParameterValue(0.0));
+  nav2_util::declare_parameter_if_not_declared(
+    node_, name + ".external_detection_rotation_yaw", rclcpp::ParameterValue(0.0));
+  nav2_util::declare_parameter_if_not_declared(
+    node_, name + ".external_detection_rotation_pitch", rclcpp::ParameterValue(1.57));
+  nav2_util::declare_parameter_if_not_declared(
+    node_, name + ".external_detection_rotation_roll", rclcpp::ParameterValue(-1.57));
+  nav2_util::declare_parameter_if_not_declared(
+    node_, name + ".filter_coef", rclcpp::ParameterValue(0.1));
+
+  // Optionally determine if docked via stall detection using joint_states
+  nav2_util::declare_parameter_if_not_declared(
+    node_, name + ".use_stall_detection", rclcpp::ParameterValue(false));
+  nav2_util::declare_parameter_if_not_declared(
+    node_, name + ".stall_joint_names", rclcpp::PARAMETER_STRING_ARRAY);
+  nav2_util::declare_parameter_if_not_declared(
+    node_, name + ".stall_velocity_threshold", rclcpp::ParameterValue(1.0));
+  nav2_util::declare_parameter_if_not_declared(
+    node_, name + ".stall_effort_threshold", rclcpp::ParameterValue(1.0));
+
+  // If not using stall detection, this is how close robot should get to pose
+  nav2_util::declare_parameter_if_not_declared(
+    node_, name + ".docking_threshold", rclcpp::ParameterValue(0.05));
+
+  // Staging pose configuration
+  nav2_util::declare_parameter_if_not_declared(
+    node_, name + ".staging_x_offset", rclcpp::ParameterValue(-0.7));
+  nav2_util::declare_parameter_if_not_declared(
+    node_, name + ".staging_yaw_offset", rclcpp::ParameterValue(0.0));
+
+  node_->get_parameter(name + ".use_external_detection_pose", use_external_detection_pose_);
+  node_->get_parameter(name + ".external_detection_timeout", external_detection_timeout_);
+  node_->get_parameter(
+    name + ".external_detection_translation_x", external_detection_translation_x_);
+  node_->get_parameter(
+    name + ".external_detection_translation_y", external_detection_translation_y_);
+  double yaw, pitch, roll;
+  node_->get_parameter(name + ".external_detection_rotation_yaw", yaw);
+  node_->get_parameter(name + ".external_detection_rotation_pitch", pitch);
+  node_->get_parameter(name + ".external_detection_rotation_roll", roll);
+  external_detection_rotation_.setEuler(pitch, roll, yaw);
+  node_->get_parameter(name + ".stall_velocity_threshold", stall_velocity_threshold_);
+  node_->get_parameter(name + ".stall_effort_threshold", stall_effort_threshold_);
+  node_->get_parameter(name + ".docking_threshold", docking_threshold_);
+  node_->get_parameter("base_frame", base_frame_id_);  // Get server base frame ID
+  node_->get_parameter(name + ".staging_x_offset", staging_x_offset_);
+  node_->get_parameter(name + ".staging_yaw_offset", staging_yaw_offset_);
+
+  // Setup filter
+  double filter_coef;
+  node_->get_parameter(name + ".filter_coef", filter_coef);
+  filter_ = std::make_unique<PoseFilter>(filter_coef, external_detection_timeout_);
+
+  if (use_external_detection_pose_) {
+    dock_pose_.header.stamp = rclcpp::Time(0);
+    dock_pose_sub_ = node_->create_subscription<geometry_msgs::msg::PoseStamped>(
+      "detected_dock_pose", 1,
+      [this](const geometry_msgs::msg::PoseStamped::SharedPtr pose) {
+        detected_dock_pose_ = *pose;
+      });
+  }
+
+  bool use_stall_detection;
+  node_->get_parameter(name + ".use_stall_detection", use_stall_detection);
+  if (use_stall_detection) {
+    is_stalled_ = false;
+    node_->get_parameter(name + ".stall_joint_names", stall_joint_names_);
+>>>>>>> jazzy
     if (stall_joint_names_.size() < 1) {
       RCLCPP_ERROR(node_->get_logger(), "stall_joint_names cannot be empty!");
     }
     joint_state_sub_ = node_->create_subscription<sensor_msgs::msg::JointState>(
+<<<<<<< HEAD
       "joint_states",
       std::bind(&SimpleNonChargingDock::jointStateCallback, this, std::placeholders::_1),
       nav2::qos::StandardTopicQoS());
@@ -141,6 +229,16 @@ void SimpleNonChargingDock::configure(
     "filtered_dock_pose", nav2::qos::LatchedPublisherQoS());
   staging_pose_pub_ = node_->create_publisher<geometry_msgs::msg::PoseStamped>(
     "staging_pose", nav2::qos::LatchedPublisherQoS());
+=======
+      "joint_states", 1,
+      std::bind(&SimpleNonChargingDock::jointStateCallback, this, std::placeholders::_1));
+  }
+
+  dock_pose_pub_ = node_->create_publisher<geometry_msgs::msg::PoseStamped>("dock_pose", 1);
+  filtered_dock_pose_pub_ = node_->create_publisher<geometry_msgs::msg::PoseStamped>(
+    "filtered_dock_pose", 1);
+  staging_pose_pub_ = node_->create_publisher<geometry_msgs::msg::PoseStamped>("staging_pose", 1);
+>>>>>>> jazzy
 }
 
 geometry_msgs::msg::PoseStamped SimpleNonChargingDock::getStagingPose(
@@ -163,11 +261,19 @@ geometry_msgs::msg::PoseStamped SimpleNonChargingDock::getStagingPose(
   staging_pose.pose.position.x += cos(yaw) * staging_x_offset_;
   staging_pose.pose.position.y += sin(yaw) * staging_x_offset_;
   tf2::Quaternion orientation;
+<<<<<<< HEAD
   orientation.setRPY(0.0, 0.0, yaw + staging_yaw_offset_);
   staging_pose.pose.orientation = tf2::toMsg(orientation);
 
   // Publish staging pose for debugging purposes
   staging_pose_pub_->publish(std::make_unique<geometry_msgs::msg::PoseStamped>(staging_pose));
+=======
+  orientation.setEuler(0.0, 0.0, yaw + staging_yaw_offset_);
+  staging_pose.pose.orientation = tf2::toMsg(orientation);
+
+  // Publish staging pose for debugging purposes
+  staging_pose_pub_->publish(staging_pose);
+>>>>>>> jazzy
   return staging_pose;
 }
 
@@ -175,17 +281,24 @@ bool SimpleNonChargingDock::getRefinedPose(geometry_msgs::msg::PoseStamped & pos
 {
   // If using not detection, set the dock pose to the static fixed-frame version
   if (!use_external_detection_pose_) {
+<<<<<<< HEAD
     dock_pose_pub_->publish(std::make_unique<geometry_msgs::msg::PoseStamped>(pose));
+=======
+    dock_pose_pub_->publish(pose);
+>>>>>>> jazzy
     dock_pose_ = pose;
     return true;
   }
 
+<<<<<<< HEAD
   // Guard against using pose data before the first detection has arrived.
   if (!initial_pose_received_) {
     RCLCPP_WARN(node_->get_logger(), "Waiting for first detected_dock_pose; none received yet");
     return false;
   }
 
+=======
+>>>>>>> jazzy
   // If using detections, get current detections, transform to frame, and apply offsets
   geometry_msgs::msg::PoseStamped detected = detected_dock_pose_;
 
@@ -217,7 +330,11 @@ bool SimpleNonChargingDock::getRefinedPose(geometry_msgs::msg::PoseStamped & pos
 
   // Filter the detected pose
   detected = filter_->update(detected);
+<<<<<<< HEAD
   filtered_dock_pose_pub_->publish(std::make_unique<geometry_msgs::msg::PoseStamped>(detected));
+=======
+  filtered_dock_pose_pub_->publish(detected);
+>>>>>>> jazzy
 
   // Rotate the just the orientation, then remove roll/pitch
   geometry_msgs::msg::PoseStamped just_orientation;
@@ -227,7 +344,11 @@ bool SimpleNonChargingDock::getRefinedPose(geometry_msgs::msg::PoseStamped & pos
   tf2::doTransform(just_orientation, just_orientation, transform);
 
   tf2::Quaternion orientation;
+<<<<<<< HEAD
   orientation.setRPY(0.0, 0.0, tf2::getYaw(just_orientation.pose.orientation));
+=======
+  orientation.setEuler(0.0, 0.0, tf2::getYaw(just_orientation.pose.orientation));
+>>>>>>> jazzy
   dock_pose_.pose.orientation = tf2::toMsg(orientation);
 
   // Construct dock_pose_ by applying translation/rotation
@@ -241,7 +362,11 @@ bool SimpleNonChargingDock::getRefinedPose(geometry_msgs::msg::PoseStamped & pos
   dock_pose_.pose.position.z = 0.0;
 
   // Publish & return dock pose for debugging purposes
+<<<<<<< HEAD
   dock_pose_pub_->publish(std::make_unique<geometry_msgs::msg::PoseStamped>(dock_pose_));
+=======
+  dock_pose_pub_->publish(dock_pose_);
+>>>>>>> jazzy
   pose = dock_pose_;
   return true;
 }
@@ -276,8 +401,12 @@ bool SimpleNonChargingDock::isDocked()
   return d < docking_threshold_;
 }
 
+<<<<<<< HEAD
 void SimpleNonChargingDock::jointStateCallback(
   const sensor_msgs::msg::JointState::ConstSharedPtr & state)
+=======
+void SimpleNonChargingDock::jointStateCallback(const sensor_msgs::msg::JointState::SharedPtr state)
+>>>>>>> jazzy
 {
   double velocity = 0.0;
   double effort = 0.0;
@@ -298,6 +427,7 @@ void SimpleNonChargingDock::jointStateCallback(
   is_stalled_ = (velocity < stall_velocity_threshold_) && (effort > stall_effort_threshold_);
 }
 
+<<<<<<< HEAD
 bool SimpleNonChargingDock::startDetectionProcess()
 {
   // Skip if already active
@@ -412,6 +542,8 @@ void SimpleNonChargingDock::cleanup()
   RCLCPP_DEBUG(node_->get_logger(), "SimpleNonChargingDock cleaned up");
 }
 
+=======
+>>>>>>> jazzy
 }  // namespace opennav_docking
 
 #include "pluginlib/class_list_macros.hpp"

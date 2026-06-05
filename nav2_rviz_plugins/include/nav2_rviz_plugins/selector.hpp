@@ -50,7 +50,10 @@ private:
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr pub_goal_checker_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr pub_smoother_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr pub_progress_checker_;
+<<<<<<< HEAD
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr pub_path_handler_;
+=======
+>>>>>>> jazzy
 
   bool plugins_loaded_ = false;
   bool server_failed_ = false;
@@ -76,7 +79,10 @@ private:
   void setGoalChecker();
   void setSmoother();
   void setProgressChecker();
+<<<<<<< HEAD
   void setPathHandler();
+=======
+>>>>>>> jazzy
 
   /*
     * @brief Set the selection from the combo box

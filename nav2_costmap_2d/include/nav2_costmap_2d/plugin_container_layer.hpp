@@ -15,18 +15,30 @@
 #ifndef NAV2_COSTMAP_2D__PLUGIN_CONTAINER_LAYER_HPP_
 #define NAV2_COSTMAP_2D__PLUGIN_CONTAINER_LAYER_HPP_
 
+<<<<<<< HEAD
+=======
+#include <Eigen/Dense>
+>>>>>>> jazzy
 #include <cmath>
 #include <memory>
 #include <string>
 #include <vector>
+<<<<<<< HEAD
 
+=======
+>>>>>>> jazzy
 #include "rclcpp/rclcpp.hpp"
 #include "nav2_costmap_2d/layer.hpp"
 #include "nav2_costmap_2d/layered_costmap.hpp"
 #include "nav2_costmap_2d/costmap_layer.hpp"
 #include "nav2_costmap_2d/observation_buffer.hpp"
 #include "nav2_costmap_2d/inflation_layer.hpp"
+<<<<<<< HEAD
 #include "tf2_ros/message_filter.hpp"
+=======
+#include "tf2_ros/message_filter.h"
+#include "message_filters/subscriber.h"
+>>>>>>> jazzy
 #include "pluginlib/class_loader.hpp"
 
 using nav2_costmap_2d::LETHAL_OBSTACLE;
@@ -45,7 +57,11 @@ public:
   /**
    * @brief Initialization process of layer on startup
    */
+<<<<<<< HEAD
   void onInitialize() override;
+=======
+  virtual void onInitialize();
+>>>>>>> jazzy
   /**
    * @brief Update the bounds of the master costmap by this layer's update
    *dimensions
@@ -57,14 +73,22 @@ public:
    * @param max_x X max map coord of the window to update
    * @param max_y Y max map coord of the window to update
    */
+<<<<<<< HEAD
   void updateBounds(
+=======
+  virtual void updateBounds(
+>>>>>>> jazzy
     double robot_x,
     double robot_y,
     double robot_yaw,
     double * min_x,
     double * min_y,
     double * max_x,
+<<<<<<< HEAD
     double * max_y) override;
+=======
+    double * max_y);
+>>>>>>> jazzy
   /**
    * @brief Update the costs in the master costmap in the window
    * @param master_grid The master costmap grid to update
@@ -73,11 +97,16 @@ public:
    * @param max_x X max map coord of the window to update
    * @param max_y Y max map coord of the window to update
    */
+<<<<<<< HEAD
   void updateCosts(
+=======
+  virtual void updateCosts(
+>>>>>>> jazzy
     nav2_costmap_2d::Costmap2D & master_grid,
     int min_i,
     int min_j,
     int max_i,
+<<<<<<< HEAD
     int max_j) override;
   void onFootprintChanged() override;
   /** @brief Update the footprint to match size of the parent costmap. */
@@ -98,6 +127,28 @@ public:
    * @brief If clearing operations should be processed on this layer or not
    */
   bool isClearable() override;
+=======
+    int max_j);
+  virtual void onFootprintChanged();
+  /** @brief Update the footprint to match size of the parent costmap. */
+  virtual void matchSize();
+  /**
+   * @brief Deactivate the layer
+   */
+  virtual void deactivate();
+  /**
+   * @brief Activate the layer
+   */
+  virtual void activate();
+  /**
+   * @brief Reset this costmap
+   */
+  virtual void reset();
+  /**
+   * @brief If clearing operations should be processed on this layer or not
+   */
+  virtual bool isClearable();
+>>>>>>> jazzy
   /**
    * @brief Clear an area in the constituent costmaps with the given dimension
    * if invert, then clear everything except these dimensions
@@ -107,6 +158,7 @@ public:
   void addPlugin(std::shared_ptr<Layer> plugin, std::string layer_name);
   pluginlib::ClassLoader<Layer> plugin_loader_{"nav2_costmap_2d", "nav2_costmap_2d::Layer"};
   /**
+<<<<<<< HEAD
    * @brief Validate incoming parameter updates before applying them.
    * This callback is triggered when one or more parameters are about to be updated.
    * It checks the validity of parameter values and rejects updates that would lead
@@ -129,6 +181,18 @@ private:
   /// @brief Dynamic parameters handler
   rclcpp::node_interfaces::PostSetParametersCallbackHandle::SharedPtr post_set_params_handler_;
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr on_set_params_handler_;
+=======
+   * @brief Callback executed when a parameter change is detected
+   * @param event ParameterEvent message
+   */
+  rcl_interfaces::msg::SetParametersResult dynamicParametersCallback(
+    std::vector<rclcpp::Parameter> parameters);
+
+private:
+  /// @brief Dynamic parameters handler
+  rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr
+    dyn_params_handler_;
+>>>>>>> jazzy
 
   nav2_costmap_2d::CombinationMethod combination_method_;
   std::vector<std::shared_ptr<Layer>> plugins_;

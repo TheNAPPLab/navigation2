@@ -1,11 +1,19 @@
+<<<<<<< HEAD
 // Copyright (c) 2018 Intel Corporation
 // Copyright (c) 2020 Francisco Martin Rico
+=======
+// Copyright (c) 2025 Open Navigation LLC
+>>>>>>> jazzy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
+<<<<<<< HEAD
 //     http://www.apache.org/licenses/LICENSE-2.0
+=======
+//      http://www.apache.org/licenses/LICENSE-2.0
+>>>>>>> jazzy
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,6 +21,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+<<<<<<< HEAD
 #include <string>
 #include <memory>
 #include <limits>
@@ -22,17 +31,27 @@
 #include "nav2_util/geometry_utils.hpp"
 #include "behaviortree_cpp/decorator_node.h"
 
+=======
+>>>>>>> jazzy
 #include "nav2_behavior_tree/plugins/action/get_current_pose_action.hpp"
 
 namespace nav2_behavior_tree
 {
 
 GetCurrentPoseAction::GetCurrentPoseAction(
+<<<<<<< HEAD
   const std::string & name,
   const BT::NodeConfiguration & conf)
 : BT::ActionNodeBase(name, conf)
 {
   auto node = config().blackboard->get<nav2::LifecycleNode::SharedPtr>("node");
+=======
+  const std::string & xml_tag_name,
+  const BT::NodeConfiguration & conf)
+: BT::ActionNodeBase(xml_tag_name, conf)
+{
+  auto node = config().blackboard->get<rclcpp::Node::SharedPtr>("node");
+>>>>>>> jazzy
   tf_ = config().blackboard->get<std::shared_ptr<tf2_ros::Buffer>>("tf_buffer");
   node->get_parameter("transform_tolerance", transform_tolerance_);
   global_frame_ = BT::deconflictPortAndParamFrame<std::string>(
@@ -41,7 +60,11 @@ GetCurrentPoseAction::GetCurrentPoseAction(
     node, "robot_base_frame", this);
 }
 
+<<<<<<< HEAD
 inline BT::NodeStatus GetCurrentPoseAction::tick()
+=======
+BT::NodeStatus GetCurrentPoseAction::tick()
+>>>>>>> jazzy
 {
   setStatus(BT::NodeStatus::RUNNING);
   geometry_msgs::msg::PoseStamped current_pose;
@@ -50,7 +73,11 @@ inline BT::NodeStatus GetCurrentPoseAction::tick()
       current_pose, *tf_, global_frame_, robot_base_frame_, transform_tolerance_))
   {
     RCLCPP_WARN(
+<<<<<<< HEAD
       config().blackboard->get<nav2::LifecycleNode::SharedPtr>("node")->get_logger(),
+=======
+      config().blackboard->get<rclcpp::Node::SharedPtr>("node")->get_logger(),
+>>>>>>> jazzy
       "Current robot pose is not available.");
     return BT::NodeStatus::FAILURE;
   }

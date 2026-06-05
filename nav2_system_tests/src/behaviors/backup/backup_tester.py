@@ -15,13 +15,17 @@
 
 import sys
 import time
+<<<<<<< HEAD
 from typing import Optional
+=======
+>>>>>>> jazzy
 
 from action_msgs.msg import GoalStatus
 from geometry_msgs.msg import Point32, PolygonStamped
 from nav2_msgs.action import BackUp
 from nav2_msgs.msg import Costmap
 from nav2_msgs.srv import ManageLifecycleNodes
+<<<<<<< HEAD
 import rclpy
 from rclpy.action import ActionClient
 from rclpy.action.client import ClientGoalHandle
@@ -29,11 +33,25 @@ from rclpy.client import Client
 from rclpy.duration import Duration
 from rclpy.node import Node
 from rclpy.qos import QoSDurabilityPolicy, QoSHistoryPolicy, QoSProfile, QoSReliabilityPolicy
+=======
+
+import rclpy
+
+from rclpy.action import ActionClient
+from rclpy.duration import Duration
+from rclpy.node import Node
+from rclpy.qos import QoSDurabilityPolicy, QoSHistoryPolicy, QoSReliabilityPolicy
+from rclpy.qos import QoSProfile
+>>>>>>> jazzy
 
 
 class BackupTest(Node):
 
+<<<<<<< HEAD
     def __init__(self) -> None:
+=======
+    def __init__(self):
+>>>>>>> jazzy
         super().__init__(node_name='backup_tester', namespace='')
         self.costmap_qos = QoSProfile(
             durability=QoSDurabilityPolicy.TRANSIENT_LOCAL,
@@ -41,20 +59,31 @@ class BackupTest(Node):
             history=QoSHistoryPolicy.KEEP_LAST,
             depth=1,
         )
+<<<<<<< HEAD
         self.action_client: ActionClient[
             BackUp.Goal,
             BackUp.Result,
             BackUp.Feedback
         ] = ActionClient(self, BackUp, 'backup')
+=======
+        self.action_client = ActionClient(self, BackUp, 'backup')
+>>>>>>> jazzy
         self.costmap_pub = self.create_publisher(
             Costmap, 'local_costmap/costmap_raw', self.costmap_qos)
         self.footprint_pub = self.create_publisher(
             PolygonStamped, 'local_costmap/published_footprint', 10)
+<<<<<<< HEAD
         self.goal_handle: Optional[ClientGoalHandle[
                 BackUp.Goal, BackUp.Result, BackUp.Feedback]] = None
         self.action_result = BackUp.Result()
 
     def sendCommand(self, command: BackUp.Goal) -> bool:
+=======
+        self.goal_handle = None
+        self.action_result = None
+
+    def sendCommand(self, command):
+>>>>>>> jazzy
         self.info_msg('Sending goal request...')
         self.goal_future = self.action_client.send_goal_async(command)
         try:
@@ -63,7 +92,11 @@ class BackupTest(Node):
         except Exception as e:  # noqa: B902
             self.error_msg(f'Service call failed {e!r}')
 
+<<<<<<< HEAD
         if not self.goal_handle or not self.goal_handle.accepted:
+=======
+        if not self.goal_handle.accepted:
+>>>>>>> jazzy
             self.error_msg('Goal rejected')
             return False
 
@@ -73,8 +106,13 @@ class BackupTest(Node):
         self.info_msg("Waiting for 'Backup' action to complete")
         try:
             rclpy.spin_until_future_complete(self, self.result_future)
+<<<<<<< HEAD
             status = self.result_future.result().status  # type: ignore[union-attr]
             result = self.result_future.result().result  # type: ignore[union-attr]
+=======
+            status = self.result_future.result().status
+            result = self.result_future.result().result
+>>>>>>> jazzy
             self.action_result = result
         except Exception as e:  # noqa: B902
             self.error_msg(f'Service call failed {e!r}')
@@ -88,7 +126,11 @@ class BackupTest(Node):
         self.info_msg('Backup failed to meet target!')
         return False
 
+<<<<<<< HEAD
     def sendAndPreemptWithFasterCommand(self, command: BackUp.Goal) -> bool:
+=======
+    def sendAndPreemptWithFasterCommand(self, command):
+>>>>>>> jazzy
         # Send initial goal
         self.info_msg('Sending goal request...')
         self.goal_future = self.action_client.send_goal_async(command)
@@ -98,7 +140,11 @@ class BackupTest(Node):
         except Exception as e:  # noqa: B902
             self.error_msg(f'Service call failed {e!r}')
 
+<<<<<<< HEAD
         if not self.goal_handle or not self.goal_handle.accepted:
+=======
+        if not self.goal_handle.accepted:
+>>>>>>> jazzy
             self.error_msg('Goal rejected')
             return False
 
@@ -116,7 +162,11 @@ class BackupTest(Node):
         except Exception as e:  # noqa: B902
             self.error_msg(f'Service call failed {e!r}')
 
+<<<<<<< HEAD
         if not self.goal_handle or not self.goal_handle.accepted:
+=======
+        if not self.goal_handle.accepted:
+>>>>>>> jazzy
             self.error_msg('Preemption rejected')
             return False
 
@@ -127,8 +177,13 @@ class BackupTest(Node):
         self.info_msg("Waiting for 'backup' action Preemption to complete")
         try:
             rclpy.spin_until_future_complete(self, self.result_future)
+<<<<<<< HEAD
             status = self.result_future.result().status  # type: ignore[union-attr]
             result = self.result_future.result().result  # type: ignore[union-attr]
+=======
+            status = self.result_future.result().status
+            result = self.result_future.result().result
+>>>>>>> jazzy
             self.action_result = result
         except Exception as e:  # noqa: B902
             self.error_msg(f'Service call failed {e!r}')
@@ -142,7 +197,11 @@ class BackupTest(Node):
         self.info_msg('Backup failed to meet target!')
         return False
 
+<<<<<<< HEAD
     def sendAndCancelCommand(self, command: BackUp.Goal) -> bool:
+=======
+    def sendAndCancelCommand(self, command):
+>>>>>>> jazzy
         self.info_msg('Sending goal request...')
         self.goal_future = self.action_client.send_goal_async(command)
         try:
@@ -151,7 +210,11 @@ class BackupTest(Node):
         except Exception as e:  # noqa: B902
             self.error_msg(f'Service call failed {e!r}')
 
+<<<<<<< HEAD
         if not self.goal_handle or not self.goal_handle.accepted:
+=======
+        if not self.goal_handle.accepted:
+>>>>>>> jazzy
             self.error_msg('Goal rejected')
             return False
 
@@ -163,7 +226,11 @@ class BackupTest(Node):
         cancel_future = self.goal_handle.cancel_goal_async()
         rclpy.spin_until_future_complete(self, cancel_future)
         rclpy.spin_until_future_complete(self, self.result_future)
+<<<<<<< HEAD
         status = self.result_future.result().status  # type: ignore[union-attr]
+=======
+        status = self.result_future.result().status
+>>>>>>> jazzy
         if status != GoalStatus.STATUS_CANCELED:
             self.info_msg(f'Goal failed with status code: {status}')
             return False
@@ -171,7 +238,11 @@ class BackupTest(Node):
             self.info_msg('Goal was canceled successfully')
             return True
 
+<<<<<<< HEAD
     def sendFreeCostmap(self) -> None:
+=======
+    def sendFreeCostmap(self):
+>>>>>>> jazzy
         costmap_msg = Costmap()
         costmap_msg.header.frame_id = 'odom'
         costmap_msg.header.stamp = self.get_clock().now().to_msg()
@@ -194,7 +265,11 @@ class BackupTest(Node):
         ]
         self.footprint_pub.publish(footprint_msg)
 
+<<<<<<< HEAD
     def sendOccupiedCostmap(self) -> None:
+=======
+    def sendOccupiedCostmap(self):
+>>>>>>> jazzy
         costmap_msg = Costmap()
         costmap_msg.header.frame_id = 'odom'
         costmap_msg.header.stamp = self.get_clock().now().to_msg()
@@ -217,7 +292,11 @@ class BackupTest(Node):
         ]
         self.footprint_pub.publish(footprint_msg)
 
+<<<<<<< HEAD
     def run(self) -> bool:
+=======
+    def run(self):
+>>>>>>> jazzy
         while not self.action_client.wait_for_server(timeout_sec=1.0):
             self.info_msg("'Backup' action server not available, waiting...")
 
@@ -286,20 +365,32 @@ class BackupTest(Node):
             self.info_msg('Test D passed')
         return True
 
+<<<<<<< HEAD
     def shutdown(self) -> None:
+=======
+    def shutdown(self):
+>>>>>>> jazzy
         self.info_msg('Shutting down')
 
         self.action_client.destroy()
         self.info_msg('Destroyed backup action client')
 
         transition_service = 'lifecycle_manager_navigation/manage_nodes'
+<<<<<<< HEAD
         mgr_client: Client[ManageLifecycleNodes.Request, ManageLifecycleNodes.Response] \
             = self.create_client(ManageLifecycleNodes, transition_service)
+=======
+        mgr_client = self.create_client(ManageLifecycleNodes, transition_service)
+>>>>>>> jazzy
         while not mgr_client.wait_for_service(timeout_sec=1.0):
             self.info_msg(f'{transition_service} service not available, waiting...')
 
         req = ManageLifecycleNodes.Request()
+<<<<<<< HEAD
         req.command = ManageLifecycleNodes.Request.SHUTDOWN
+=======
+        req.command = ManageLifecycleNodes.Request().SHUTDOWN
+>>>>>>> jazzy
         future = mgr_client.call_async(req)
         try:
             rclpy.spin_until_future_complete(self, future)
@@ -309,6 +400,7 @@ class BackupTest(Node):
 
         self.info_msg(f'{transition_service} finished')
 
+<<<<<<< HEAD
     def info_msg(self, msg: str) -> None:
         self.get_logger().info(msg)
 
@@ -320,6 +412,19 @@ class BackupTest(Node):
 
 
 def main(argv: list[str] = sys.argv[1:]):  # type: ignore[no-untyped-def]
+=======
+    def info_msg(self, msg: str):
+        self.get_logger().info(msg)
+
+    def warn_msg(self, msg: str):
+        self.get_logger().warn(msg)
+
+    def error_msg(self, msg: str):
+        self.get_logger().error(msg)
+
+
+def main(argv=sys.argv[1:]):
+>>>>>>> jazzy
     rclpy.init()
     time.sleep(10)
     test = BackupTest()

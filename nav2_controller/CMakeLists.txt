@@ -8,7 +8,17 @@ find_package(geometry_msgs REQUIRED)
 find_package(lifecycle_msgs REQUIRED)
 find_package(nav2_core REQUIRED)
 find_package(nav2_common REQUIRED)
+<<<<<<< HEAD
 find_package(nav2_costmap_2d REQUIRED)
+=======
+find_package(angles REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(nav2_costmap_2d REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(nav2_util REQUIRED)
+>>>>>>> jazzy
 find_package(nav2_msgs REQUIRED)
 find_package(nav2_util REQUIRED)
 find_package(pluginlib REQUIRED)
@@ -149,6 +159,7 @@ target_link_libraries(stopped_goal_checker PRIVATE
 )
 
 add_library(position_goal_checker SHARED plugins/position_goal_checker.cpp)
+<<<<<<< HEAD
 target_include_directories(position_goal_checker
   PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
@@ -230,6 +241,13 @@ target_link_libraries(feasible_path_handler PUBLIC
 target_link_libraries(feasible_path_handler PRIVATE
   nav2_util::nav2_util_core
   pluginlib::pluginlib
+=======
+target_link_libraries(position_goal_checker simple_goal_checker)
+ament_target_dependencies(position_goal_checker ${dependencies})
+
+ament_target_dependencies(${library_name}
+  ${dependencies}
+>>>>>>> jazzy
 )
 
 if(BUILD_TESTING)
@@ -248,6 +266,7 @@ endif()
 
 rclcpp_components_register_nodes(${library_name} "nav2_controller::ControllerServer")
 
+<<<<<<< HEAD
 install(TARGETS
   simple_progress_checker
   position_goal_checker
@@ -259,6 +278,9 @@ install(TARGETS
   feasible_path_handler
   ${library_name}
   EXPORT ${library_name}
+=======
+install(TARGETS simple_progress_checker position_goal_checker pose_progress_checker simple_goal_checker stopped_goal_checker ${library_name}
+>>>>>>> jazzy
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -277,10 +299,14 @@ ament_export_libraries(simple_progress_checker
   pose_progress_checker
   simple_goal_checker
   stopped_goal_checker
+<<<<<<< HEAD
   adaptive_tolerance_goal_checker
   position_goal_checker
   axis_goal_checker
   feasible_path_handler
+=======
+  position_goal_checker
+>>>>>>> jazzy
   ${library_name})
 ament_export_dependencies(
   geometry_msgs

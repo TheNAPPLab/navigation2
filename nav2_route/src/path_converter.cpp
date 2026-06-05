@@ -24,6 +24,7 @@
 namespace nav2_route
 {
 
+<<<<<<< HEAD
 void PathConverter::configure(nav2::LifecycleNode::SharedPtr node)
 {
   // Density to make path points
@@ -35,6 +36,22 @@ void PathConverter::configure(nav2::LifecycleNode::SharedPtr node)
   smooth_corners_ = node->declare_or_get_parameter("smooth_corners", false);
 
   path_pub_ = node->create_publisher<nav_msgs::msg::Path>("plan");
+=======
+void PathConverter::configure(nav2_util::LifecycleNode::SharedPtr node)
+{
+  // Density to make path points
+  nav2_util::declare_parameter_if_not_declared(
+    node, "path_density", rclcpp::ParameterValue(0.05));
+  density_ = static_cast<float>(node->get_parameter("path_density").as_double());
+  nav2_util::declare_parameter_if_not_declared(
+    node, "smoothing_radius", rclcpp::ParameterValue(1.0));
+  smoothing_radius_ = static_cast<float>(node->get_parameter("smoothing_radius").as_double());
+  nav2_util::declare_parameter_if_not_declared(
+    node, "smooth_corners", rclcpp::ParameterValue(false));
+  smooth_corners_ = node->get_parameter("smooth_corners").as_bool();
+
+  path_pub_ = node->create_publisher<nav_msgs::msg::Path>("plan", 10);
+>>>>>>> jazzy
   path_pub_->on_activate();
   logger_ = node->get_logger();
 }
@@ -70,8 +87,12 @@ nav_msgs::msg::Path PathConverter::densify(
       const EdgePtr & next_edge = route.edges[i + 1];
       end = edge->end->coords;
 
+<<<<<<< HEAD
       CornerArc corner_arc(start, end, next_edge->end->coords, smoothing_radius_,
         smoothing_angle_threshold_);
+=======
+      CornerArc corner_arc(start, end, next_edge->end->coords, smoothing_radius_);
+>>>>>>> jazzy
       if (corner_arc.isCornerValid() && smooth_corners_) {
         // if an arc exists, end of the first edge is the start of the arc
         end = corner_arc.getCornerStart();

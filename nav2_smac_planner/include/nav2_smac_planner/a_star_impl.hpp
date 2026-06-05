@@ -73,6 +73,7 @@ void AStarAlgorithm<NodeT>::initialize(
   _max_on_approach_iterations = max_on_approach_iterations;
   _terminal_checking_interval = terminal_checking_interval;
   _max_planning_time = max_planning_time;
+<<<<<<< HEAD:nav2_smac_planner/include/nav2_smac_planner/a_star_impl.hpp
 
   if constexpr (std::is_base_of_v<Node2D, NodeT>) {
     // Node2D-specific initialization: no distance heuristic precomputation
@@ -89,6 +90,10 @@ void AStarAlgorithm<NodeT>::initialize(
         dim_3_size,
         _search_info, _shared_ctx->motion_table);
     }
+=======
+  if (!_is_initialized) {
+    NodeT::precomputeDistanceHeuristic(lookup_table_size, _motion_model, dim_3_size, _search_info);
+>>>>>>> jazzy:nav2_smac_planner/src/a_star.cpp
   }
 
   _is_initialized = true;

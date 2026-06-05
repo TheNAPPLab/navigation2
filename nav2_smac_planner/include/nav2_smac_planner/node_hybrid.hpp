@@ -347,6 +347,57 @@ public:
     SearchInfo & search_info);
 
   /**
+<<<<<<< HEAD
+=======
+   * @brief Compute the SE2 distance heuristic
+   * @param lookup_table_dim Size, in costmap pixels, of the
+   * each lookup table dimension to populate
+   * @param motion_model Motion model to use for state space
+   * @param dim_3_size Number of quantization bins for caching
+   * @param search_info Info containing minimum radius to use
+   */
+  static void precomputeDistanceHeuristic(
+    const float & lookup_table_dim,
+    const MotionModel & motion_model,
+    const unsigned int & dim_3_size,
+    const SearchInfo & search_info);
+
+  /**
+   * @brief Compute the Obstacle heuristic
+   * @param node_coords Coordinates to get heuristic at
+   * @param goal_coords Coordinates to compute heuristic to
+   * @return heuristic Heuristic value
+   */
+  static float getObstacleHeuristic(
+    const Coordinates & node_coords,
+    const Coordinates & goal_coords,
+    const float & cost_penalty);
+
+  /**
+   * @brief Compute the Distance heuristic
+   * @param node_coords Coordinates to get heuristic at
+   * @param goal_coords Coordinates to compute heuristic to
+   * @param obstacle_heuristic Value of the obstacle heuristic to compute
+   * additional motion heuristics if required
+   * @return heuristic Heuristic value
+   */
+  static float getDistanceHeuristic(
+    const Coordinates & node_coords,
+    const Coordinates & goal_coords,
+    const float & obstacle_heuristic);
+
+  /**
+   * @brief reset the obstacle heuristic state
+   * @param costmap_ros Costmap to use
+   * @param goal_coords Coordinates to start heuristic expansion at
+   */
+  static void resetObstacleHeuristic(
+    std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros,
+    const unsigned int & start_x, const unsigned int & start_y,
+    const unsigned int & goal_x, const unsigned int & goal_y);
+
+  /**
+>>>>>>> jazzy
    * @brief Retrieve all valid neighbors of a node.
    * @param validity_checker Functor for state validity checking
    * @param collision_checker Collision checker to use
@@ -367,9 +418,36 @@ public:
    */
   bool backtracePath(CoordinateVector & path);
 
+<<<<<<< HEAD
   NodeHybrid * parent;
   Coordinates pose;
 
+=======
+  /**
+    * @brief Destroy shared pointer assets at the end of the process that don't
+    * require normal destruction handling
+    */
+  static void destroyStaticAssets()
+  {
+    costmap_ros.reset();
+  }
+
+  NodeHybrid * parent;
+  Coordinates pose;
+
+  // Constants required across all nodes but don't want to allocate more than once
+  static float travel_distance_cost;
+  static HybridMotionTable motion_table;
+  // Wavefront lookup and queue for continuing to expand as needed
+  static LookupTable obstacle_heuristic_lookup_table;
+  static ObstacleHeuristicQueue obstacle_heuristic_queue;
+
+  static std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros;
+  // Dubin / Reeds-Shepp lookup and size for dereferencing
+  static LookupTable dist_heuristic_lookup_table;
+  static float size_lookup;
+
+>>>>>>> jazzy
 private:
   float _cell_cost;
   float _accumulated_cost;
@@ -378,7 +456,10 @@ private:
   unsigned int _motion_primitive_index;
   TurnDirection _turn_dir;
   bool _is_node_valid{false};
+<<<<<<< HEAD
   NodeContext * _ctx = nullptr;
+=======
+>>>>>>> jazzy
 };
 
 }  // namespace nav2_smac_planner

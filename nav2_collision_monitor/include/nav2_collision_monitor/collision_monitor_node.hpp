@@ -203,12 +203,15 @@ protected:
   void publishPolygons() const;
 
   /**
+<<<<<<< HEAD
    * @brief Publishes action.triggering_points as markers, colour-coded by action type.
    * @param action Current robot action
    */
   void publishTriggeringPoints(const Action & action);
 
   /**
+=======
+>>>>>>> jazzy
    * @brief Enable/disable collision monitor service callback
    * @param request Service request
    * @param response Service response
@@ -245,6 +248,7 @@ protected:
   nav2::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr
     collision_points_marker_pub_;
 
+<<<<<<< HEAD
   /// @brief Triggering points marker publisher (points inside the active triggering zone)
   nav2::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr
     triggering_points_pub_;
@@ -257,6 +261,10 @@ protected:
 
   /// @brief Robot base frame ID
   std::string base_frame_id_;
+=======
+  /// @brief Enable/disable collision monitor service
+  rclcpp::Service<nav2_msgs::srv::Toggle>::SharedPtr toggle_cm_service_;
+>>>>>>> jazzy
 
   /// @brief Whether collision monitor is enabled
   bool enabled_;

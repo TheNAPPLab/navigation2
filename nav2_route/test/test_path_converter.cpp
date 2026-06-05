@@ -19,7 +19,11 @@
 
 #include "gtest/gtest.h"
 #include "rclcpp/rclcpp.hpp"
+<<<<<<< HEAD
 #include "nav2_ros_common/lifecycle_node.hpp"
+=======
+#include "nav2_util/lifecycle_node.hpp"
+>>>>>>> jazzy
 #include "nav2_route/path_converter.hpp"
 
 class RclCppFixture
@@ -34,12 +38,21 @@ using namespace nav2_route;  // NOLINT
 
 TEST(PathConverterTest, test_path_converter_api)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("edge_scorer_test");
   auto node_thread = std::make_unique<nav2::NodeThread>(node);
 
   nav_msgs::msg::Path path_msg;
   auto sub = node->create_subscription<nav_msgs::msg::Path>(
     "plan", [&, this](nav_msgs::msg::Path msg) {path_msg = msg;});
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("edge_scorer_test");
+  auto node_thread = std::make_unique<nav2_util::NodeThread>(node);
+
+  nav_msgs::msg::Path path_msg;
+  auto sub = node->create_subscription<nav_msgs::msg::Path>(
+    "plan", rclcpp::QoS(10), [&, this](nav_msgs::msg::Path msg) {path_msg = msg;});
+>>>>>>> jazzy
 
   PathConverter converter;
   converter.configure(node);
@@ -93,7 +106,11 @@ TEST(PathConverterTest, test_path_converter_api)
 
 TEST(PathConverterTest, test_path_single_pt_path)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("edge_scorer_test");
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("edge_scorer_test");
+>>>>>>> jazzy
   PathConverter converter;
   converter.configure(node);
 
@@ -117,7 +134,11 @@ TEST(PathConverterTest, test_path_single_pt_path)
 
 TEST(PathConverterTest, test_prev_info_path)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("edge_scorer_test");
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("edge_scorer_test");
+>>>>>>> jazzy
   PathConverter converter;
   converter.configure(node);
 
@@ -146,7 +167,11 @@ TEST(PathConverterTest, test_prev_info_path)
 
 TEST(PathConverterTest, test_path_converter_interpolation)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("edge_scorer_test");
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("edge_scorer_test");
+>>>>>>> jazzy
   PathConverter converter;
   converter.configure(node);
 
@@ -166,7 +191,11 @@ TEST(PathConverterTest, test_path_converter_interpolation)
 
 TEST(PathConverterTest, test_path_converter_zero_length_edge)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("edge_scorer_test");
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("edge_scorer_test");
+>>>>>>> jazzy
   PathConverter converter;
   converter.configure(node);
 

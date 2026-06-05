@@ -34,15 +34,23 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/CriticsStats.msg"
   "msg/Particle.msg"
   "msg/ParticleCloud.msg"
+<<<<<<< HEAD
   "msg/WaypointStatus.msg"
+=======
+  "msg/MissedWaypoint.msg"
+>>>>>>> jazzy
   "msg/Route.msg"
   "msg/RouteNode.msg"
   "msg/RouteEdge.msg"
   "msg/EdgeCost.msg"
+<<<<<<< HEAD
   "msg/TrackingFeedback.msg"
   "srv/GetCosts.srv"
   "msg/PolygonObject.msg"
   "msg/CircleObject.msg"
+=======
+  "srv/GetCost.srv"
+>>>>>>> jazzy
   "srv/GetCostmap.srv"
   "srv/IsPathValid.srv"
   "srv/ClearCostmapExceptRegion.srv"
@@ -54,9 +62,12 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/SaveMap.srv"
   "srv/SetInitialPose.srv"
   "srv/ReloadDockDatabase.srv"
+<<<<<<< HEAD
   "srv/AddShapes.srv"
   "srv/RemoveShapes.srv"
   "srv/GetShapes.srv"
+=======
+>>>>>>> jazzy
   "srv/SetRouteGraph.srv"
   "srv/DynamicEdges.srv"
   "srv/Toggle.srv"
@@ -64,6 +75,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "action/BackUp.action"
   "action/ComputePathToPose.action"
   "action/ComputePathThroughPoses.action"
+  "action/ComputeRoute.action"
+  "action/ComputeAndTrackRoute.action"
   "action/DriveOnHeading.action"
   "action/SmoothPath.action"
   "action/FollowPath.action"

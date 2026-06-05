@@ -31,6 +31,7 @@ IsBatteryChargingCondition::IsBatteryChargingCondition(
     config().blackboard->template get<std::chrono::milliseconds>("bt_loop_duration");
 }
 
+<<<<<<< HEAD
 void IsBatteryChargingCondition::initialize()
 {
   createROSInterfaces();
@@ -56,6 +57,18 @@ void IsBatteryChargingCondition::createROSInterfaces()
       nav2::qos::StandardTopicQoS(),
       callback_group_);
   }
+=======
+  rclcpp::SubscriptionOptions sub_option;
+  sub_option.callback_group = callback_group_;
+  battery_sub_ = node->create_subscription<sensor_msgs::msg::BatteryState>(
+    battery_topic_,
+    rclcpp::SystemDefaultsQoS(),
+    std::bind(&IsBatteryChargingCondition::batteryCallback, this, std::placeholders::_1),
+    sub_option);
+
+  // Spin multiple times due to rclcpp regression in Jazzy requiring a 'warm up' spin
+  callback_group_executor_.spin_some(std::chrono::nanoseconds(1));
+>>>>>>> jazzy
 }
 
 BT::NodeStatus IsBatteryChargingCondition::tick()

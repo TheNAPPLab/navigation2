@@ -198,9 +198,25 @@ public:
 
 
   /**
+   * @brief Gets number of points inside given polygon
+   * @param sources_collision_points_map Map containing source name as key,
+   * and input array of source's points to be checked as value
+   * @return Number of points inside polygon,
+   * for sources in map that are associated with current polygon.
+   * If there are no points, returns zero value.
+   */
+  virtual int getPointsInside(
+    const std::unordered_map<std::string, std::vector<Point>> & sources_collision_points_map) const;
+
+  /**
    * @brief Obtains estimated (simulated) time before a collision.
    * Applicable for APPROACH model.
+<<<<<<< HEAD
    * @param collision_points Input 2D obstacle points
+=======
+   * @param sources_collision_points_map Map containing source name as key,
+   * and input array of source's 2D obstacle points as value
+>>>>>>> jazzy
    * @param velocity Simulated robot velocity
    * @param out_triggering_points Output vector receiving the original points
    * responsible for the collision (populated only on a triggering step)
@@ -209,8 +225,12 @@ public:
    */
   double getCollisionTime(
     const std::unordered_map<std::string, std::vector<Point>> & sources_collision_points_map,
+<<<<<<< HEAD
     const Velocity & velocity,
     std::vector<Point> & out_triggering_points) const;
+=======
+    const Velocity & velocity) const;
+>>>>>>> jazzy
 
   /**
    * @brief Publishes polygon message into a its own topic

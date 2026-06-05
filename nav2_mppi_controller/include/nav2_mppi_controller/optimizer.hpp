@@ -157,6 +157,7 @@ public:
    * @param Whether to reset the constraints to its base values
    */
   void reset(bool reset_dynamic_speed_limits = true);
+<<<<<<< HEAD
 
   /**
    * @brief Check if a dynamic speed limit is currently active
@@ -172,6 +173,8 @@ public:
   {
     return settings_;
   }
+=======
+>>>>>>> jazzy
 
 protected:
   /**
@@ -320,12 +323,20 @@ protected:
   models::Trajectories generated_trajectories_;
   models::Path path_;
   geometry_msgs::msg::Pose goal_;
+<<<<<<< HEAD
   Eigen::ArrayXf costs_;
+=======
+  xt::xtensor<float, 1> costs_;
+>>>>>>> jazzy
 
   CriticData critics_data_ = {
     state_, generated_trajectories_, path_, goal_,
     costs_, settings_.model_dt, false, nullptr, nullptr,
+<<<<<<< HEAD
     std::nullopt, std::nullopt, {}};  /// Caution, keep references
+=======
+    std::nullopt, std::nullopt};  /// Caution, keep references
+>>>>>>> jazzy
 
   rclcpp::Logger logger_{rclcpp::get_logger("MPPIController")};
 

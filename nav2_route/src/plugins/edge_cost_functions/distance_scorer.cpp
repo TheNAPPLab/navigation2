@@ -21,7 +21,11 @@ namespace nav2_route
 {
 
 void DistanceScorer::configure(
+<<<<<<< HEAD
   const nav2::LifecycleNode::SharedPtr node,
+=======
+  const nav2_util::LifecycleNode::SharedPtr node,
+>>>>>>> jazzy
   const std::shared_ptr<tf2_ros::Buffer>/* tf_buffer */,
   std::shared_ptr<nav2_costmap_2d::CostmapSubscriber>/* costmap_subscriber */,
   const std::string & name)
@@ -30,12 +34,23 @@ void DistanceScorer::configure(
   name_ = name;
 
   // Find the tag at high the speed limit information is stored
+<<<<<<< HEAD
   speed_tag_ = node->declare_or_get_parameter(
     getName() + ".speed_tag", std::string("speed_limit"));
 
   // Find the proportional weight to apply, if multiple cost functions
   weight_ = static_cast<float>(
     node->declare_or_get_parameter(getName() + ".weight", 1.0));
+=======
+  nav2_util::declare_parameter_if_not_declared(
+    node, getName() + ".speed_tag", rclcpp::ParameterValue("speed_limit"));
+  speed_tag_ = node->get_parameter(getName() + ".speed_tag").as_string();
+
+  // Find the proportional weight to apply, if multiple cost functions
+  nav2_util::declare_parameter_if_not_declared(
+    node, getName() + ".weight", rclcpp::ParameterValue(1.0));
+  weight_ = static_cast<float>(node->get_parameter(getName() + ".weight").as_double());
+>>>>>>> jazzy
 }
 
 bool DistanceScorer::score(

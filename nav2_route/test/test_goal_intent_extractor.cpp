@@ -19,12 +19,21 @@
 
 #include "gtest/gtest.h"
 #include "rclcpp/rclcpp.hpp"
+<<<<<<< HEAD
 #include "tf2_ros/transform_broadcaster.hpp"
 #include "tf2_ros/create_timer_ros.hpp"
 #include "tf2_ros/transform_listener.hpp"
 #include "nav2_ros_common/lifecycle_node.hpp"
 #include "nav2_ros_common/service_client.hpp"
 #include "nav2_ros_common/node_thread.hpp"
+=======
+#include "tf2_ros/transform_broadcaster.h"
+#include "tf2_ros/create_timer_ros.h"
+#include "tf2_ros/transform_listener.h"
+#include "nav2_util/lifecycle_node.hpp"
+#include "nav2_util/service_client.hpp"
+#include "nav2_util/node_thread.hpp"
+>>>>>>> jazzy
 #include "nav2_route/goal_intent_extractor.hpp"
 
 class RclCppFixture
@@ -62,18 +71,31 @@ public:
 
 TEST(GoalIntentExtractorTest, test_obj_lifecycle)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("goal_intent_extractor_test");
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("goal_intent_extractor_test");
+>>>>>>> jazzy
   GoalIntentExtractor extractor;
   Graph graph;
   GraphToIDMap id_map;
   std::shared_ptr<nav2_costmap_2d::CostmapSubscriber> costmap_subscriber = nullptr;
+<<<<<<< HEAD
   extractor.configure(node, graph, &id_map, nullptr, costmap_subscriber, "map", "base_link");
+=======
+  extractor.configure(node, graph, &id_map, nullptr, costmap_subscriber, "map", "map", "base_link");
+>>>>>>> jazzy
 }
 
 TEST(GoalIntentExtractorTest, test_transform_pose)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("goal_intent_extractor_test");
   auto node_thread = std::make_unique<nav2::NodeThread>(node);
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("goal_intent_extractor_test");
+  auto node_thread = std::make_unique<nav2_util::NodeThread>(node);
+>>>>>>> jazzy
   GoalIntentExtractor extractor;
   Graph graph;
   GraphToIDMap id_map;
@@ -83,9 +105,15 @@ TEST(GoalIntentExtractorTest, test_transform_pose)
     node->get_node_timers_interface());
   tf->setCreateTimerInterface(timer_interface);
   auto transform_listener = std::make_shared<tf2_ros::TransformListener>(*tf);
+<<<<<<< HEAD
   auto broadcaster = std::make_shared<tf2_ros::TransformBroadcaster>(node);
   std::shared_ptr<nav2_costmap_2d::CostmapSubscriber> costmap_subscriber = nullptr;
   extractor.configure(node, graph, &id_map, tf, costmap_subscriber, "map", "base_link");
+=======
+  tf2_ros::TransformBroadcaster broadcaster(node);
+  std::shared_ptr<nav2_costmap_2d::CostmapSubscriber> costmap_subscriber = nullptr;
+  extractor.configure(node, graph, &id_map, tf, costmap_subscriber, "map", "map", "base_link");
+>>>>>>> jazzy
 
   // Test transformations same frame, should pass
   geometry_msgs::msg::PoseStamped pose;
@@ -101,15 +129,25 @@ TEST(GoalIntentExtractorTest, test_transform_pose)
   transform.header.frame_id = "map";
   transform.header.stamp = node->now();
   transform.child_frame_id = "gps";
+<<<<<<< HEAD
   broadcaster->sendTransform(transform);
+=======
+  broadcaster.sendTransform(transform);
+>>>>>>> jazzy
   EXPECT_NO_THROW(extractor.transformPose(pose, "map"));
 }
 
 TEST(GoalIntentExtractorTest, test_start_goal_finder)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("goal_intent_extractor_test");
   node->declare_parameter("enable_nn_search", rclcpp::ParameterValue(false));
   auto node_thread = std::make_unique<nav2::NodeThread>(node);
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("goal_intent_extractor_test");
+  node->declare_parameter("enable_nn_search", rclcpp::ParameterValue(false));
+  auto node_thread = std::make_unique<nav2_util::NodeThread>(node);
+>>>>>>> jazzy
   GoalIntentExtractorWrapper extractor;
   Graph graph;
   GraphToIDMap id_map;
@@ -134,7 +172,11 @@ TEST(GoalIntentExtractorTest, test_start_goal_finder)
     }
   }
   std::shared_ptr<nav2_costmap_2d::CostmapSubscriber> costmap_subscriber = nullptr;
+<<<<<<< HEAD
   extractor.configure(node, graph, &id_map, tf, costmap_subscriber, "map", "base_link");
+=======
+  extractor.configure(node, graph, &id_map, tf, costmap_subscriber, "map", "map", "base_link");
+>>>>>>> jazzy
 
   // Test sending goal and start IDs to search
   nav2_msgs::action::ComputeRoute::Goal raw_goal;
@@ -188,12 +230,20 @@ TEST(GoalIntentExtractorTest, test_start_goal_finder)
 
 TEST(GoalIntentExtractorTest, test_pruning)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("goal_intent_extractor_test");
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("goal_intent_extractor_test");
+>>>>>>> jazzy
   GoalIntentExtractorWrapper extractor;
   Graph graph;
   GraphToIDMap id_map;
   std::shared_ptr<nav2_costmap_2d::CostmapSubscriber> costmap_subscriber = nullptr;
+<<<<<<< HEAD
   extractor.configure(node, graph, &id_map, nullptr, costmap_subscriber, "map", "base_link");
+=======
+  extractor.configure(node, graph, &id_map, nullptr, costmap_subscriber, "map", "map", "base_link");
+>>>>>>> jazzy
 
   // Setup goal to use (only uses the use_poses field)
   nav2_msgs::action::ComputeRoute::Goal raw_goal;
@@ -374,7 +424,12 @@ TEST(GoalIntentExtractorTest, test_pruning)
   goal.pose.position.y = -0.4;
   GoalIntentExtractorWrapper extractor2;
   std::shared_ptr<nav2_costmap_2d::CostmapSubscriber> costmap_subscriber2 = nullptr;
+<<<<<<< HEAD
   extractor2.configure(node, graph, &id_map, nullptr, costmap_subscriber2, "map", "base_link");
+=======
+  extractor2.configure(
+    node, graph, &id_map, nullptr, costmap_subscriber2, "map", "map", "base_link");
+>>>>>>> jazzy
   extractor2.setStartAndGoal(start, goal);
   rtn = extractor2.pruneStartandGoal(route, poses_goal, rerouting_info);
   EXPECT_EQ(rtn.edges.size(), 2u);

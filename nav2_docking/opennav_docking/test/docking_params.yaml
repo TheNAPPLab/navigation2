@@ -2,14 +2,23 @@ docking_server:
   ros__parameters:
     wait_charge_timeout: 1.0
     controller:
+<<<<<<< HEAD
       use_collision_detection: false
+=======
+      use_collision_detection: False
+>>>>>>> jazzy
       transform_tolerance: 0.5
     dock_plugins: [test_dock_plugin]
     test_dock_plugin:
       plugin: opennav_docking::SimpleChargingDock
+<<<<<<< HEAD
       use_battery_status: true
       dock_direction: forward
       rotate_to_dock: false
+=======
+      use_battery_status: True
+      dock_direction: forward
+>>>>>>> jazzy
       staging_yaw_offset: 0.0
     docks: [test_dock]
     test_dock:

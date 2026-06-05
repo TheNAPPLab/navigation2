@@ -22,10 +22,15 @@
 #include <chrono>
 
 #include "behaviortree_cpp/decorator_node.h"
+<<<<<<< HEAD
 #include "behaviortree_cpp/json_export.h"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "nav_msgs/msg/goals.hpp"
 #include "nav2_behavior_tree/bt_utils.hpp"
+=======
+
+#include "behaviortree_cpp/json_export.h"
+>>>>>>> jazzy
 #include "nav2_behavior_tree/json_utils.hpp"
 #include "rclcpp/rclcpp.hpp"
 
@@ -65,7 +70,10 @@ public:
   {
     // Register JSON definitions for the types used in the ports
     BT::RegisterJsonDefinition<geometry_msgs::msg::PoseStamped>();
+<<<<<<< HEAD
     BT::RegisterJsonDefinition<nav_msgs::msg::Goals>();
+=======
+>>>>>>> jazzy
 
     return {
       BT::InputPort<geometry_msgs::msg::PoseStamped>("input_goal", "Original Goal"),

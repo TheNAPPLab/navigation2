@@ -134,8 +134,12 @@ bool PointCloud::getData(
   if (use_global_height_ && height_present) {
     height_field = "height";
   } else if (use_global_height_) {
+<<<<<<< HEAD
     RCLCPP_ERROR(
       logger_, "[%s]: 'use_global_height' parameter true but height field not in cloud",
+=======
+    RCLCPP_ERROR(logger_, "[%s]: 'use_global_height' parameter true but height field not in cloud",
+>>>>>>> jazzy
       source_name_.c_str());
     return false;
   }
@@ -167,7 +171,11 @@ bool PointCloud::getData(
 
     // Refill data array
     if (data_height >= min_height_ && data_height <= max_height_) {
+<<<<<<< HEAD
       data.push_back({p_v3_b.x(), p_v3_b.y(), p_v3_b.z(), source_name_});
+=======
+      data.push_back({p_v3_b.x(), p_v3_b.y()});
+>>>>>>> jazzy
     }
   }
   return true;
@@ -182,6 +190,7 @@ void PointCloud::getParameters(std::string & source_topic)
 
   getCommonParameters(source_topic);
 
+<<<<<<< HEAD
   min_height_ = node->declare_or_get_parameter(source_name_ + ".min_height", 0.05);
   max_height_ = node->declare_or_get_parameter(source_name_ + ".max_height", 0.5);
   min_range_ = node->declare_or_get_parameter(source_name_ + ".min_range", 0.0);
@@ -189,6 +198,20 @@ void PointCloud::getParameters(std::string & source_topic)
     source_name_ + ".use_global_height", false);
   transport_type_ = node->declare_or_get_parameter(
     source_name_ + ".transport_type", std::string("raw"));
+=======
+  nav2_util::declare_parameter_if_not_declared(
+    node, source_name_ + ".min_height", rclcpp::ParameterValue(0.05));
+  min_height_ = node->get_parameter(source_name_ + ".min_height").as_double();
+  nav2_util::declare_parameter_if_not_declared(
+    node, source_name_ + ".max_height", rclcpp::ParameterValue(0.5));
+  max_height_ = node->get_parameter(source_name_ + ".max_height").as_double();
+  nav2_util::declare_parameter_if_not_declared(
+    node, source_name_ + ".min_range", rclcpp::ParameterValue(0.0));
+  min_range_ = node->get_parameter(source_name_ + ".min_range").as_double();
+  nav2_util::declare_parameter_if_not_declared(
+    node, source_name_ + ".use_global_height", rclcpp::ParameterValue(false));
+  use_global_height_ = node->get_parameter(source_name_ + ".use_global_height").as_bool();
+>>>>>>> jazzy
 }
 
 void PointCloud::dataCallback(sensor_msgs::msg::PointCloud2::ConstSharedPtr msg)

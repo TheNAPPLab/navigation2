@@ -300,6 +300,10 @@ protected:
   bool enable_groot_monitoring_ = false;
   int groot_server_port_ = 1667;
 
+  // Parameters for Groot2 monitoring
+  bool enable_groot_monitoring_ = false;
+  int groot_server_port_ = 1667;
+
   // User-provided callbacks
   OnGoalReceivedCallback on_goal_received_callback_;
   OnLoopCallback on_loop_callback_;

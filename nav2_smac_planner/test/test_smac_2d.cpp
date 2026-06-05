@@ -81,7 +81,11 @@ TEST(SmacTest, test_smac_2d) {
   goal.pose.position.x = 0.01;
   goal.pose.position.y = 0.01;
 
+<<<<<<< HEAD
   nav_msgs::msg::Path plan = planner_2d->createPlan(start, goal, viapoints, dummy_cancel_checker);
+=======
+  nav_msgs::msg::Path plan = planner_2d->createPlan(start, goal, dummy_cancel_checker);
+>>>>>>> jazzy
   EXPECT_EQ(plan.poses.size(), 1);  // single point path
 
   planner_2d->deactivate();

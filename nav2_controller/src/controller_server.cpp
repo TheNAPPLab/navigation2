@@ -40,11 +40,38 @@ ControllerServer::ControllerServer(const rclcpp::NodeOptions & options)
   progress_checker_loader_("nav2_core", "nav2_core::ProgressChecker"),
   goal_checker_loader_("nav2_core", "nav2_core::GoalChecker"),
   lp_loader_("nav2_core", "nav2_core::Controller"),
+<<<<<<< HEAD
   path_handler_loader_("nav2_core", "nav2_core::PathHandler"),
   start_index_(0)
 {
   RCLCPP_INFO(get_logger(), "Creating controller server");
 
+=======
+  default_ids_{"FollowPath"},
+  default_types_{"dwb_core::DWBLocalPlanner"},
+  costmap_update_timeout_(300ms)
+{
+  RCLCPP_INFO(get_logger(), "Creating controller server");
+
+  declare_parameter("controller_frequency", 20.0);
+
+  declare_parameter("action_server_result_timeout", 10.0);
+
+  declare_parameter("progress_checker_plugins", default_progress_checker_ids_);
+  declare_parameter("goal_checker_plugins", default_goal_checker_ids_);
+  declare_parameter("controller_plugins", default_ids_);
+  declare_parameter("min_x_velocity_threshold", rclcpp::ParameterValue(0.0001));
+  declare_parameter("min_y_velocity_threshold", rclcpp::ParameterValue(0.0001));
+  declare_parameter("min_theta_velocity_threshold", rclcpp::ParameterValue(0.0001));
+
+  declare_parameter("speed_limit_topic", rclcpp::ParameterValue("speed_limit"));
+
+  declare_parameter("failure_tolerance", rclcpp::ParameterValue(0.0));
+  declare_parameter("use_realtime_priority", rclcpp::ParameterValue(false));
+  declare_parameter("publish_zero_velocity", rclcpp::ParameterValue(true));
+  declare_parameter("costmap_update_timeout", 0.30);  // 300ms
+
+>>>>>>> jazzy
   // The costmap node is used in the implementation of the controller
   costmap_ros_ = std::make_shared<nav2_costmap_2d::Costmap2DROS>(
     "local_costmap", std::string{get_namespace()},
@@ -60,7 +87,11 @@ ControllerServer::~ControllerServer()
   costmap_thread_.reset();
 }
 
+<<<<<<< HEAD
 nav2::CallbackReturn
+=======
+nav2_util::CallbackReturn
+>>>>>>> jazzy
 ControllerServer::on_configure(const rclcpp_lifecycle::State & state)
 {
   auto node = shared_from_this();
@@ -94,12 +125,19 @@ ControllerServer::on_configure(const rclcpp_lifecycle::State & state)
         get_logger(),
         "Failed to create progress_checker. Exception: %s", ex.what());
       on_cleanup(state);
+<<<<<<< HEAD
       return nav2::CallbackReturn::FAILURE;
+=======
+      return nav2_util::CallbackReturn::FAILURE;
+>>>>>>> jazzy
     }
   }
 
   for (size_t i = 0; i != params_->progress_checker_ids.size(); i++) {
     progress_checker_ids_concat_ += params_->progress_checker_ids[i] + std::string(" ");
+  }
+  if (progress_checker_ids_concat_.empty()) {
+    progress_checker_ids_concat_ = "(none)";
   }
   if (progress_checker_ids_concat_.empty()) {
     progress_checker_ids_concat_ = "(none)";
@@ -122,7 +160,11 @@ ControllerServer::on_configure(const rclcpp_lifecycle::State & state)
         get_logger(),
         "Failed to create goal checker. Exception: %s", ex.what());
       on_cleanup(state);
+<<<<<<< HEAD
       return nav2::CallbackReturn::FAILURE;
+=======
+      return nav2_util::CallbackReturn::FAILURE;
+>>>>>>> jazzy
     }
   }
 
@@ -175,7 +217,11 @@ ControllerServer::on_configure(const rclcpp_lifecycle::State & state)
         get_logger(),
         "Failed to create controller. Exception: %s", ex.what());
       on_cleanup(state);
+<<<<<<< HEAD
       return nav2::CallbackReturn::FAILURE;
+=======
+      return nav2_util::CallbackReturn::FAILURE;
+>>>>>>> jazzy
     }
   }
 
@@ -193,6 +239,10 @@ ControllerServer::on_configure(const rclcpp_lifecycle::State & state)
   transformed_plan_pub_ = create_publisher<nav_msgs::msg::Path>("transformed_global_plan");
   tracking_feedback_pub_ = create_publisher<nav2_msgs::msg::TrackingFeedback>("tracking_feedback");
 
+  double costmap_update_timeout_dbl;
+  get_parameter("costmap_update_timeout", costmap_update_timeout_dbl);
+  costmap_update_timeout_ = rclcpp::Duration::from_seconds(costmap_update_timeout_dbl);
+
   // Create the action server that we implement with our followPath method
   // This may throw due to real-time prioritization if user doesn't have real-time permissions
   try {
@@ -205,7 +255,11 @@ ControllerServer::on_configure(const rclcpp_lifecycle::State & state)
   } catch (const std::runtime_error & e) {
     RCLCPP_ERROR(get_logger(), "Error creating action server! %s", e.what());
     on_cleanup(state);
+<<<<<<< HEAD
     return nav2::CallbackReturn::FAILURE;
+=======
+    return nav2_util::CallbackReturn::FAILURE;
+>>>>>>> jazzy
   }
 
   // Set subscription to the speed limiting topic
@@ -275,11 +329,28 @@ ControllerServer::on_deactivate(const rclcpp_lifecycle::State & /*state*/)
    */
   costmap_ros_->deactivate();
 
-  publishZeroVelocity();
+  // Always publish a zero velocity when deactivating the controller server
+  geometry_msgs::msg::TwistStamped velocity;
+  velocity.twist.angular.x = 0;
+  velocity.twist.angular.y = 0;
+  velocity.twist.angular.z = 0;
+  velocity.twist.linear.x = 0;
+  velocity.twist.linear.y = 0;
+  velocity.twist.linear.z = 0;
+  velocity.header.frame_id = costmap_ros_->getBaseFrameID();
+  velocity.header.stamp = now();
+  publishVelocity(velocity);
+
   vel_publisher_->on_deactivate();
+<<<<<<< HEAD
   transformed_plan_pub_->on_deactivate();
   tracking_feedback_pub_->on_deactivate();
   param_handler_->deactivate();
+=======
+
+  remove_on_set_parameters_callback(dyn_params_handler_.get());
+  dyn_params_handler_.reset();
+>>>>>>> jazzy
 
   // destroy bond connection
   destroyBond();
@@ -454,7 +525,11 @@ void ControllerServer::computeControl()
   try {
     auto goal = action_server_->get_current_goal();
     if (!goal) {
+<<<<<<< HEAD
       return;  //  goal would be nullptr if action_server_ is deactivate.
+=======
+      return;  //  goal would be nullptr if action_server_ is inactivate.
+>>>>>>> jazzy
     }
 
     std::string c_name = goal->controller_id;
@@ -481,6 +556,7 @@ void ControllerServer::computeControl()
       throw nav2_core::ControllerException("Failed to find progress checker name: " + pc_name);
     }
 
+<<<<<<< HEAD
     std::string ph_name = goal->path_handler_id;
     std::string current_path_handler;
     if(findPathHandlerId(ph_name, current_path_handler)) {
@@ -489,6 +565,8 @@ void ControllerServer::computeControl()
       throw nav2_core::ControllerException("Failed to find path handler name: " + ph_name);
     }
 
+=======
+>>>>>>> jazzy
     setPlannerPath(goal->path);
     if (!current_progress_checker_.empty()) {
       progress_checkers_[current_progress_checker_]->reset();
@@ -517,7 +595,18 @@ void ControllerServer::computeControl()
       }
 
       // Don't compute a trajectory until costmap is valid (after clear costmap)
+<<<<<<< HEAD
       double costmap_wait = waitForCostmap();
+=======
+      rclcpp::Rate r(100);
+      auto waiting_start = now();
+      while (!costmap_ros_->isCurrent()) {
+        if (now() - waiting_start > costmap_update_timeout_) {
+          throw nav2_core::ControllerTimedOut("Costmap timed out waiting for update");
+        }
+        r.sleep();
+      }
+>>>>>>> jazzy
 
       updateGlobalPath();
 
@@ -532,11 +621,16 @@ void ControllerServer::computeControl()
       if (!loop_rate.sleep()) {
         RCLCPP_WARN(
           get_logger(),
+<<<<<<< HEAD
           "Control loop missed its desired rate of %.4f Hz. Current loop rate is %.4f Hz."
           "%s",
           params_->controller_frequency, 1 / cycle_duration.seconds(),
           costmap_wait > 0.0 ?
           (" Waited " + std::to_string(costmap_wait) + "s for costmap update.").c_str() : "");
+=======
+          "Control loop missed its desired rate of %.4f Hz. Current loop rate is %.4f Hz.",
+          controller_frequency_, 1 / cycle_duration.seconds());
+>>>>>>> jazzy
         loop_rate.reset();
       }
     }
@@ -594,6 +688,13 @@ void ControllerServer::computeControl()
     std::shared_ptr<Action::Result> result = std::make_shared<Action::Result>();
     result->error_code = Action::Result::CONTROLLER_TIMED_OUT;
     result->error_msg = e.what();
+    action_server_->terminate_current(result);
+    return;
+  } catch (nav2_core::ControllerTimedOut & e) {
+    RCLCPP_ERROR(this->get_logger(), "%s", e.what());
+    publishZeroVelocity();
+    std::shared_ptr<Action::Result> result = std::make_shared<Action::Result>();
+    result->error_code = Action::Result::CONTROLLER_TIMED_OUT;
     action_server_->terminate_current(result);
     return;
   } catch (nav2_core::ControllerException & e) {
@@ -881,6 +982,7 @@ void ControllerServer::publishVelocity(const geometry_msgs::msg::TwistStamped & 
 
 void ControllerServer::publishZeroVelocity()
 {
+<<<<<<< HEAD
   geometry_msgs::msg::TwistStamped velocity;
   velocity.twist.angular.x = 0;
   velocity.twist.angular.y = 0;
@@ -892,6 +994,20 @@ void ControllerServer::publishZeroVelocity()
   velocity.header.stamp = now();
   publishVelocity(velocity);
 }
+=======
+  if (get_parameter("publish_zero_velocity").as_bool()) {
+    geometry_msgs::msg::TwistStamped velocity;
+    velocity.twist.angular.x = 0;
+    velocity.twist.angular.y = 0;
+    velocity.twist.angular.z = 0;
+    velocity.twist.linear.x = 0;
+    velocity.twist.linear.y = 0;
+    velocity.twist.linear.z = 0;
+    velocity.header.frame_id = costmap_ros_->getBaseFrameID();
+    velocity.header.stamp = now();
+    publishVelocity(velocity);
+  }
+>>>>>>> jazzy
 
 void ControllerServer::onGoalExit(bool force_stop)
 {

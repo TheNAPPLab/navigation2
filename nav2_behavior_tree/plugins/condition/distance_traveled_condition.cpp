@@ -49,6 +49,13 @@ void DistanceTraveledCondition::initialize()
 
 BT::NodeStatus DistanceTraveledCondition::tick()
 {
+<<<<<<< HEAD
+=======
+  if (!BT::isStatusActive(status())) {
+    initialize();
+  }
+
+>>>>>>> jazzy
   if (!BT::isStatusActive(status())) {
     initialize();
     if (!nav2_util::getCurrentPose(

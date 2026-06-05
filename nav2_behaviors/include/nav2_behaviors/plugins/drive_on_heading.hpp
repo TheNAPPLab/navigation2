@@ -105,10 +105,17 @@ public:
     rclcpp::Duration time_remaining = end_time_ - this->clock_->now();
     if (time_remaining.seconds() < 0.0 && command_time_allowance_.seconds() > 0.0) {
       this->stopRobot();
+<<<<<<< HEAD
       std::string error_msg =
         "Exceeded time allowance before reaching the DriveOnHeading goal - Exiting DriveOnHeading";
       RCLCPP_WARN(this->logger_, error_msg.c_str());
       return ResultStatus{Status::FAILED, ActionT::Result::TIMEOUT, error_msg};
+=======
+      RCLCPP_WARN(
+        this->logger_,
+        "Exceeded time allowance before reaching the DriveOnHeading goal - Exiting DriveOnHeading");
+      return ResultStatus{Status::FAILED, ActionT::Result::TIMEOUT};
+>>>>>>> jazzy
     }
 
     geometry_msgs::msg::PoseStamped current_pose;

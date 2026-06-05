@@ -123,7 +123,11 @@ def main(argv: list[str] = sys.argv[1:]):  # type: ignore[no-untyped-def]
     lts.add_test_action(ld, test1_action)  # type: ignore[no-untyped-call]
     ls = LaunchService(argv=argv)
     ls.include_launch_description(ld)
+<<<<<<< HEAD:nav2_system_tests/src/waypoint_follower/test_case_launch.py
     return_code = lts.run(ls)  # type: ignore[no-untyped-call]
+=======
+    return_code = lts.run(ls)
+>>>>>>> jazzy:nav2_system_tests/src/waypoint_follower/test_case_py.launch
     return return_code
 
 

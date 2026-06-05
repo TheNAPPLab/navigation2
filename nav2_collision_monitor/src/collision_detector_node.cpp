@@ -39,7 +39,11 @@ CollisionDetector::~CollisionDetector()
   sources_.clear();
 }
 
+<<<<<<< HEAD
 nav2::CallbackReturn
+=======
+nav2_util::CallbackReturn
+>>>>>>> jazzy
 CollisionDetector::on_configure(const rclcpp_lifecycle::State & state)
 {
   RCLCPP_INFO(get_logger(), "Configuring");
@@ -64,7 +68,11 @@ CollisionDetector::on_configure(const rclcpp_lifecycle::State & state)
   // Obtaining ROS parameters
   if (!getParameters()) {
     on_cleanup(state);
+<<<<<<< HEAD
     return nav2::CallbackReturn::FAILURE;
+=======
+    return nav2_util::CallbackReturn::FAILURE;
+>>>>>>> jazzy
   }
 
   return nav2::CallbackReturn::SUCCESS;
@@ -164,6 +172,7 @@ bool CollisionDetector::getParameters()
   collision_points_marker_3d_ = node->declare_or_get_parameter("collision_points_marker_3d", false);
 
   if (!configureSources(
+<<<<<<< HEAD
       base_frame_id_, odom_frame_id, transform_tolerance, source_timeout,
       base_shift_correction))
   {
@@ -171,6 +180,15 @@ bool CollisionDetector::getParameters()
   }
 
   if (!configurePolygons(base_frame_id_, transform_tolerance)) {
+=======
+      base_frame_id, odom_frame_id, transform_tolerance, source_timeout,
+      base_shift_correction))
+  {
+>>>>>>> jazzy
+    return false;
+  }
+
+  if (!configurePolygons(base_frame_id, transform_tolerance)) {
     return false;
   }
 

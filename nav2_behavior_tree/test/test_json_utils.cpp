@@ -22,7 +22,10 @@
 #include "nav_msgs/msg/path.hpp"
 #include "nav2_behavior_tree/bt_utils.hpp"
 #include "nav2_behavior_tree/json_utils.hpp"
+<<<<<<< HEAD
 #include "nav2_msgs/msg/waypoint_status.hpp"
+=======
+>>>>>>> jazzy
 
 
 class JsonTest : public testing::Test
@@ -41,8 +44,11 @@ protected:
     exporter.addConverter<std::vector<geometry_msgs::msg::PoseStamped>>();
     exporter.addConverter<nav_msgs::msg::Goals>();
     exporter.addConverter<nav_msgs::msg::Path>();
+<<<<<<< HEAD
     exporter.addConverter<nav2_msgs::msg::WaypointStatus>();
     exporter.addConverter<std::vector<nav2_msgs::msg::WaypointStatus>>();
+=======
+>>>>>>> jazzy
   }
 };
 
@@ -230,8 +236,12 @@ TEST_F(JsonTest, test_quaternion)
         "x": 1.0, "y": 2.0, "z": 3.0, "w": 4.0
       }
     )";
+<<<<<<< HEAD
   ASSERT_NO_THROW(
     quaternion_test3 =
+=======
+  ASSERT_NO_THROW(quaternion_test3 =
+>>>>>>> jazzy
     BT::convertFromString<geometry_msgs::msg::Quaternion>(test_json));
   ASSERT_EQ(quaternion_test.x, quaternion_test3.x);
   ASSERT_EQ(quaternion_test.y, quaternion_test3.y);
@@ -316,8 +326,12 @@ TEST_F(JsonTest, test_pose_stamped)
         }
       }
     )";
+<<<<<<< HEAD
   ASSERT_NO_THROW(
     pose_stamped_test3 =
+=======
+  ASSERT_NO_THROW(pose_stamped_test3 =
+>>>>>>> jazzy
     BT::convertFromString<geometry_msgs::msg::PoseStamped>(test_json));
   ASSERT_EQ(pose_stamped_test.header, pose_stamped_test3.header);
   ASSERT_EQ(pose_stamped_test.pose.position, pose_stamped_test3.pose.position);
@@ -368,8 +382,12 @@ TEST_F(JsonTest, test_pose_stamped_vector)
   ASSERT_EQ(json["poses"][0]["pose"]["position"]["x"], 3.0);
   ASSERT_EQ(json["poses"][0]["pose"]["position"]["y"], 4.0);
   ASSERT_EQ(json["poses"][0]["pose"]["position"]["z"], 5.0);
+<<<<<<< HEAD
   ASSERT_EQ(
     json["poses"][0]["pose"]["orientation"]["__type"],
+=======
+  ASSERT_EQ(json["poses"][0]["pose"]["orientation"]["__type"],
+>>>>>>> jazzy
     "geometry_msgs::msg::Quaternion");
   ASSERT_EQ(json["poses"][0]["pose"]["orientation"]["x"], 6.0);
   ASSERT_EQ(json["poses"][0]["pose"]["orientation"]["y"], 7.0);
@@ -377,21 +395,33 @@ TEST_F(JsonTest, test_pose_stamped_vector)
   ASSERT_EQ(json["poses"][0]["pose"]["orientation"]["w"], 9.0);
   ASSERT_EQ(json["poses"][1]["__type"], "geometry_msgs::msg::PoseStamped");
   ASSERT_EQ(json["poses"][1]["header"]["__type"], "std_msgs::msg::Header");
+<<<<<<< HEAD
   ASSERT_EQ(
     json["poses"][1]["header"]["stamp"]["__type"],
+=======
+  ASSERT_EQ(json["poses"][1]["header"]["stamp"]["__type"],
+>>>>>>> jazzy
     "builtin_interfaces::msg::Time");
   ASSERT_EQ(json["poses"][1]["header"]["stamp"]["sec"], 10);
   ASSERT_EQ(json["poses"][1]["header"]["stamp"]["nanosec"], 11);
   ASSERT_EQ(json["poses"][1]["header"]["frame_id"], "odom");
   ASSERT_EQ(json["poses"][1]["pose"]["__type"], "geometry_msgs::msg::Pose");
+<<<<<<< HEAD
   ASSERT_EQ(
     json["poses"][1]["pose"]["position"]["__type"],
+=======
+  ASSERT_EQ(json["poses"][1]["pose"]["position"]["__type"],
+>>>>>>> jazzy
     "geometry_msgs::msg::Point");
   ASSERT_EQ(json["poses"][1]["pose"]["position"]["x"], 12.0);
   ASSERT_EQ(json["poses"][1]["pose"]["position"]["y"], 13.0);
   ASSERT_EQ(json["poses"][1]["pose"]["position"]["z"], 14.0);
+<<<<<<< HEAD
   ASSERT_EQ(
     json["poses"][1]["pose"]["orientation"]["__type"],
+=======
+  ASSERT_EQ(json["poses"][1]["pose"]["orientation"]["__type"],
+>>>>>>> jazzy
     "geometry_msgs::msg::Quaternion");
   ASSERT_EQ(json["poses"][1]["pose"]["orientation"]["x"], 15.0);
   ASSERT_EQ(json["poses"][1]["pose"]["orientation"]["y"], 16.0);
@@ -547,8 +577,12 @@ TEST_F(JsonTest, test_goals)
   ASSERT_EQ(json["goals"]["header"]["frame_id"], "map");
   ASSERT_EQ(json["goals"]["goals"][0]["__type"], "geometry_msgs::msg::PoseStamped");
   ASSERT_EQ(json["goals"]["goals"][0]["header"]["__type"], "std_msgs::msg::Header");
+<<<<<<< HEAD
   ASSERT_EQ(
     json["goals"]["goals"][0]["header"]["stamp"]["__type"],
+=======
+  ASSERT_EQ(json["goals"]["goals"][0]["header"]["stamp"]["__type"],
+>>>>>>> jazzy
     "builtin_interfaces::msg::Time");
   ASSERT_EQ(json["goals"]["goals"][0]["header"]["stamp"]["sec"], 3);
   ASSERT_EQ(json["goals"]["goals"][0]["header"]["stamp"]["nanosec"], 4);
@@ -558,8 +592,12 @@ TEST_F(JsonTest, test_goals)
   ASSERT_EQ(json["goals"]["goals"][0]["pose"]["position"]["x"], 5.0);
   ASSERT_EQ(json["goals"]["goals"][0]["pose"]["position"]["y"], 6.0);
   ASSERT_EQ(json["goals"]["goals"][0]["pose"]["position"]["z"], 7.0);
+<<<<<<< HEAD
   ASSERT_EQ(
     json["goals"]["goals"][0]["pose"]["orientation"]["__type"],
+=======
+  ASSERT_EQ(json["goals"]["goals"][0]["pose"]["orientation"]["__type"],
+>>>>>>> jazzy
     "geometry_msgs::msg::Quaternion");
   ASSERT_EQ(json["goals"]["goals"][0]["pose"]["orientation"]["x"], 8.0);
   ASSERT_EQ(json["goals"]["goals"][0]["pose"]["orientation"]["y"], 9.0);
@@ -567,8 +605,12 @@ TEST_F(JsonTest, test_goals)
   ASSERT_EQ(json["goals"]["goals"][0]["pose"]["orientation"]["w"], 11.0);
   ASSERT_EQ(json["goals"]["goals"][1]["__type"], "geometry_msgs::msg::PoseStamped");
   ASSERT_EQ(json["goals"]["goals"][1]["header"]["__type"], "std_msgs::msg::Header");
+<<<<<<< HEAD
   ASSERT_EQ(
     json["goals"]["goals"][1]["header"]["stamp"]["__type"],
+=======
+  ASSERT_EQ(json["goals"]["goals"][1]["header"]["stamp"]["__type"],
+>>>>>>> jazzy
     "builtin_interfaces::msg::Time");
   ASSERT_EQ(json["goals"]["goals"][1]["header"]["stamp"]["sec"], 12);
   ASSERT_EQ(json["goals"]["goals"][1]["header"]["stamp"]["nanosec"], 13);
@@ -578,8 +620,12 @@ TEST_F(JsonTest, test_goals)
   ASSERT_EQ(json["goals"]["goals"][1]["pose"]["position"]["x"], 14.0);
   ASSERT_EQ(json["goals"]["goals"][1]["pose"]["position"]["y"], 15.0);
   ASSERT_EQ(json["goals"]["goals"][1]["pose"]["position"]["z"], 16.0);
+<<<<<<< HEAD
   ASSERT_EQ(
     json["goals"]["goals"][1]["pose"]["orientation"]["__type"],
+=======
+  ASSERT_EQ(json["goals"]["goals"][1]["pose"]["orientation"]["__type"],
+>>>>>>> jazzy
     "geometry_msgs::msg::Quaternion");
   ASSERT_EQ(json["goals"]["goals"][1]["pose"]["orientation"]["x"], 17.0);
   ASSERT_EQ(json["goals"]["goals"][1]["pose"]["orientation"]["y"], 18.0);
@@ -663,8 +709,12 @@ TEST_F(JsonTest, test_goals)
         ]
       }
     )";
+<<<<<<< HEAD
   ASSERT_NO_THROW(
     goals_test3 =
+=======
+  ASSERT_NO_THROW(goals_test3 =
+>>>>>>> jazzy
     BT::convertFromString<nav_msgs::msg::Goals>(test_json));
   ASSERT_EQ(goals_test.goals[0].header, goals_test3.goals[0].header);
   ASSERT_EQ(goals_test.goals[0].pose.position, goals_test3.goals[0].pose.position);
@@ -718,21 +768,33 @@ TEST_F(JsonTest, test_path)
   ASSERT_EQ(json["path"]["header"]["frame_id"], "map");
   ASSERT_EQ(json["path"]["poses"][0]["__type"], "geometry_msgs::msg::PoseStamped");
   ASSERT_EQ(json["path"]["poses"][0]["header"]["__type"], "std_msgs::msg::Header");
+<<<<<<< HEAD
   ASSERT_EQ(
     json["path"]["poses"][0]["header"]["stamp"]["__type"],
+=======
+  ASSERT_EQ(json["path"]["poses"][0]["header"]["stamp"]["__type"],
+>>>>>>> jazzy
     "builtin_interfaces::msg::Time");
   ASSERT_EQ(json["path"]["poses"][0]["header"]["stamp"]["sec"], 3);
   ASSERT_EQ(json["path"]["poses"][0]["header"]["stamp"]["nanosec"], 4);
   ASSERT_EQ(json["path"]["poses"][0]["header"]["frame_id"], "map");
   ASSERT_EQ(json["path"]["poses"][0]["pose"]["__type"], "geometry_msgs::msg::Pose");
+<<<<<<< HEAD
   ASSERT_EQ(
     json["path"]["poses"][0]["pose"]["position"]["__type"],
+=======
+  ASSERT_EQ(json["path"]["poses"][0]["pose"]["position"]["__type"],
+>>>>>>> jazzy
     "geometry_msgs::msg::Point");
   ASSERT_EQ(json["path"]["poses"][0]["pose"]["position"]["x"], 5.0);
   ASSERT_EQ(json["path"]["poses"][0]["pose"]["position"]["y"], 6.0);
   ASSERT_EQ(json["path"]["poses"][0]["pose"]["position"]["z"], 7.0);
+<<<<<<< HEAD
   ASSERT_EQ(
     json["path"]["poses"][0]["pose"]["orientation"]["__type"],
+=======
+  ASSERT_EQ(json["path"]["poses"][0]["pose"]["orientation"]["__type"],
+>>>>>>> jazzy
     "geometry_msgs::msg::Quaternion");
   ASSERT_EQ(json["path"]["poses"][0]["pose"]["orientation"]["x"], 8.0);
   ASSERT_EQ(json["path"]["poses"][0]["pose"]["orientation"]["y"], 9.0);
@@ -740,21 +802,33 @@ TEST_F(JsonTest, test_path)
   ASSERT_EQ(json["path"]["poses"][0]["pose"]["orientation"]["w"], 11.0);
   ASSERT_EQ(json["path"]["poses"][1]["__type"], "geometry_msgs::msg::PoseStamped");
   ASSERT_EQ(json["path"]["poses"][1]["header"]["__type"], "std_msgs::msg::Header");
+<<<<<<< HEAD
   ASSERT_EQ(
     json["path"]["poses"][1]["header"]["stamp"]["__type"],
+=======
+  ASSERT_EQ(json["path"]["poses"][1]["header"]["stamp"]["__type"],
+>>>>>>> jazzy
     "builtin_interfaces::msg::Time");
   ASSERT_EQ(json["path"]["poses"][1]["header"]["stamp"]["sec"], 12);
   ASSERT_EQ(json["path"]["poses"][1]["header"]["stamp"]["nanosec"], 13);
   ASSERT_EQ(json["path"]["poses"][1]["header"]["frame_id"], "odom");
   ASSERT_EQ(json["path"]["poses"][1]["pose"]["__type"], "geometry_msgs::msg::Pose");
+<<<<<<< HEAD
   ASSERT_EQ(
     json["path"]["poses"][1]["pose"]["position"]["__type"],
+=======
+  ASSERT_EQ(json["path"]["poses"][1]["pose"]["position"]["__type"],
+>>>>>>> jazzy
     "geometry_msgs::msg::Point");
   ASSERT_EQ(json["path"]["poses"][1]["pose"]["position"]["x"], 14.0);
   ASSERT_EQ(json["path"]["poses"][1]["pose"]["position"]["y"], 15.0);
   ASSERT_EQ(json["path"]["poses"][1]["pose"]["position"]["z"], 16.0);
+<<<<<<< HEAD
   ASSERT_EQ(
     json["path"]["poses"][1]["pose"]["orientation"]["__type"],
+=======
+  ASSERT_EQ(json["path"]["poses"][1]["pose"]["orientation"]["__type"],
+>>>>>>> jazzy
     "geometry_msgs::msg::Quaternion");
   ASSERT_EQ(json["path"]["poses"][1]["pose"]["orientation"]["x"], 17.0);
   ASSERT_EQ(json["path"]["poses"][1]["pose"]["orientation"]["y"], 18.0);
@@ -840,8 +914,12 @@ TEST_F(JsonTest, test_path)
         ]
       }
     )";
+<<<<<<< HEAD
   ASSERT_NO_THROW(
     path_test3 =
+=======
+  ASSERT_NO_THROW(path_test3 =
+>>>>>>> jazzy
     BT::convertFromString<nav_msgs::msg::Path>(test_json));
   ASSERT_EQ(path_test.header, path_test3.header);
   ASSERT_EQ(path_test.poses[0].header, path_test3.poses[0].header);
@@ -851,6 +929,7 @@ TEST_F(JsonTest, test_path)
   ASSERT_EQ(path_test.poses[1].pose.position, path_test3.poses[1].pose.position);
   ASSERT_EQ(path_test.poses[1].pose.orientation, path_test3.poses[1].pose.orientation);
 }
+<<<<<<< HEAD
 
 TEST_F(JsonTest, test_waypoint_status)
 {
@@ -1101,3 +1180,5 @@ TEST_F(JsonTest, test_waypoint_status_vector)
   // auto waypoint_status_vector_test2 =
   //   exporter.fromJson(json["waypoint_status_vector"])->first.cast<std::vector<nav2_msgs::msg::WaypointStatus>>();
 }
+=======
+>>>>>>> jazzy

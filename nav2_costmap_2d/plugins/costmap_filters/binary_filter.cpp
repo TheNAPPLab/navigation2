@@ -228,7 +228,11 @@ void BinaryFilter::resetFilter()
 {
   std::lock_guard<CostmapFilter::mutex_t> guard(*getMutex());
 
+<<<<<<< HEAD
   // Publishing new BinaryState ib reset
+=======
+  // Publishing new BinaryState in reset
+>>>>>>> jazzy
   std::unique_ptr<std_msgs::msg::Bool> msg =
     std::make_unique<std_msgs::msg::Bool>();
   msg->data = binary_state_;

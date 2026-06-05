@@ -29,8 +29,14 @@ void TrajectoryVisualizer::on_configure(
   logger_ = node->get_logger();
   frame_id_ = frame_id;
   trajectories_publisher_ =
+<<<<<<< HEAD
     node->create_publisher<visualization_msgs::msg::MarkerArray>("~/candidate_trajectories");
   optimal_path_pub_ = node->create_publisher<nav_msgs::msg::Path>("~/optimal_path");
+=======
+    node->create_publisher<visualization_msgs::msg::MarkerArray>("/trajectories", 1);
+  transformed_path_pub_ = node->create_publisher<nav_msgs::msg::Path>("transformed_global_plan", 1);
+  optimal_path_pub_ = node->create_publisher<nav_msgs::msg::Path>("optimal_trajectory", 1);
+>>>>>>> jazzy
   parameters_handler_ = parameters_handler;
 
   auto getParam = parameters_handler->getParamGetter(name + ".TrajectoryVisualizer");
@@ -44,23 +50,39 @@ void TrajectoryVisualizer::on_configure(
 void TrajectoryVisualizer::on_cleanup()
 {
   trajectories_publisher_.reset();
+<<<<<<< HEAD
+=======
+  transformed_path_pub_.reset();
+>>>>>>> jazzy
   optimal_path_pub_.reset();
 }
 
 void TrajectoryVisualizer::on_activate()
 {
   trajectories_publisher_->on_activate();
+<<<<<<< HEAD
+=======
+  transformed_path_pub_->on_activate();
+>>>>>>> jazzy
   optimal_path_pub_->on_activate();
 }
 
 void TrajectoryVisualizer::on_deactivate()
 {
   trajectories_publisher_->on_deactivate();
+<<<<<<< HEAD
+=======
+  transformed_path_pub_->on_deactivate();
+>>>>>>> jazzy
   optimal_path_pub_->on_deactivate();
 }
 
 void TrajectoryVisualizer::add(
+<<<<<<< HEAD
   const Eigen::ArrayXXf & trajectory,
+=======
+  const xt::xtensor<float, 2> & trajectory,
+>>>>>>> jazzy
   const std::string & marker_namespace,
   const builtin_interfaces::msg::Time & cmd_stamp)
 {
@@ -70,7 +92,11 @@ void TrajectoryVisualizer::add(
     return;
   }
 
+<<<<<<< HEAD
   size_t size = trajectory.rows();
+=======
+  auto & size = trajectory.shape()[0];
+>>>>>>> jazzy
   if (!size) {
     return;
   }
@@ -115,6 +141,29 @@ void TrajectoryVisualizer::add(
 {
   if (trajectories_publisher_->get_subscription_count() == 0) {
     return;
+<<<<<<< HEAD
+=======
+  }
+
+  auto & shape = trajectories.x.shape();
+  const float shape_1 = static_cast<float>(shape[1]);
+  points_->markers.reserve(floor(shape[0] / trajectory_step_) * floor(shape[1] * time_step_));
+
+  for (size_t i = 0; i < shape[0]; i += trajectory_step_) {
+    for (size_t j = 0; j < shape[1]; j += time_step_) {
+      const float j_flt = static_cast<float>(j);
+      float blue_component = 1.0f - j_flt / shape_1;
+      float green_component = j_flt / shape_1;
+
+      auto pose = utils::createPose(trajectories.x(i, j), trajectories.y(i, j), 0.03);
+      auto scale = utils::createScale(0.03, 0.03, 0.03);
+      auto color = utils::createColor(0, green_component, blue_component, 1);
+      auto marker = utils::createMarker(
+        marker_id_++, pose, scale, color, frame_id_, marker_namespace);
+
+      points_->markers.push_back(marker);
+    }
+>>>>>>> jazzy
   }
 
   const size_t n_rows = trajectories.x.rows();
@@ -215,6 +264,16 @@ void TrajectoryVisualizer::visualize()
 
   if (optimal_path_pub_->get_subscription_count() > 0) {
     optimal_path_pub_->publish(std::move(optimal_path_));
+<<<<<<< HEAD
+=======
+  }
+
+  reset();
+
+  if (transformed_path_pub_->get_subscription_count() > 0) {
+    auto plan_ptr = std::make_unique<nav_msgs::msg::Path>(plan);
+    transformed_path_pub_->publish(std::move(plan_ptr));
+>>>>>>> jazzy
   }
 
   reset();

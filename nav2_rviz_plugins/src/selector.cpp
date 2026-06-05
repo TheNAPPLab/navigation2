@@ -126,7 +126,11 @@ void Selector::setSelection(
   auto msg = std::make_unique<std_msgs::msg::String>();
   msg->data = combo_box->currentText().toStdString();
 
+<<<<<<< HEAD
   publisher->publish(std::move(msg));
+=======
+  publisher->publish(msg);
+>>>>>>> jazzy
 }
 
 // Call setSelection() for controller
@@ -158,6 +162,7 @@ void Selector::setProgressChecker()
   setSelection(progress_checker_, pub_progress_checker_);
 }
 
+<<<<<<< HEAD
 void Selector::setPathHandler()
 {
   setSelection(path_handler_, pub_path_handler_);
@@ -200,6 +205,40 @@ Selector::loadPlugins()
         rate.sleep();
       }
     });
+=======
+void
+Selector::loadPlugins()
+{
+  load_plugins_thread_ = std::thread([this]() {
+        rclcpp::Rate rate(0.2);
+        while (rclcpp::ok() && !plugins_loaded_) {
+          RCLCPP_INFO(client_node_->get_logger(), "Trying to load plugins...");
+          nav2_rviz_plugins::pluginLoader(
+            client_node_, server_failed_, "controller_server", "controller_plugins", controller_);
+          nav2_rviz_plugins::pluginLoader(
+            client_node_, server_failed_, "planner_server", "planner_plugins", planner_);
+          nav2_rviz_plugins::pluginLoader(
+            client_node_, server_failed_, "controller_server", "goal_checker_plugins",
+            goal_checker_);
+          nav2_rviz_plugins::pluginLoader(
+            client_node_, server_failed_, "smoother_server", "smoother_plugins", smoother_);
+          nav2_rviz_plugins::pluginLoader(
+            client_node_, server_failed_, "controller_server", "progress_checker_plugins",
+            progress_checker_);
+          if (controller_->count() > 0 &&
+          planner_->count() > 0 &&
+          goal_checker_->count() > 0 &&
+          smoother_->count() > 0 &&
+          progress_checker_->count() > 0)
+          {
+            plugins_loaded_ = true;
+          } else {
+            RCLCPP_INFO(client_node_->get_logger(), "Failed to load plugins. Retrying...");
+          }
+          rate.sleep();
+        }
+  });
+>>>>>>> jazzy
 }
 
 }  // namespace nav2_rviz_plugins

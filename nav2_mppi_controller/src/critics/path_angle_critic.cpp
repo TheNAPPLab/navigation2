@@ -61,7 +61,13 @@ void PathAngleCritic::initialize()
 
 void PathAngleCritic::score(CriticData & data)
 {
+<<<<<<< HEAD
   if (!enabled_ || data.state.local_path_length < threshold_to_consider_) {
+=======
+  if (!enabled_ ||
+    utils::withinPositionGoalTolerance(threshold_to_consider_, data.state.pose.pose, data.goal))
+  {
+>>>>>>> jazzy
     return;
   }
 

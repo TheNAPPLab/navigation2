@@ -83,6 +83,7 @@ void SimpleGoalChecker::initialize(
   auto node = node_.lock();
   logger_ = node->get_logger();
 
+<<<<<<< HEAD
   xy_goal_tolerance_ = node->declare_or_get_parameter(plugin_name + ".xy_goal_tolerance", 0.25);
   yaw_goal_tolerance_ = node->declare_or_get_parameter(plugin_name + ".yaw_goal_tolerance", 0.25);
   path_length_tolerance_ = node->declare_or_get_parameter(
@@ -90,6 +91,25 @@ void SimpleGoalChecker::initialize(
   stateful_ = node->declare_or_get_parameter(plugin_name + ".stateful", true);
   symmetric_yaw_tolerance_ = node->declare_or_get_parameter(
     plugin_name + ".symmetric_yaw_tolerance", false);
+=======
+  nav2_util::declare_parameter_if_not_declared(
+    node,
+    plugin_name + ".xy_goal_tolerance", rclcpp::ParameterValue(0.25));
+  nav2_util::declare_parameter_if_not_declared(
+    node,
+    plugin_name + ".yaw_goal_tolerance", rclcpp::ParameterValue(0.25));
+  nav2_util::declare_parameter_if_not_declared(
+    node,
+    plugin_name + ".stateful", rclcpp::ParameterValue(true));
+  nav2_util::declare_parameter_if_not_declared(
+    node,
+    plugin_name + ".symmetric_yaw_tolerance", rclcpp::ParameterValue(false));
+
+  node->get_parameter(plugin_name + ".xy_goal_tolerance", xy_goal_tolerance_);
+  node->get_parameter(plugin_name + ".yaw_goal_tolerance", yaw_goal_tolerance_);
+  node->get_parameter(plugin_name + ".stateful", stateful_);
+  node->get_parameter(plugin_name + ".symmetric_yaw_tolerance", symmetric_yaw_tolerance_);
+>>>>>>> jazzy
 
   xy_goal_tolerance_sq_ = xy_goal_tolerance_ * xy_goal_tolerance_;
 
@@ -161,7 +181,26 @@ bool SimpleGoalChecker::isGoalXYReached(
     }
   }
 
+<<<<<<< HEAD
   return true;
+=======
+  double query_yaw = tf2::getYaw(query_pose.orientation);
+  double goal_yaw = tf2::getYaw(goal_pose.orientation);
+  if (symmetric_yaw_tolerance_) {
+    // For symmetric robots: accept either goal orientation or goal + 180°
+    double dyaw_forward = angles::shortest_angular_distance(query_yaw, goal_yaw);
+    double dyaw_backward = angles::shortest_angular_distance(
+      query_yaw, angles::normalize_angle(goal_yaw + M_PI));
+
+    bool forward_match = fabs(dyaw_forward) <= yaw_goal_tolerance_;
+    bool backward_match = fabs(dyaw_backward) <= yaw_goal_tolerance_;
+
+    return forward_match || backward_match;
+  } else {
+    double dyaw = angles::shortest_angular_distance(query_yaw, goal_yaw);
+    return fabs(dyaw) <= yaw_goal_tolerance_;
+  }
+>>>>>>> jazzy
 }
 
 bool SimpleGoalChecker::getTolerances(
@@ -196,6 +235,7 @@ SimpleGoalChecker::validateParameterUpdatesCallback(
   const std::vector<rclcpp::Parameter> & parameters)
 {
   rcl_interfaces::msg::SetParametersResult result;
+<<<<<<< HEAD
   result.successful = true;
   for (const auto & parameter : parameters) {
     const auto & param_type = parameter.get_type();
@@ -210,6 +250,24 @@ SimpleGoalChecker::validateParameterUpdatesCallback(
         "it should be >=0. Ignoring parameter update.",
         param_name.c_str(), parameter.as_double());
         result.successful = false;
+=======
+  for (auto & parameter : parameters) {
+    const auto & type = parameter.get_type();
+    const auto & name = parameter.get_name();
+
+    if (type == ParameterType::PARAMETER_DOUBLE) {
+      if (name == plugin_name_ + ".xy_goal_tolerance") {
+        xy_goal_tolerance_ = parameter.as_double();
+        xy_goal_tolerance_sq_ = xy_goal_tolerance_ * xy_goal_tolerance_;
+      } else if (name == plugin_name_ + ".yaw_goal_tolerance") {
+        yaw_goal_tolerance_ = parameter.as_double();
+      }
+    } else if (type == ParameterType::PARAMETER_BOOL) {
+      if (name == plugin_name_ + ".stateful") {
+        stateful_ = parameter.as_bool();
+      } else if (name == plugin_name_ + ".symmetric_yaw_tolerance") {
+        symmetric_yaw_tolerance_ = parameter.as_bool();
+>>>>>>> jazzy
       }
     }
   }

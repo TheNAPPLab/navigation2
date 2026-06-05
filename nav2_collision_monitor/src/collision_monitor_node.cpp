@@ -32,9 +32,14 @@ namespace nav2_collision_monitor
 {
 
 CollisionMonitor::CollisionMonitor(const rclcpp::NodeOptions & options)
+<<<<<<< HEAD
 : nav2::LifecycleNode("collision_monitor", options),
   enabled_{true}, process_active_(false),
   robot_action_prev_{DO_NOTHING, {-1.0, -1.0, -1.0}, "", std::vector<Point>()},
+=======
+: nav2_util::LifecycleNode("collision_monitor", "", options),
+  enabled_{true}, process_active_(false), robot_action_prev_{DO_NOTHING, {-1.0, -1.0, -1.0}, ""},
+>>>>>>> jazzy
   stop_stamp_{0, 0, get_clock()->get_clock_type()}, stop_pub_timeout_(1.0, 0.0)
 {
 }
@@ -45,7 +50,11 @@ CollisionMonitor::~CollisionMonitor()
   sources_.clear();
 }
 
+<<<<<<< HEAD
 nav2::CallbackReturn
+=======
+nav2_util::CallbackReturn
+>>>>>>> jazzy
 CollisionMonitor::on_configure(const rclcpp_lifecycle::State & state)
 {
   RCLCPP_INFO(get_logger(), "Configuring");
@@ -65,7 +74,11 @@ CollisionMonitor::on_configure(const rclcpp_lifecycle::State & state)
   // Obtaining ROS parameters
   if (!getParameters(cmd_vel_in_topic, cmd_vel_out_topic, state_topic)) {
     on_cleanup(state);
+<<<<<<< HEAD
     return nav2::CallbackReturn::FAILURE;
+=======
+    return nav2_util::CallbackReturn::FAILURE;
+>>>>>>> jazzy
   }
 
   cmd_vel_in_sub_ = std::make_unique<nav2_util::TwistSubscriber>(
@@ -85,22 +98,36 @@ CollisionMonitor::on_configure(const rclcpp_lifecycle::State & state)
   collision_points_marker_pub_ = this->create_publisher<visualization_msgs::msg::MarkerArray>(
     "~/collision_points_marker");
 
+<<<<<<< HEAD
   triggering_points_pub_ = this->create_publisher<visualization_msgs::msg::MarkerArray>(
     "~/triggering_points");
 
+=======
+>>>>>>> jazzy
   // Toggle service initialization
   toggle_cm_service_ = create_service<nav2_msgs::srv::Toggle>(
     "~/toggle",
     std::bind(&CollisionMonitor::toggleCMServiceCallback, this, _1, _2, _3));
 
+<<<<<<< HEAD
   bool use_realtime_priority = node->declare_or_get_parameter("use_realtime_priority", false);
+=======
+  nav2_util::declare_parameter_if_not_declared(
+    node, "use_realtime_priority", rclcpp::ParameterValue(false));
+  bool use_realtime_priority = false;
+  node->get_parameter("use_realtime_priority", use_realtime_priority);
+>>>>>>> jazzy
   if (use_realtime_priority) {
     try {
       nav2::setSoftRealTimePriority();
     } catch (const std::runtime_error & e) {
       RCLCPP_ERROR(get_logger(), "%s", e.what());
       on_cleanup(state);
+<<<<<<< HEAD
       return nav2::CallbackReturn::FAILURE;
+=======
+      return nav2_util::CallbackReturn::FAILURE;
+>>>>>>> jazzy
     }
   }
 
@@ -275,8 +302,15 @@ bool CollisionMonitor::getParameters(
   const bool base_shift_correction = node->declare_or_get_parameter("base_shift_correction", true);
   collision_points_marker_3d_ = node->declare_or_get_parameter("collision_points_marker_3d", false);
 
+<<<<<<< HEAD
   stop_pub_timeout_ = rclcpp::Duration::from_seconds(
     node->declare_or_get_parameter("stop_pub_timeout", 1.0));
+=======
+  nav2_util::declare_parameter_if_not_declared(
+    node, "stop_pub_timeout", rclcpp::ParameterValue(1.0));
+  stop_pub_timeout_ =
+    rclcpp::Duration::from_seconds(get_parameter("stop_pub_timeout").as_double());
+>>>>>>> jazzy
 
   if (
     !configureSources(
@@ -285,7 +319,11 @@ bool CollisionMonitor::getParameters(
     return false;
   }
 
+<<<<<<< HEAD
   if (!configurePolygons(base_frame_id_, transform_tolerance)) {
+=======
+  if (!configurePolygons(base_frame_id, transform_tolerance)) {
+>>>>>>> jazzy
     return false;
   }
 
@@ -453,7 +491,11 @@ void CollisionMonitor::process(const Velocity & cmd_vel_in, const std_msgs::msg:
     if (collision_points_marker_pub_->get_subscription_count() > 0) {
       // visualize collision points with markers
       visualization_msgs::msg::Marker marker;
+<<<<<<< HEAD
       marker.header.frame_id = base_frame_id_;
+=======
+      marker.header.frame_id = get_parameter("base_frame_id").as_string();
+>>>>>>> jazzy
       marker.header.stamp = rclcpp::Time(0, 0);
       marker.ns = "collision_points_" + source->getSourceName();
       marker.id = 0;
@@ -470,7 +512,11 @@ void CollisionMonitor::process(const Velocity & cmd_vel_in, const std_msgs::msg:
         geometry_msgs::msg::Point p;
         p.x = point.x;
         p.y = point.y;
+<<<<<<< HEAD
         p.z = collision_points_marker_3d_ ? point.z : 0.0;
+=======
+        p.z = 0.0;
+>>>>>>> jazzy
         marker.points.push_back(p);
       }
       marker_array->markers.push_back(marker);
@@ -509,10 +555,13 @@ void CollisionMonitor::process(const Velocity & cmd_vel_in, const std_msgs::msg:
     }
   }
 
+<<<<<<< HEAD
   if (triggering_points_pub_->get_subscription_count() > 0) {
     publishTriggeringPoints(robot_action);
   }
 
+=======
+>>>>>>> jazzy
   if ((robot_action.polygon_name != robot_action_prev_.polygon_name) && enabled_) {
     // Report changed robot behavior
     notifyActionState(robot_action, action_polygon);
@@ -537,9 +586,13 @@ bool CollisionMonitor::processStopSlowdownLimit(
     return false;
   }
 
+<<<<<<< HEAD
   // Single pass: collect in-polygon points while isTriggered counts them.
   std::vector<Point> triggering_points;
   if (polygon->isTriggered(sources_collision_points_map, triggering_points)) {
+=======
+  if (polygon->getPointsInside(sources_collision_points_map) >= polygon->getMinPoints()) {
+>>>>>>> jazzy
     if (polygon->getActionType() == STOP) {
       // Setting up zero velocity for STOP model
       robot_action.polygon_name = polygon->getName();
@@ -601,10 +654,15 @@ bool CollisionMonitor::processApproach(
     return false;
   }
 
+<<<<<<< HEAD
   // Obtain time before a collision, capturing the responsible points at the collision step.
   std::vector<Point> triggering_points;
   const double collision_time = polygon->getCollisionTime(sources_collision_points_map, velocity,
       triggering_points);
+=======
+  // Obtain time before a collision
+  const double collision_time = polygon->getCollisionTime(sources_collision_points_map, velocity);
+>>>>>>> jazzy
   if (collision_time >= 0.0) {
     // If collision will occur, reduce robot speed
     const double change_ratio = collision_time / polygon->getTimeBeforeCollision();

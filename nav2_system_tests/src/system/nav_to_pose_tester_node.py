@@ -32,7 +32,12 @@ import rclpy
 from rclpy.action import ActionClient
 from rclpy.client import Client
 from rclpy.node import Node
+<<<<<<< HEAD
 from rclpy.qos import QoSDurabilityPolicy, QoSHistoryPolicy, QoSProfile, QoSReliabilityPolicy
+=======
+from rclpy.qos import QoSDurabilityPolicy, QoSHistoryPolicy, QoSReliabilityPolicy
+from rclpy.qos import QoSProfile
+>>>>>>> jazzy
 import zmq
 
 

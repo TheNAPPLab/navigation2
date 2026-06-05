@@ -268,6 +268,8 @@ protected:
    */
   inline void clearGraph();
 
+  inline bool onVisitationCheckNode(const NodePtr & node);
+
   /**
    * @brief Get index at coordinates
    * @param x X coordinate of point

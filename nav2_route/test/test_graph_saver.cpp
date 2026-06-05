@@ -18,12 +18,20 @@
 
 #include "gtest/gtest.h"
 #include "rclcpp/rclcpp.hpp"
+<<<<<<< HEAD
 #include "nav2_ros_common/lifecycle_node.hpp"
 #include "nav2_ros_common/node_utils.hpp"
 #include "nav2_ros_common/rate.hpp"
 #include "nav2_route/graph_loader.hpp"
 #include "nav2_route/graph_saver.hpp"
 #include "tf2_ros/static_transform_broadcaster.hpp"
+=======
+#include "nav2_util/lifecycle_node.hpp"
+#include "nav2_util/node_utils.hpp"
+#include "nav2_route/graph_loader.hpp"
+#include "nav2_route/graph_saver.hpp"
+#include "tf2_ros/static_transform_broadcaster.h"
+>>>>>>> jazzy
 
 class RclCppFixture
 {
@@ -37,6 +45,7 @@ using namespace nav2_route; //NOLINT
 
 TEST(GraphSaver, test_invalid_plugin)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("graph_saver_test");
   auto tf = std::make_shared<tf2_ros::Buffer>(node->get_clock());
   std::string frame = "map";
@@ -44,11 +53,24 @@ TEST(GraphSaver, test_invalid_plugin)
   nav2::declare_parameter_if_not_declared(
     node, "graph_filepath", rclcpp::ParameterValue(
       nav2::get_package_share_directory("nav2_route") +
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("graph_saver_test");
+  auto tf = std::make_shared<tf2_ros::Buffer>(node->get_clock());
+  std::string frame = "map";
+
+  nav2_util::declare_parameter_if_not_declared(
+    node, "graph_filepath", rclcpp::ParameterValue(
+      ament_index_cpp::get_package_share_directory("nav2_route") +
+>>>>>>> jazzy
       "/graphs/aws_graph.geojson"));
 
   // Set dummy parameter
   std::string default_plugin = "nav2_route::Dummy";
+<<<<<<< HEAD
   nav2::declare_parameter_if_not_declared(
+=======
+  nav2_util::declare_parameter_if_not_declared(
+>>>>>>> jazzy
     node, "graph_file_saver", rclcpp::ParameterValue(default_plugin));
 
   EXPECT_THROW(GraphSaver graph_saver(node, tf, frame), std::runtime_error);
@@ -56,6 +78,7 @@ TEST(GraphSaver, test_invalid_plugin)
 
 TEST(GraphSaver, test_empty_filename)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("graph_saver_test");
   auto tf = std::make_shared<tf2_ros::Buffer>(node->get_clock());
   std::string frame = "map";
@@ -63,6 +86,15 @@ TEST(GraphSaver, test_empty_filename)
   nav2::declare_parameter_if_not_declared(
     node, "graph_filepath", rclcpp::ParameterValue(
       nav2::get_package_share_directory("nav2_route") +
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("graph_saver_test");
+  auto tf = std::make_shared<tf2_ros::Buffer>(node->get_clock());
+  std::string frame = "map";
+
+  nav2_util::declare_parameter_if_not_declared(
+    node, "graph_filepath", rclcpp::ParameterValue(
+      ament_index_cpp::get_package_share_directory("nav2_route") +
+>>>>>>> jazzy
       "/graphs/aws_graph.geojson"));
 
   GraphLoader graph_loader(node, tf, frame);
@@ -77,6 +109,7 @@ TEST(GraphSaver, test_empty_filename)
 
 TEST(GraphSaver, test_api)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("graph_saver_test");
   auto tf = std::make_shared<tf2_ros::Buffer>(node->get_clock());
   std::string frame = "map";
@@ -84,6 +117,15 @@ TEST(GraphSaver, test_api)
   nav2::declare_parameter_if_not_declared(
     node, "graph_filepath", rclcpp::ParameterValue(
       nav2::get_package_share_directory("nav2_route") +
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("graph_saver_test");
+  auto tf = std::make_shared<tf2_ros::Buffer>(node->get_clock());
+  std::string frame = "map";
+
+  nav2_util::declare_parameter_if_not_declared(
+    node, "graph_filepath", rclcpp::ParameterValue(
+      ament_index_cpp::get_package_share_directory("nav2_route") +
+>>>>>>> jazzy
       "/graphs/aws_graph.geojson"));
 
   GraphLoader graph_loader(node, tf, frame);
@@ -110,9 +152,13 @@ TEST(GraphSaver, test_api)
 
 TEST(GraphSaver, test_transformation_api)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("graph_saver_test");
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node->get_node_base_interface());
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("graph_saver_test");
+>>>>>>> jazzy
   auto tf = std::make_shared<tf2_ros::Buffer>(node->get_clock());
   tf->setUsingDedicatedThread(true);
   auto tf_listener = std::make_shared<tf2_ros::TransformListener>(*tf);
@@ -120,9 +166,15 @@ TEST(GraphSaver, test_transformation_api)
 
   std::string frame = "map";
 
+<<<<<<< HEAD
   nav2::declare_parameter_if_not_declared(
     node, "graph_filepath", rclcpp::ParameterValue(
       nav2::get_package_share_directory("nav2_route") +
+=======
+  nav2_util::declare_parameter_if_not_declared(
+    node, "graph_filepath", rclcpp::ParameterValue(
+      ament_index_cpp::get_package_share_directory("nav2_route") +
+>>>>>>> jazzy
       "/graphs/aws_graph.geojson"));
 
   GraphLoader graph_loader(node, tf, frame);
@@ -132,7 +184,11 @@ TEST(GraphSaver, test_transformation_api)
   GraphToIDMap graph_to_id_map;
   std::string filepath;
   filepath =
+<<<<<<< HEAD
     nav2::get_package_share_directory("nav2_route") +
+=======
+    ament_index_cpp::get_package_share_directory("nav2_route") +
+>>>>>>> jazzy
     "/graphs/aws_graph.geojson";
   graph_loader.loadGraphFromFile(graph, graph_to_id_map, filepath);
 
@@ -144,9 +200,15 @@ TEST(GraphSaver, test_transformation_api)
   transform.transform.rotation.w = 1.0;
   transform.transform.translation.x = 1.0;
   tf_broadcaster->sendTransform(transform);
+<<<<<<< HEAD
   rclcpp::WallRate(1).sleep();
   tf_broadcaster->sendTransform(transform);
   executor.spin_all(std::chrono::milliseconds(50));
+=======
+  rclcpp::Rate(1).sleep();
+  tf_broadcaster->sendTransform(transform);
+  rclcpp::spin_all(node->get_node_base_interface(), std::chrono::milliseconds(50));
+>>>>>>> jazzy
 
   GraphSaver graph_saver(node, tf, frame);
   std::string file_path = "test.geojson";

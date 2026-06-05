@@ -18,22 +18,33 @@
 #include "rclcpp/rclcpp.hpp"
 #include "opennav_docking/controller.hpp"
 #include "nav2_util/geometry_utils.hpp"
+<<<<<<< HEAD
 #include "nav2_ros_common/node_utils.hpp"
 #include "tf2/utils.hpp"
 
 using rcl_interfaces::msg::ParameterType;
+=======
+#include "nav2_util/node_utils.hpp"
+#include "nav_2d_utils/conversions.hpp"
+#include "tf2/utils.h"
+>>>>>>> jazzy
 
 namespace opennav_docking
 {
 
 Controller::Controller(
+<<<<<<< HEAD
   const nav2::LifecycleNode::SharedPtr & node, std::shared_ptr<tf2_ros::Buffer> tf,
+=======
+  const rclcpp_lifecycle::LifecycleNode::SharedPtr & node, std::shared_ptr<tf2_ros::Buffer> tf,
+>>>>>>> jazzy
   std::string fixed_frame, std::string base_frame)
 : tf2_buffer_(tf), fixed_frame_(fixed_frame), base_frame_(base_frame)
 {
   logger_ = node->get_logger();
   clock_ = node->get_clock();
 
+<<<<<<< HEAD
   std::string costmap_topic, footprint_topic;
   k_phi_ = node->declare_or_get_parameter("controller.k_phi", 3.0);
   k_delta_ = node->declare_or_get_parameter("controller.k_delta", 2.0);
@@ -62,12 +73,47 @@ Controller::Controller(
     "controller.simulation_time_step", 0.1);
   dock_collision_threshold_ = node->declare_or_get_parameter(
     "controller.dock_collision_threshold", 0.3);
+=======
+  nav2_util::declare_parameter_if_not_declared(
+    node, "controller.k_phi", rclcpp::ParameterValue(3.0));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "controller.k_delta", rclcpp::ParameterValue(2.0));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "controller.beta", rclcpp::ParameterValue(0.4));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "controller.lambda", rclcpp::ParameterValue(2.0));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "controller.v_linear_min", rclcpp::ParameterValue(0.1));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "controller.v_linear_max", rclcpp::ParameterValue(0.25));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "controller.v_angular_max", rclcpp::ParameterValue(0.75));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "controller.slowdown_radius", rclcpp::ParameterValue(0.25));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "controller.use_collision_detection", rclcpp::ParameterValue(true));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "controller.costmap_topic",
+    rclcpp::ParameterValue(std::string("local_costmap/costmap_raw")));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "controller.footprint_topic", rclcpp::ParameterValue(
+      std::string("local_costmap/published_footprint")));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "controller.transform_tolerance", rclcpp::ParameterValue(0.1));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "controller.projection_time", rclcpp::ParameterValue(5.0));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "controller.simulation_time_step", rclcpp::ParameterValue(0.1));
+  nav2_util::declare_parameter_if_not_declared(
+    node, "controller.dock_collision_threshold", rclcpp::ParameterValue(0.3));
+>>>>>>> jazzy
 
   control_law_ = std::make_unique<nav2_graceful_controller::SmoothControlLaw>(
     k_phi_, k_delta_, beta_, lambda_, slowdown_radius_, deceleration_max_,
     v_linear_min_, v_linear_max_, v_angular_max_);
 
   // Add callback for dynamic parameters
+<<<<<<< HEAD
   post_set_params_handler_ = node->add_post_set_parameters_callback(
     std::bind(
       &Controller::updateParametersCallback,
@@ -78,11 +124,30 @@ Controller::Controller(
       this, std::placeholders::_1));
 
   if (use_collision_detection_) {
+=======
+  dyn_params_handler_ = node->add_on_set_parameters_callback(
+    std::bind(&Controller::dynamicParametersCallback, this, std::placeholders::_1));
+
+  node->get_parameter("controller.use_collision_detection", use_collision_detection_);
+  node->get_parameter("controller.projection_time", projection_time_);
+  node->get_parameter("controller.simulation_time_step", simulation_time_step_);
+  node->get_parameter("controller.transform_tolerance", transform_tolerance_);
+
+  if (use_collision_detection_) {
+    std::string costmap_topic, footprint_topic;
+    node->get_parameter("controller.costmap_topic", costmap_topic);
+    node->get_parameter("controller.footprint_topic", footprint_topic);
+    node->get_parameter("controller.dock_collision_threshold", dock_collision_threshold_);
+>>>>>>> jazzy
     configureCollisionChecker(node, costmap_topic, footprint_topic, transform_tolerance_);
   }
 
   trajectory_pub_ =
+<<<<<<< HEAD
     node->create_publisher<nav_msgs::msg::Path>("docking_trajectory");
+=======
+    node->create_publisher<nav_msgs::msg::Path>("docking_trajectory", 1);
+>>>>>>> jazzy
 }
 
 Controller::~Controller()
@@ -103,6 +168,7 @@ bool Controller::computeVelocityCommand(
   return isTrajectoryCollisionFree(pose, is_docking, backward);
 }
 
+<<<<<<< HEAD
 geometry_msgs::msg::Twist Controller::computeRotateToHeadingCommand(
   const double & angular_distance_to_heading,
   const geometry_msgs::msg::Twist & current_velocity,
@@ -128,24 +194,40 @@ geometry_msgs::msg::Twist Controller::computeRotateToHeadingCommand(
   return cmd_vel;
 }
 
+=======
+>>>>>>> jazzy
 bool Controller::isTrajectoryCollisionFree(
   const geometry_msgs::msg::Pose & target_pose, bool is_docking, bool backward)
 {
   // Visualization of the trajectory
+<<<<<<< HEAD
   auto trajectory = std::make_unique<nav_msgs::msg::Path>();
   trajectory->header.frame_id = base_frame_;
   trajectory->header.stamp = clock_->now();
+=======
+  nav_msgs::msg::Path trajectory;
+  trajectory.header.frame_id = base_frame_;
+  trajectory.header.stamp = clock_->now();
+>>>>>>> jazzy
 
   // First pose
   geometry_msgs::msg::PoseStamped next_pose;
   next_pose.header.frame_id = base_frame_;
+<<<<<<< HEAD
   trajectory->poses.push_back(next_pose);
+=======
+  trajectory.poses.push_back(next_pose);
+>>>>>>> jazzy
 
   // Get the transform from base_frame to fixed_frame
   geometry_msgs::msg::TransformStamped base_to_fixed_transform;
   try {
     base_to_fixed_transform = tf2_buffer_->lookupTransform(
+<<<<<<< HEAD
       fixed_frame_, base_frame_, trajectory->header.stamp,
+=======
+      fixed_frame_, base_frame_, trajectory.header.stamp,
+>>>>>>> jazzy
       tf2::durationFromSec(transform_tolerance_));
   } catch (tf2::TransformException & ex) {
     RCLCPP_ERROR(
@@ -164,11 +246,19 @@ bool Controller::isTrajectoryCollisionFree(
       simulation_time_step_, target_pose, next_pose.pose, backward);
 
     // Add the pose to the trajectory for visualization
+<<<<<<< HEAD
     trajectory->poses.push_back(next_pose);
 
     // Transform pose from base_frame into fixed_frame
     geometry_msgs::msg::PoseStamped local_pose = next_pose;
     local_pose.header.stamp = trajectory->header.stamp;
+=======
+    trajectory.poses.push_back(next_pose);
+
+    // Transform pose from base_frame into fixed_frame
+    geometry_msgs::msg::PoseStamped local_pose = next_pose;
+    local_pose.header.stamp = trajectory.header.stamp;
+>>>>>>> jazzy
     tf2::doTransform(local_pose, local_pose, base_to_fixed_transform);
 
     // Determine the distance at which to check for collisions
@@ -182,27 +272,45 @@ bool Controller::isTrajectoryCollisionFree(
     // If this distance is greater than the dock_collision_threshold, check for collisions
     if (use_collision_detection_ &&
       dock_collision_distance > dock_collision_threshold_ &&
+<<<<<<< HEAD
       !collision_checker_->isCollisionFree(local_pose.pose))
+=======
+      !collision_checker_->isCollisionFree(nav_2d_utils::poseToPose2D(local_pose.pose)))
+>>>>>>> jazzy
     {
       RCLCPP_WARN(
         logger_, "Collision detected at pose: (%.2f, %.2f, %.2f) in frame %s",
         local_pose.pose.position.x, local_pose.pose.position.y, local_pose.pose.position.z,
         local_pose.header.frame_id.c_str());
+<<<<<<< HEAD
       trajectory_pub_->publish(std::move(trajectory));
+=======
+      trajectory_pub_->publish(trajectory);
+>>>>>>> jazzy
       return false;
     }
 
     // Check if we reach the goal
     distance = nav2_util::geometry_utils::euclidean_distance(target_pose, next_pose.pose);
+<<<<<<< HEAD
   }while(distance > 1e-2 && trajectory->poses.size() < max_iter);
 
   trajectory_pub_->publish(std::move(trajectory));
+=======
+  }while(distance > 1e-2 && trajectory.poses.size() < max_iter);
+
+  trajectory_pub_->publish(trajectory);
+>>>>>>> jazzy
 
   return true;
 }
 
 void Controller::configureCollisionChecker(
+<<<<<<< HEAD
   const nav2::LifecycleNode::SharedPtr & node,
+=======
+  const rclcpp_lifecycle::LifecycleNode::SharedPtr & node,
+>>>>>>> jazzy
   std::string costmap_topic, std::string footprint_topic, double transform_tolerance)
 {
   costmap_sub_ = std::make_unique<nav2_costmap_2d::CostmapSubscriber>(node, costmap_topic);
@@ -212,6 +320,7 @@ void Controller::configureCollisionChecker(
     *costmap_sub_, *footprint_sub_, node->get_name());
 }
 
+<<<<<<< HEAD
 rcl_interfaces::msg::SetParametersResult Controller::validateParameterUpdatesCallback(
   const std::vector<rclcpp::Parameter> & parameters)
 {
@@ -238,6 +347,10 @@ rcl_interfaces::msg::SetParametersResult Controller::validateParameterUpdatesCal
 
 void
 Controller::updateParametersCallback(const std::vector<rclcpp::Parameter> & parameters)
+=======
+rcl_interfaces::msg::SetParametersResult
+Controller::dynamicParametersCallback(std::vector<rclcpp::Parameter> parameters)
+>>>>>>> jazzy
 {
   std::lock_guard<std::mutex> lock(dynamic_params_lock_);
 
@@ -264,6 +377,7 @@ Controller::updateParametersCallback(const std::vector<rclcpp::Parameter> & para
         v_angular_max_ = parameter.as_double();
       } else if (param_name == "controller.slowdown_radius") {
         slowdown_radius_ = parameter.as_double();
+<<<<<<< HEAD
       } else if (param_name == "controller.deceleration_max") {
         deceleration_max_ = parameter.as_double();
       } else if (param_name == "controller.rotate_to_heading_angular_vel") {
@@ -275,6 +389,13 @@ Controller::updateParametersCallback(const std::vector<rclcpp::Parameter> & para
       } else if (param_name == "controller.simulation_time_step") {
         simulation_time_step_ = parameter.as_double();
       } else if (param_name == "controller.dock_collision_threshold") {
+=======
+      } else if (name == "controller.projection_time") {
+        projection_time_ = parameter.as_double();
+      } else if (name == "controller.simulation_time_step") {
+        simulation_time_step_ = parameter.as_double();
+      } else if (name == "controller.dock_collision_threshold") {
+>>>>>>> jazzy
         dock_collision_threshold_ = parameter.as_double();
       }
 

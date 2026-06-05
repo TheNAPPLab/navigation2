@@ -29,9 +29,15 @@
 
 #include "nav2_rviz_plugins/goal_common.hpp"
 #include "nav2_rviz_plugins/utils.hpp"
+<<<<<<< HEAD
 #include "rclcpp/rclcpp.hpp"
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/load_resource.hpp"
+=======
+#include "rviz_common/display_context.hpp"
+#include "rviz_common/load_resource.hpp"
+#include "ament_index_cpp/get_package_share_directory.hpp"
+>>>>>>> jazzy
 #include "yaml-cpp/yaml.h"
 #include "geometry_msgs/msg/pose.hpp"
 
@@ -344,11 +350,14 @@ Nav2Panel::Nav2Panel(QWidget * parent)
 
   paused_->assignProperty(navigation_mode_button_, "text", "");
   paused_->assignProperty(navigation_mode_button_, "enabled", false);
+<<<<<<< HEAD
 
   paused_->assignProperty(start_nav_to_pose_button_, "enabled", false);
 
   paused_->assignProperty(add_pose_button_, "enabled", false);
   paused_->assignProperty(remove_pose_button_, "enabled", false);
+=======
+>>>>>>> jazzy
 
   paused_->assignProperty(save_waypoints_button_, "enabled", false);
   paused_->assignProperty(load_waypoints_button_, "enabled", false);
@@ -549,6 +558,10 @@ Nav2Panel::Nav2Panel(QWidget * parent)
   QVBoxLayout * status_layout = new QVBoxLayout;
   QHBoxLayout * logo_layout = new QHBoxLayout;
 
+<<<<<<< HEAD
+=======
+  QGroupBox * groupBox = new QGroupBox(tr("Tools for WP-Following"));
+>>>>>>> jazzy
   imgDisplayLabel_ = new QLabel("");
   imgDisplayLabel_->setPixmap(
     rviz_common::loadPixmap("package://nav2_rviz_plugins/icons/classes/nav2_logo_small.png"));

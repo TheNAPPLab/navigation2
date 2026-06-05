@@ -18,9 +18,21 @@ from pathlib import Path
 import sys
 
 from ament_index_python.packages import get_package_share_directory
+<<<<<<< HEAD
 from launch import LaunchDescription, LaunchService
 from launch.actions import (AppendEnvironmentVariable, DeclareLaunchArgument, ExecuteProcess,
                             IncludeLaunchDescription, SetEnvironmentVariable)
+=======
+
+from launch import LaunchDescription
+from launch import LaunchService
+from launch.actions import (
+    AppendEnvironmentVariable,
+    DeclareLaunchArgument,
+    ExecuteProcess,
+    IncludeLaunchDescription,
+    SetEnvironmentVariable)
+>>>>>>> jazzy
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
@@ -28,7 +40,11 @@ from launch_testing.legacy import LaunchTestService
 from nav2_common.launch import RewrittenYaml
 
 
+<<<<<<< HEAD
 def generate_launch_description() -> LaunchDescription:
+=======
+def generate_launch_description():
+>>>>>>> jazzy
     bringup_dir = get_package_share_directory('nav2_bringup')
     sim_dir = get_package_share_directory('nav2_minimal_tb3_sim')
     params_file = LaunchConfiguration('params_file')
@@ -44,10 +60,13 @@ def generate_launch_description() -> LaunchDescription:
         source_file=params_file,
         root_key='',
         param_rewrites=param_substitutions,
+<<<<<<< HEAD
         value_rewrites={
             'KEEPOUT_ZONE_ENABLED': 'False',
             'SPEED_ZONE_ENABLED': 'False',
         },
+=======
+>>>>>>> jazzy
         convert_types=True,
     )
 
@@ -137,22 +156,38 @@ def generate_launch_description() -> LaunchDescription:
     )
 
 
+<<<<<<< HEAD
 def main(argv: list[str] = sys.argv[1:]):  # type: ignore[no-untyped-def]
+=======
+def main(argv=sys.argv[1:]):
+>>>>>>> jazzy
     ld = generate_launch_description()
 
     test1_action = ExecuteProcess(
         cmd=[os.path.join(
+<<<<<<< HEAD
             os.getenv('TEST_DIR', ''),
             'drive_tester.py'), '--ros-args', '-p', 'use_sim_time:=True'],
+=======
+            os.getenv('TEST_DIR'), 'drive_tester.py'), '--ros-args', '-p', 'use_sim_time:=True'],
+>>>>>>> jazzy
         name='tester_node',
         output='screen',
     )
 
+<<<<<<< HEAD
     lts = LaunchTestService()  # type: ignore[no-untyped-call]
     lts.add_test_action(ld, test1_action)  # type: ignore[no-untyped-call]
     ls = LaunchService(argv=argv)
     ls.include_launch_description(ld)
     return_code = lts.run(ls)  # type: ignore[no-untyped-call]
+=======
+    lts = LaunchTestService()
+    lts.add_test_action(ld, test1_action)
+    ls = LaunchService(argv=argv)
+    ls.include_launch_description(ld)
+    return_code = lts.run(ls)
+>>>>>>> jazzy
     return return_code
 
 

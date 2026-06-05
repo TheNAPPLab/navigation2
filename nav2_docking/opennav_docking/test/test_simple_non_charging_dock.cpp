@@ -12,20 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+<<<<<<< HEAD
 #include <chrono>
 #include "gtest/gtest.h"
 #include "std_srvs/srv/trigger.hpp"
+=======
+#include "gtest/gtest.h"
+>>>>>>> jazzy
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "sensor_msgs/msg/battery_state.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "opennav_docking/simple_non_charging_dock.hpp"
+<<<<<<< HEAD
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 #include "tf2/utils.hpp"
 
 // Testing the simple non-charging dock plugin
 
 using namespace std::chrono_literals;
+=======
+#include "ament_index_cpp/get_package_share_directory.hpp"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
+#include "tf2/utils.h"
+
+// Testing the simple non-charging dock plugin
+
+class RosLockGuard
+{
+public:
+  RosLockGuard() {rclcpp::init(0, nullptr);}
+  ~RosLockGuard() {rclcpp::shutdown();}
+};
+RosLockGuard g_rclcpp;
+>>>>>>> jazzy
 
 namespace opennav_docking
 {
@@ -42,6 +62,7 @@ public:
   }
 };
 
+<<<<<<< HEAD
 class SimpleNonChargingDockTestable : public opennav_docking::SimpleNonChargingDock
 {
 public:
@@ -54,13 +75,21 @@ public:
 TEST(SimpleNonChargingDockTests, ObjectLifecycle)
 {
   auto node = std::make_shared<nav2::LifecycleNode>("test");
+=======
+TEST(SimpleNonChargingDockTests, ObjectLifecycle)
+{
+  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("test");
+>>>>>>> jazzy
   node->declare_parameter("my_dock.use_external_detection_pose", rclcpp::ParameterValue(true));
 
   auto dock = std::make_unique<opennav_docking::SimpleNonChargingDock>();
   dock->configure(node, "my_dock", nullptr);
   dock->activate();
+<<<<<<< HEAD
   EXPECT_TRUE(dock->startDetectionProcess());
   EXPECT_TRUE(dock->stopDetectionProcess());
+=======
+>>>>>>> jazzy
 
   // Check initial states
   EXPECT_THROW(dock->isCharging(), std::runtime_error);
@@ -75,7 +104,11 @@ TEST(SimpleNonChargingDockTests, ObjectLifecycle)
 
 TEST(SimpleNonChargingDockTests, StallDetection)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("test");
+=======
+  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("test");
+>>>>>>> jazzy
   auto pub = node->create_publisher<sensor_msgs::msg::JointState>(
     "joint_states", rclcpp::QoS(1));
   pub->on_activate();
@@ -98,8 +131,11 @@ TEST(SimpleNonChargingDockTests, StallDetection)
   EXPECT_EQ(dock->getStallJointNames(), names);
 
   dock->activate();
+<<<<<<< HEAD
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node->get_node_base_interface());
+=======
+>>>>>>> jazzy
   geometry_msgs::msg::PoseStamped pose;
   EXPECT_TRUE(dock->getRefinedPose(pose, ""));
 
@@ -111,7 +147,11 @@ TEST(SimpleNonChargingDockTests, StallDetection)
   pub->publish(msg);
   rclcpp::Rate r(2);
   r.sleep();
+<<<<<<< HEAD
   executor.spin_some();
+=======
+  rclcpp::spin_some(node->get_node_base_interface());
+>>>>>>> jazzy
 
   EXPECT_FALSE(dock->isDocked());
 
@@ -123,7 +163,11 @@ TEST(SimpleNonChargingDockTests, StallDetection)
   pub->publish(msg2);
   rclcpp::Rate r1(2);
   r1.sleep();
+<<<<<<< HEAD
   executor.spin_some();
+=======
+  rclcpp::spin_some(node->get_node_base_interface());
+>>>>>>> jazzy
 
   EXPECT_FALSE(dock->isDocked());
 
@@ -135,7 +179,11 @@ TEST(SimpleNonChargingDockTests, StallDetection)
   pub->publish(msg3);
   rclcpp::Rate r2(2);
   r2.sleep();
+<<<<<<< HEAD
   executor.spin_some();
+=======
+  rclcpp::spin_some(node->get_node_base_interface());
+>>>>>>> jazzy
 
   EXPECT_TRUE(dock->isDocked());
 
@@ -146,7 +194,11 @@ TEST(SimpleNonChargingDockTests, StallDetection)
 
 TEST(SimpleNonChargingDockTests, StagingPose)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("test");
+=======
+  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("test");
+>>>>>>> jazzy
   auto dock = std::make_unique<opennav_docking::SimpleNonChargingDock>();
 
   dock->configure(node, "my_dock", nullptr);
@@ -175,7 +227,11 @@ TEST(SimpleNonChargingDockTests, StagingPoseWithYawOffset)
     }
   );
 
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("test", "", options);
+=======
+  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("test", options);
+>>>>>>> jazzy
   auto dock = std::make_unique<opennav_docking::SimpleNonChargingDock>();
 
   dock->configure(node, "my_dock", nullptr);
@@ -197,7 +253,11 @@ TEST(SimpleNonChargingDockTests, StagingPoseWithYawOffset)
 
 TEST(SimpleNonChargingDockTests, RefinedPoseTest)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("test");
+=======
+  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("test");
+>>>>>>> jazzy
   node->declare_parameter("my_dock.use_external_detection_pose", rclcpp::ParameterValue(true));
   auto pub = node->create_publisher<geometry_msgs::msg::PoseStamped>(
     "detected_dock_pose", rclcpp::QoS(1));
@@ -206,9 +266,12 @@ TEST(SimpleNonChargingDockTests, RefinedPoseTest)
 
   dock->configure(node, "my_dock", nullptr);
   dock->activate();
+<<<<<<< HEAD
   dock->startDetectionProcess();
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node->get_node_base_interface());
+=======
+>>>>>>> jazzy
 
   geometry_msgs::msg::PoseStamped pose;
 
@@ -222,8 +285,12 @@ TEST(SimpleNonChargingDockTests, RefinedPoseTest)
   detected_pose.pose.position.x = 0.1;
   detected_pose.pose.position.y = -0.5;
   pub->publish(detected_pose);
+<<<<<<< HEAD
   executor.spin_some();
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
+=======
+  rclcpp::spin_some(node->get_node_base_interface());
+>>>>>>> jazzy
 
   pose.header.frame_id = "my_frame";
   EXPECT_TRUE(dock->getRefinedPose(pose, ""));
@@ -231,14 +298,21 @@ TEST(SimpleNonChargingDockTests, RefinedPoseTest)
   EXPECT_NEAR(pose.pose.position.y, -0.3, 0.01);  // Applies external_detection_translation_x, +0.2
 
   dock->deactivate();
+<<<<<<< HEAD
   dock->stopDetectionProcess();
+=======
+>>>>>>> jazzy
   dock->cleanup();
   dock.reset();
 }
 
 TEST(SimpleNonChargingDockTests, RefinedPoseNotTransform)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("test");
+=======
+  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("test");
+>>>>>>> jazzy
   node->declare_parameter("my_dock.use_external_detection_pose", rclcpp::ParameterValue(true));
   auto pub = node->create_publisher<geometry_msgs::msg::PoseStamped>(
     "detected_dock_pose", rclcpp::QoS(1));
@@ -251,8 +325,11 @@ TEST(SimpleNonChargingDockTests, RefinedPoseNotTransform)
 
   dock->configure(node, "my_dock", tf_buffer);
   dock->activate();
+<<<<<<< HEAD
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node->get_node_base_interface());
+=======
+>>>>>>> jazzy
 
   geometry_msgs::msg::PoseStamped detected_pose;
   detected_pose.header.stamp = node->now();
@@ -260,7 +337,11 @@ TEST(SimpleNonChargingDockTests, RefinedPoseNotTransform)
   detected_pose.pose.position.x = 1.0;
   detected_pose.pose.position.y = 1.0;
   pub->publish(detected_pose);
+<<<<<<< HEAD
   executor.spin_some();
+=======
+  rclcpp::spin_some(node->get_node_base_interface());
+>>>>>>> jazzy
 
   // Create a pose with a different frame_id
   geometry_msgs::msg::PoseStamped pose;
@@ -277,7 +358,11 @@ TEST(SimpleNonChargingDockTests, RefinedPoseNotTransform)
 
 TEST(SimpleNonChargingDockTests, IsDockedTransformException)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("test");
+=======
+  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("test");
+>>>>>>> jazzy
   node->declare_parameter("my_dock.use_external_detection_pose", rclcpp::ParameterValue(true));
   auto pub = node->create_publisher<geometry_msgs::msg::PoseStamped>(
     "detected_dock_pose", rclcpp::QoS(1));
@@ -290,9 +375,20 @@ TEST(SimpleNonChargingDockTests, IsDockedTransformException)
 
   dock->configure(node, "my_dock", tf_buffer);
   dock->activate();
+<<<<<<< HEAD
   dock->startDetectionProcess();
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node->get_node_base_interface());
+=======
+
+  geometry_msgs::msg::PoseStamped detected_pose;
+  detected_pose.header.stamp = node->now();
+  detected_pose.header.frame_id = "my_frame";
+  detected_pose.pose.position.x = 1.0;
+  detected_pose.pose.position.y = 1.0;
+  pub->publish(detected_pose);
+  rclcpp::spin_some(node->get_node_base_interface());
+>>>>>>> jazzy
 
   // Create a pose with a different frame_id
   geometry_msgs::msg::PoseStamped pose;
@@ -305,6 +401,7 @@ TEST(SimpleNonChargingDockTests, IsDockedTransformException)
   transform.child_frame_id = "other_frame";
   tf_buffer->setTransform(transform, "test", true);
 
+<<<<<<< HEAD
   // First call to getRefinedPose starts detection
   EXPECT_FALSE(dock->getRefinedPose(pose, ""));
 
@@ -318,15 +415,22 @@ TEST(SimpleNonChargingDockTests, IsDockedTransformException)
   executor.spin_some();
 
   // Second call should succeed
+=======
+  // It can find a transform between the two frames but it throws an exception in isDocked
+>>>>>>> jazzy
   EXPECT_TRUE(dock->getRefinedPose(pose, ""));
   EXPECT_FALSE(dock->isDocked());
 
   dock->deactivate();
+<<<<<<< HEAD
   dock->stopDetectionProcess();
+=======
+>>>>>>> jazzy
   dock->cleanup();
   dock.reset();
 }
 
+<<<<<<< HEAD
 TEST(SimpleNonChargingDockTests, GetDockDirection)
 {
   auto node = std::make_shared<nav2::LifecycleNode>("test");
@@ -619,3 +723,6 @@ int main(int argc, char ** argv)
 
   return result;
 }
+=======
+}  // namespace opennav_docking
+>>>>>>> jazzy

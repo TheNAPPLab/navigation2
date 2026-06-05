@@ -23,6 +23,9 @@ builtin_interfaces/Duration planning_time
 nav_msgs/Path path
 Route route
 uint16 error_code 0
+<<<<<<< HEAD
 string error_msg
+=======
+>>>>>>> jazzy
 ---
 #feedback definition

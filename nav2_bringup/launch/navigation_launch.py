@@ -199,9 +199,16 @@ def generate_launch_description() -> LaunchDescription:
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
+<<<<<<< HEAD
                 parameters=[configured_params, {'graph_filepath': graph_filepath}],
                 arguments=['--ros-args', '--log-level', log_level],
                 remappings=remappings),
+=======
+                parameters=[configured_params],
+                arguments=['--ros-args', '--log-level', log_level],
+                remappings=remappings,
+            ),
+>>>>>>> jazzy
             Node(
                 package='nav2_behaviors',
                 executable='behavior_server',
@@ -333,6 +340,13 @@ def generate_launch_description() -> LaunchDescription:
                         parameters=[configured_params, {'graph_filepath': graph_filepath}],
                         remappings=remappings,
                         extra_arguments=[{'use_intra_process_comms': use_intra_process_comms}],
+                    ),
+                    ComposableNode(
+                        package='nav2_route',
+                        plugin='nav2_route::RouteServer',
+                        name='route_server',
+                        parameters=[configured_params],
+                        remappings=remappings,
                     ),
                     ComposableNode(
                         package='nav2_behaviors',

@@ -101,13 +101,24 @@ geometry_msgs::msg::TwistStamped MPPIController::computeVelocityCommands(
 #endif
 
   std::lock_guard<std::mutex> param_lock(*parameters_handler_->getLock());
+<<<<<<< HEAD
+=======
+  geometry_msgs::msg::Pose goal = path_handler_.getTransformedGoal(robot_pose.header.stamp).pose;
+
+  nav_msgs::msg::Path transformed_plan = path_handler_.transformPath(robot_pose);
+>>>>>>> jazzy
 
   nav2_costmap_2d::Costmap2D * costmap = costmap_ros_->getCostmap();
   std::unique_lock<nav2_costmap_2d::Costmap2D::mutex_t> costmap_lock(*(costmap->getMutex()));
 
+<<<<<<< HEAD
   auto [cmd, optimal_trajectory] =
     optimizer_.evalControl(robot_pose, robot_speed, transformed_global_plan, global_goal.pose,
       goal_checker);
+=======
+  geometry_msgs::msg::TwistStamped cmd =
+    optimizer_.evalControl(robot_pose, robot_speed, transformed_plan, goal, goal_checker);
+>>>>>>> jazzy
 
 #ifdef BENCHMARK_TESTING
   auto end = std::chrono::system_clock::now();
@@ -129,13 +140,18 @@ geometry_msgs::msg::TwistStamped MPPIController::computeVelocityCommands(
   }
 
   if (visualize_) {
+<<<<<<< HEAD
     visualize(cmd.header.stamp, optimal_trajectory);
+=======
+    visualize(std::move(transformed_plan), cmd.header.stamp);
+>>>>>>> jazzy
   }
 
   return cmd;
 }
 
 void MPPIController::visualize(
+<<<<<<< HEAD
   const builtin_interfaces::msg::Time & cmd_stamp,
   const Eigen::ArrayXXf & optimal_trajectory)
 {
@@ -154,6 +170,14 @@ void MPPIController::visualize(
 
   trajectory_visualizer_.add(optimal_trajectory, "Optimal Trajectory", cmd_stamp);
   trajectory_visualizer_.visualize();
+=======
+  nav_msgs::msg::Path transformed_plan,
+  const builtin_interfaces::msg::Time & cmd_stamp)
+{
+  trajectory_visualizer_.add(optimizer_.getGeneratedTrajectories(), "Candidate Trajectories");
+  trajectory_visualizer_.add(optimizer_.getOptimizedTrajectory(), "Optimal Trajectory", cmd_stamp);
+  trajectory_visualizer_.visualize(std::move(transformed_plan));
+>>>>>>> jazzy
 }
 
 void MPPIController::newPathReceived(const nav_msgs::msg::Path & /*raw_global_path*/)

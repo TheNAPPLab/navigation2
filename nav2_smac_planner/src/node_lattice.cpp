@@ -63,6 +63,11 @@ void LatticeMotionTable::initMotionModel(
   }
   current_lattice_filepath = search_info.lattice_filepath;
 
+  if (current_lattice_filepath == search_info.lattice_filepath) {
+    return;
+  }
+  current_lattice_filepath = search_info.lattice_filepath;
+
   // Get the metadata about this minimum control set
   lattice_metadata = getLatticeMetadata(current_lattice_filepath);
   std::ifstream latticeFile(current_lattice_filepath);
@@ -186,7 +191,11 @@ double LatticeMotionTable::getAngle(const double & theta)
   return getClosestAngularBin(theta);
 }
 
+<<<<<<< HEAD
 NodeLattice::NodeLattice(const uint64_t index, NodeContext * ctx)
+=======
+NodeLattice::NodeLattice(const uint64_t index)
+>>>>>>> jazzy
 : parent(nullptr),
   pose(0.0f, 0.0f, 0.0f),
   _cell_cost(std::numeric_limits<float>::quiet_NaN()),
@@ -195,8 +204,12 @@ NodeLattice::NodeLattice(const uint64_t index, NodeContext * ctx)
   _was_visited(false),
   _motion_primitive(nullptr),
   _backwards(false),
+<<<<<<< HEAD
   _is_node_valid(false),
   _ctx(ctx)
+=======
+  _is_node_valid(false)
+>>>>>>> jazzy
 {
 }
 
@@ -232,10 +245,16 @@ bool NodeLattice::isNodeValid(
 
   // Check primitive end pose
   // Convert grid quantization of primitives to radians, then collision checker quantization
+<<<<<<< HEAD
   const double bin_size = 2.0 * M_PI / collision_checker->getPrecomputedAngles().size();
   const double angle = std::fmod(
     _ctx->motion_table.getAngleFromBin(this->pose.theta),
     2.0 * M_PI) / bin_size;
+=======
+  static const double bin_size = 2.0 * M_PI / collision_checker->getPrecomputedAngles().size();
+  const double angle = std::fmod(motion_table.getAngleFromBin(this->pose.theta),
+      2.0 * M_PI) / bin_size;
+>>>>>>> jazzy
   if (collision_checker->inCollision(
       this->pose.x, this->pose.y, angle /*bin in collision checker*/, traverse_unknown))
   {
@@ -389,7 +408,131 @@ void NodeLattice::initMotionModel(
             " STATE_LATTICE and provide a valid lattice file.");
   }
 
+<<<<<<< HEAD
   ctx->motion_table.initMotionModel(size_x, search_info);
+=======
+  motion_table.initMotionModel(size_x, search_info);
+}
+
+float NodeLattice::getDistanceHeuristic(
+  const Coordinates & node_coords,
+  const Coordinates & goal_coords,
+  const float & obstacle_heuristic)
+{
+  // rotate and translate node_coords such that goal_coords relative is (0,0,0)
+  // Due to the rounding involved in exact cell increments for caching,
+  // this is not an exact replica of a live heuristic, but has bounded error.
+  // (Usually less than 1 cell length)
+
+  // This angle is negative since we are de-rotating the current node
+  // by the goal angle; cos(-th) = cos(th) & sin(-th) = -sin(th)
+  const TrigValues & trig_vals = motion_table.trig_values[goal_coords.theta];
+  const float cos_th = trig_vals.first;
+  const float sin_th = -trig_vals.second;
+  const float dx = node_coords.x - goal_coords.x;
+  const float dy = node_coords.y - goal_coords.y;
+
+  double dtheta_bin = node_coords.theta - goal_coords.theta;
+  if (dtheta_bin < 0) {
+    dtheta_bin += motion_table.num_angle_quantization;
+  }
+  if (dtheta_bin > motion_table.num_angle_quantization) {
+    dtheta_bin -= motion_table.num_angle_quantization;
+  }
+
+  Coordinates node_coords_relative(
+    round(dx * cos_th - dy * sin_th),
+    round(dx * sin_th + dy * cos_th),
+    round(dtheta_bin));
+
+  // Check if the relative node coordinate is within the localized window around the goal
+  // to apply the distance heuristic. Since the lookup table is contains only the positive
+  // X axis, we mirror the Y and theta values across the X axis to find the heuristic values.
+  float motion_heuristic = 0.0;
+  const int floored_size = floor(size_lookup / 2.0);
+  const int ceiling_size = ceil(size_lookup / 2.0);
+  const float mirrored_relative_y = abs(node_coords_relative.y);
+  if (abs(node_coords_relative.x) < floored_size && mirrored_relative_y < floored_size) {
+    // Need to mirror angle if Y coordinate was mirrored
+    int theta_pos;
+    if (node_coords_relative.y < 0.0) {
+      theta_pos = motion_table.num_angle_quantization - node_coords_relative.theta;
+    } else {
+      theta_pos = node_coords_relative.theta;
+    }
+    const int x_pos = node_coords_relative.x + floored_size;
+    const int y_pos = static_cast<int>(mirrored_relative_y);
+    const int index =
+      x_pos * ceiling_size * motion_table.num_angle_quantization +
+      y_pos * motion_table.num_angle_quantization +
+      theta_pos;
+    motion_heuristic = dist_heuristic_lookup_table[index];
+  } else if (obstacle_heuristic == 0.0) {
+    static ompl::base::ScopedState<> from(motion_table.state_space), to(motion_table.state_space);
+    to[0] = goal_coords.x;
+    to[1] = goal_coords.y;
+    to[2] = motion_table.getAngleFromBin(goal_coords.theta);
+    from[0] = node_coords.x;
+    from[1] = node_coords.y;
+    from[2] = motion_table.getAngleFromBin(node_coords.theta);
+    motion_heuristic = motion_table.state_space->distance(from(), to());
+  }
+
+  return motion_heuristic;
+}
+
+void NodeLattice::precomputeDistanceHeuristic(
+  const float & lookup_table_dim,
+  const MotionModel & /*motion_model*/,
+  const unsigned int & dim_3_size,
+  const SearchInfo & search_info)
+{
+  motion_table.lattice_metadata =
+    LatticeMotionTable::getLatticeMetadata(search_info.lattice_filepath);
+
+  // Select state space based on motion model from lattice file
+  if (motion_table.lattice_metadata.motion_model == "omni") {
+    // Holonomic robots: Euclidean distance heuristic
+    motion_table.state_space = std::make_shared<ompl::base::SE2StateSpace>();
+    motion_table.motion_model = MotionModel::OMNI;
+  } else if (!search_info.allow_reverse_expansion) {
+    motion_table.state_space = std::make_shared<ompl::base::DubinsStateSpace>(
+      search_info.minimum_turning_radius);
+    motion_table.motion_model = MotionModel::DUBIN;
+  } else {
+    motion_table.state_space = std::make_shared<ompl::base::ReedsSheppStateSpace>(
+      search_info.minimum_turning_radius);
+    motion_table.motion_model = MotionModel::REEDS_SHEPP;
+  }
+
+  ompl::base::ScopedState<> from(motion_table.state_space), to(motion_table.state_space);
+  to[0] = 0.0;
+  to[1] = 0.0;
+  to[2] = 0.0;
+  size_lookup = lookup_table_dim;
+  float motion_heuristic = 0.0;
+  unsigned int index = 0;
+  int dim_3_size_int = static_cast<int>(dim_3_size);
+
+  // Create a lookup table of Dubin/Reeds-Shepp distances in a window around the goal
+  // to help drive the search towards admissible approaches. Deu to symmetries in the
+  // Heuristic space, we need to only store 2 of the 4 quadrants and simply mirror
+  // around the X axis any relative node lookup. This reduces memory overhead and increases
+  // the size of a window a platform can store in memory.
+  dist_heuristic_lookup_table.resize(size_lookup * ceil(size_lookup / 2.0) * dim_3_size_int);
+  for (float x = ceil(-size_lookup / 2.0); x <= floor(size_lookup / 2.0); x += 1.0) {
+    for (float y = 0.0; y <= floor(size_lookup / 2.0); y += 1.0) {
+      for (int heading = 0; heading != dim_3_size_int; heading++) {
+        from[0] = x;
+        from[1] = y;
+        from[2] = motion_table.getAngleFromBin(heading);
+        motion_heuristic = motion_table.state_space->distance(from(), to());
+        dist_heuristic_lookup_table[index] = motion_heuristic;
+        index++;
+      }
+    }
+  }
+>>>>>>> jazzy
 }
 
 void NodeLattice::getNeighbors(
@@ -423,12 +566,21 @@ void NodeLattice::getNeighbors(
     if (i >= direction_change_index) {
       backwards = true;
       float opposite_heading_theta =
+<<<<<<< HEAD
         motion_projection.theta - (_ctx->motion_table.num_angle_quantization / 2);
       if (opposite_heading_theta < 0) {
         opposite_heading_theta += _ctx->motion_table.num_angle_quantization;
       }
       if (opposite_heading_theta > _ctx->motion_table.num_angle_quantization) {
         opposite_heading_theta -= _ctx->motion_table.num_angle_quantization;
+=======
+        motion_projection.theta - (motion_table.num_angle_quantization / 2);
+      if (opposite_heading_theta < 0) {
+        opposite_heading_theta += motion_table.num_angle_quantization;
+      }
+      if (opposite_heading_theta > motion_table.num_angle_quantization) {
+        opposite_heading_theta -= motion_table.num_angle_quantization;
+>>>>>>> jazzy
       }
       motion_projection.theta = opposite_heading_theta;
     }

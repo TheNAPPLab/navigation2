@@ -142,7 +142,11 @@ void Optimizer::getParams()
       "Sign of the parameter ay_min is incorrect, consider setting it negative.");
   }
 
+<<<<<<< HEAD
   getParam(motion_model_name, "motion_model", std::string("diff_drive"));
+=======
+  getParam(motion_model_name, "motion_model", std::string("DiffDrive"));
+>>>>>>> jazzy
 
   s.constraints = s.base_constraints;
 
@@ -184,7 +188,13 @@ void Optimizer::reset(bool reset_dynamic_speed_limits)
   control_history_[2] = {0.0f, 0.0f, 0.0f};
   control_history_[3] = {0.0f, 0.0f, 0.0f};
 
+<<<<<<< HEAD
   last_command_vel_ = geometry_msgs::msg::Twist();
+=======
+  if (reset_dynamic_speed_limits) {
+    settings_.constraints = settings_.base_constraints;
+  }
+>>>>>>> jazzy
 
   if (reset_dynamic_speed_limits) {
     settings_.constraints = settings_.base_constraints;
@@ -194,10 +204,14 @@ void Optimizer::reset(bool reset_dynamic_speed_limits)
   generated_trajectories_.reset(settings_.batch_size, settings_.time_steps);
 
   noise_generator_.reset(settings_, isHolonomic());
+<<<<<<< HEAD
   motion_model_->setConstraints(settings_.constraints, settings_.model_dt);
   trajectory_validator_->initialize(
     parent_, name_ + ".TrajectoryValidator",
     costmap_ros_, parameters_handler_, tf_buffer_, settings_);
+=======
+  motion_model_->initialize(settings_.constraints, settings_.model_dt);
+>>>>>>> jazzy
 
   RCLCPP_INFO(logger_, "Optimizer reset");
 }
@@ -227,8 +241,11 @@ std::tuple<geometry_msgs::msg::TwistStamped, Eigen::ArrayXXf> Optimizer::evalCon
   nav2_core::GoalChecker * goal_checker)
 {
   prepare(robot_pose, robot_speed, plan, goal, goal_checker);
+<<<<<<< HEAD
   Eigen::ArrayXXf optimal_trajectory;
   bool trajectory_valid = true;
+=======
+>>>>>>> jazzy
 
   do {
     optimize();
@@ -324,7 +341,11 @@ void Optimizer::prepare(
   state_.pose = robot_pose;
   state_.local_path_length = nav2_util::geometry_utils::calculate_path_length(plan);
   path_ = utils::toTensor(plan);
+<<<<<<< HEAD
   costs_.setZero(settings_.batch_size);
+=======
+  costs_.fill(0.0f);
+>>>>>>> jazzy
   goal_ = goal;
 
   critics_data_.fail_flag = false;
@@ -433,9 +454,27 @@ void Optimizer::applyControlSequenceConstraints()
       max_delta_wz = s.model_dt * s.constraints.az_max;
     }
 
+<<<<<<< HEAD
     float & vx_curr = control_sequence_.vx(i);
     vx_curr = utils::clamp(s.constraints.vx_min, s.constraints.vx_max, vx_curr);
     vx_curr = utils::clampVelocityByAccel(vx_last, vx_curr, min_delta_vx, max_delta_vx);
+=======
+  float max_delta_vx = s.model_dt * s.constraints.ax_max;
+  float min_delta_vx = s.model_dt * s.constraints.ax_min;
+  float max_delta_vy = s.model_dt * s.constraints.ay_max;
+  float min_delta_vy = s.model_dt * s.constraints.ay_min;
+  float max_delta_wz = s.model_dt * s.constraints.az_max;
+  float vx_last = control_sequence_.vx(0);
+  float vy_last = control_sequence_.vy(0);
+  float wz_last = control_sequence_.wz(0);
+  for (unsigned int i = 1; i != control_sequence_.vx.shape(0); i++) {
+    float & vx_curr = control_sequence_.vx(i);
+    if (vx_last > 0) {
+      vx_curr = std::clamp(vx_curr, vx_last + min_delta_vx, vx_last + max_delta_vx);
+    } else {
+      vx_curr = std::clamp(vx_curr, vx_last - max_delta_vx, vx_last - min_delta_vx);
+    }
+>>>>>>> jazzy
     vx_last = vx_curr;
 
     float & wz_curr = control_sequence_.wz(i);
@@ -445,8 +484,16 @@ void Optimizer::applyControlSequenceConstraints()
 
     if (isHolonomic()) {
       float & vy_curr = control_sequence_.vy(i);
+<<<<<<< HEAD
       vy_curr = utils::clamp(-s.constraints.vy, s.constraints.vy, vy_curr);
       vy_curr = utils::clampVelocityByAccel(vy_last, vy_curr, min_delta_vy, max_delta_vy);
+=======
+      if (vy_last > 0) {
+        vy_curr = std::clamp(vy_curr, vy_last + min_delta_vy, vy_last + max_delta_vy);
+      } else {
+        vy_curr = std::clamp(vy_curr, vy_last - max_delta_vy, vy_last - min_delta_vy);
+      }
+>>>>>>> jazzy
       vy_last = vy_curr;
     }
   }
@@ -654,6 +701,7 @@ geometry_msgs::msg::TwistStamped Optimizer::getControlFromSequenceAsTwist(
 
 void Optimizer::setMotionModel(const std::string & motion_model_name)
 {
+<<<<<<< HEAD
   auto node = parent_.lock();
   const std::string plugin_ns = name_ + "." + motion_model_name;
   std::string plugin_type;
@@ -667,6 +715,15 @@ void Optimizer::setMotionModel(const std::string & motion_model_name)
     motion_model_->initialize(parameters_handler_, plugin_ns);
     motion_model_->setConstraints(settings_.constraints, settings_.model_dt);
   } catch (const pluginlib::PluginlibException & ex) {
+=======
+  if (model == "DiffDrive") {
+    motion_model_ = std::make_shared<DiffDriveMotionModel>();
+  } else if (model == "Omni") {
+    motion_model_ = std::make_shared<OmniMotionModel>();
+  } else if (model == "Ackermann") {
+    motion_model_ = std::make_shared<AckermannMotionModel>(parameters_handler_, name_);
+  } else {
+>>>>>>> jazzy
     throw nav2_core::ControllerException(
             std::string("Failed to load motion model plugin '") + motion_model_name +
             "': " + ex.what());
@@ -700,7 +757,11 @@ void Optimizer::setSpeedLimit(double speed_limit, bool percentage)
       s.constraints.wz = s.base_constraints.wz * ratio;
     }
   }
+<<<<<<< HEAD
   motion_model_->setConstraints(settings_.constraints, settings_.model_dt);
+=======
+  motion_model_->initialize(settings_.constraints, settings_.model_dt);
+>>>>>>> jazzy
 }
 
 models::Trajectories & Optimizer::getGeneratedTrajectories()

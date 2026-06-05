@@ -36,12 +36,19 @@ The `ChargingDock` and `NonChargingDock` plugins are the heart of the customizab
 The docking procedure is as follows:
 1. Take action request and obtain the dock's plugin and its pose
 2. If the robot is not within the prestaging tolerance of the dock's staging pose, navigate to the staging pose
+<<<<<<< HEAD
 3. Call the dock's plugin `startDetectionProcess()` method to activate any external detection mechanisms.
 4. Use the dock's plugin to initially detect the dock (`getRefinedPose`) and return the docking pose.
 5. Enter a vision-control loop where the robot attempts to reach the docking pose while it's actively being refined by the vision system.
 6. Exit the vision-control loop once contact has been detected or charging has started (if applicable).
 7. Wait until charging starts (if applicable) and return success.
 8. Call the dock's plugin `stopDetectionProcess()` method to deactivate any external detection mechanisms.
+=======
+3. Use the dock's plugin to initially detect the dock and return the docking pose
+4. Enter a vision-control loop where the robot attempts to reach the docking pose while its actively being refined by the vision system
+5. Exit the vision-control loop once contact has been detected or charging has started 
+6. Wait until charging starts (if applicable) and return success.
+>>>>>>> jazzy
 
 If anywhere this procedure is unsuccessful (before step 8), `N` retries may be made, driving back to the dock's staging pose, and then restarting the process from step 3. If still unsuccessful after retries, it will return a failure code to indicate what kind of failure occurred to the client.
 
@@ -226,9 +233,12 @@ For debugging purposes, there are several publishers which can be used with RVIZ
 | controller.v_linear_max | Maximum linear velocity (m/s) | double | 0.25    |
 | controller.v_angular_max | Maximum angular velocity (rad/s) produced by the control law | double | 0.75    |
 | controller.slowdown_radius | Radius (m) around the goal pose in which the robot will start to slow down | double | 0.25     |
+<<<<<<< HEAD
 | controller.deceleration_max | Maximum deceleration (m/s²) used to compute a velocity limit based on distance to the goal: `v = sqrt(2 * dist * deceleration_max)` | double | 2.5     |
 | controller.rotate_to_heading_angular_vel | Angular velocity (rad/s) to rotate to the goal heading when rotate_to_dock is enabled | double | 1.0    |
 | controller.rotate_to_heading_max_angular_accel | Maximum angular acceleration (rad/s^2) to rotate to the goal heading when rotate_to_dock is enabled | double | 3.2    |
+=======
+>>>>>>> jazzy
 | controller.use_collision_detection | Whether to use collision detection to avoid obstacles | bool | true     |
 | controller.costmap_topic | The topic to use for the costmap | string | "local_costmap/costmap_raw"     |
 | controller.footprint_topic | The topic to use for the robot's footprint | string | "local_costmap/published_footprint"     |

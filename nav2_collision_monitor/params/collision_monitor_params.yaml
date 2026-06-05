@@ -100,6 +100,7 @@ collision_monitor:
       transport_type: "raw" # Options: raw, zlib, draco, zstd
       min_height: 0.1
       max_height: 0.5
+<<<<<<< HEAD
       use_global_height: false
       enabled: true
     # costmap:
@@ -108,3 +109,7 @@ collision_monitor:
     #   cost_threshold: 254
     #   enabled: true
     #   treat_unknown_as_obstacle: true
+=======
+      use_global_height: False
+      enabled: True
+>>>>>>> jazzy

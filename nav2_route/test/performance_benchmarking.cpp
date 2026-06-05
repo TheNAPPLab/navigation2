@@ -68,7 +68,11 @@ inline Graph createGraph()
 int main(int argc, char const * argv[])
 {
   rclcpp::init(argc, argv);
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("route_benchmarking2");
+=======
+  auto node = std::make_shared<nav2_util::LifecycleNode>("route_benchmarking2");
+>>>>>>> jazzy
   std::shared_ptr<tf2_ros::Buffer> tf_buffer;
 
   Graph graph = createGraph();

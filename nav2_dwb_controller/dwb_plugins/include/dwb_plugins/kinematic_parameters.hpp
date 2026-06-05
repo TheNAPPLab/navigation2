@@ -159,8 +159,12 @@ public:
   using Ptr = std::shared_ptr<KinematicsHandler>;
 
 protected:
+<<<<<<< HEAD
   nav2::LifecycleNode::WeakPtr node_;
   rclcpp::Logger logger_{rclcpp::get_logger("DWBController")};
+=======
+  nav2_util::LifecycleNode::WeakPtr node_;
+>>>>>>> jazzy
   std::atomic<KinematicParameters *> kinematics_;
 
   // Dynamic parameters handler

@@ -33,11 +33,17 @@ void PathFollowCritic::initialize()
 
 void PathFollowCritic::score(CriticData & data)
 {
+<<<<<<< HEAD
   if (!enabled_) {
     return;
   }
 
   if (data.path.x.size() < 2 || data.state.local_path_length < threshold_to_consider_) {
+=======
+  if (!enabled_ || data.path.x.shape(0) < 2 ||
+    utils::withinPositionGoalTolerance(threshold_to_consider_, data.state.pose.pose, data.goal))
+  {
+>>>>>>> jazzy
     return;
   }
 

@@ -82,6 +82,7 @@ public:
           "error_msg", "The wait behavior error msg"),
       });
   }
+<<<<<<< HEAD
 
   /**
    * @brief Function to perform some user-defined operation upon successful completion of the action
@@ -97,6 +98,8 @@ public:
    * @brief Function to perform some user-defined operation upon cancellation of the action
    */
   BT::NodeStatus on_cancelled() override;
+=======
+>>>>>>> jazzy
 };
 
 }  // namespace nav2_behavior_tree

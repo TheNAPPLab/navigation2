@@ -34,6 +34,7 @@ void GoalCritic::initialize()
 
 void GoalCritic::score(CriticData & data)
 {
+<<<<<<< HEAD
   if (!enabled_ || data.state.local_path_length > threshold_to_consider_) {
     return;
   }
@@ -42,6 +43,16 @@ void GoalCritic::score(CriticData & data)
 
   auto goal_x = goal.position.x;
   auto goal_y = goal.position.y;
+=======
+  if (!enabled_ || !utils::withinPositionGoalTolerance(
+      threshold_to_consider_, data.state.pose.pose, data.goal))
+  {
+    return;
+  }
+
+  const auto & goal_x = data.goal.position.x;
+  const auto & goal_y = data.goal.position.y;
+>>>>>>> jazzy
 
   const auto delta_x = data.trajectories.x - goal_x;
   const auto delta_y = data.trajectories.y - goal_y;

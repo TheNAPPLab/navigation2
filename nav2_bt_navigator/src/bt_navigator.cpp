@@ -20,7 +20,11 @@
 #include <vector>
 
 #include "nav2_util/geometry_utils.hpp"
+<<<<<<< HEAD
 #include "nav2_ros_common/node_utils.hpp"
+=======
+#include "nav2_util/node_utils.hpp"
+>>>>>>> jazzy
 #include "nav2_util/string_utils.hpp"
 #include "nav2_util/robot_utils.hpp"
 #include "nav2_behavior_tree/bt_utils.hpp"
@@ -44,7 +48,11 @@ BtNavigator::~BtNavigator()
 {
 }
 
+<<<<<<< HEAD
 nav2::CallbackReturn
+=======
+nav2_util::CallbackReturn
+>>>>>>> jazzy
 BtNavigator::on_configure(const rclcpp_lifecycle::State & state)
 {
   RCLCPP_INFO(get_logger(), "Configuring");
@@ -122,21 +130,33 @@ BtNavigator::on_configure(const rclcpp_lifecycle::State & state)
         get_logger(), "Failed to create navigator id %s."
         " Exception: %s", navigator_ids[i].c_str(), ex.what());
       on_cleanup(state);
+<<<<<<< HEAD
       return nav2::CallbackReturn::FAILURE;
+=======
+      return nav2_util::CallbackReturn::FAILURE;
+>>>>>>> jazzy
     }
   }
 
   return nav2::CallbackReturn::SUCCESS;
 }
 
+<<<<<<< HEAD
 nav2::CallbackReturn
+=======
+nav2_util::CallbackReturn
+>>>>>>> jazzy
 BtNavigator::on_activate(const rclcpp_lifecycle::State & state)
 {
   RCLCPP_INFO(get_logger(), "Activating");
   for (size_t i = 0; i != navigators_.size(); i++) {
     if (!navigators_[i]->on_activate()) {
       on_deactivate(state);
+<<<<<<< HEAD
       return nav2::CallbackReturn::FAILURE;
+=======
+      return nav2_util::CallbackReturn::FAILURE;
+>>>>>>> jazzy
     }
   }
 

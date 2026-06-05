@@ -19,27 +19,47 @@ from pathlib import Path
 import sys
 
 from ament_index_python.packages import get_package_share_directory
+<<<<<<<< HEAD:nav2_system_tests/src/route/test_route_launch.py
 from launch import LaunchDescription, LaunchService
 from launch.actions import (AppendEnvironmentVariable, ExecuteProcess, IncludeLaunchDescription,
                             SetEnvironmentVariable)
 from launch.launch_context import LaunchContext
+========
+
+from launch import LaunchDescription
+from launch import LaunchService
+from launch.actions import (
+    AppendEnvironmentVariable,
+    DeclareLaunchArgument,
+    ExecuteProcess,
+    IncludeLaunchDescription,
+    SetEnvironmentVariable)
+>>>>>>>> jazzy:nav2_system_tests/src/behaviors/spin/test_spin_behavior.launch.py
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from launch_testing.legacy import LaunchTestService
 from nav2_common.launch import RewrittenYaml
 
 
+<<<<<<<< HEAD:nav2_system_tests/src/route/test_route_launch.py
 def generate_launch_description() -> LaunchDescription:
     sim_dir = get_package_share_directory('nav2_minimal_tb3_sim')
     nav2_bringup_dir = get_package_share_directory('nav2_bringup')
 
+========
+def generate_launch_description():
+    bringup_dir = get_package_share_directory('nav2_bringup')
+    sim_dir = get_package_share_directory('nav2_minimal_tb3_sim')
+    params_file = LaunchConfiguration('params_file')
+>>>>>>>> jazzy:nav2_system_tests/src/behaviors/spin/test_spin_behavior.launch.py
     world_sdf_xacro = os.path.join(sim_dir, 'worlds', 'tb3_sandbox.sdf.xacro')
     robot_sdf = os.path.join(sim_dir, 'urdf', 'gz_waffle.sdf.xacro')
-
     urdf = os.path.join(sim_dir, 'urdf', 'turtlebot3_waffle.urdf')
     with open(urdf, 'r') as infp:
         robot_description = infp.read()
 
+<<<<<<<< HEAD:nav2_system_tests/src/route/test_route_launch.py
     map_yaml_file = os.path.join(nav2_bringup_dir, 'maps', 'tb3_sandbox.yaml')
 
     bt_navigator_xml = os.path.join(
@@ -69,14 +89,21 @@ def generate_launch_description() -> LaunchDescription:
         {'route_server.ros__parameters.max_planning_time': '0.0001'}
     )
 
+========
+    # Create our own temporary YAML files that include substitutions
+    param_substitutions = {'use_sim_time': 'True'}
+>>>>>>>> jazzy:nav2_system_tests/src/behaviors/spin/test_spin_behavior.launch.py
     configured_params = RewrittenYaml(
         source_file=params_file,
         root_key='',
         param_rewrites=param_substitutions,
+<<<<<<<< HEAD:nav2_system_tests/src/route/test_route_launch.py
         value_rewrites={
             'KEEPOUT_ZONE_ENABLED': 'False',
             'SPEED_ZONE_ENABLED': 'False',
         },
+========
+>>>>>>>> jazzy:nav2_system_tests/src/behaviors/spin/test_spin_behavior.launch.py
         convert_types=True,
     )
 
@@ -86,6 +113,15 @@ def generate_launch_description() -> LaunchDescription:
         [
             SetEnvironmentVariable('RCUTILS_LOGGING_BUFFERED_STREAM', '1'),
             SetEnvironmentVariable('RCUTILS_LOGGING_USE_STDOUT', '1'),
+<<<<<<<< HEAD:nav2_system_tests/src/route/test_route_launch.py
+========
+            DeclareLaunchArgument(
+                'params_file',
+                default_value=os.path.join(bringup_dir, 'params', 'nav2_params.yaml'),
+                description='Full path to the ROS2 parameters file to use',
+            ),
+            # Simulation for odometry
+>>>>>>>> jazzy:nav2_system_tests/src/behaviors/spin/test_spin_behavior.launch.py
             AppendEnvironmentVariable(
                 'GZ_SIM_RESOURCE_PATH', os.path.join(sim_dir, 'models')
             ),
@@ -112,6 +148,24 @@ def generate_launch_description() -> LaunchDescription:
                     'yaw': '0.0',
                 }.items(),
             ),
+            # No need for localization
+            Node(
+                package='tf2_ros',
+                executable='static_transform_publisher',
+                output='screen',
+                arguments=[
+                    '--x', '0',
+                    '--y', '0',
+                    '--z', '0',
+                    '--roll', '0',
+                    '--pitch', '0',
+                    '--yaw', '0',
+                    '--frame-id', 'map',
+                    '--child-frame-id', 'odom'
+                ],
+                parameters=[{'use_sim_time': True}],
+            ),
+            # Need transforms
             Node(
                 package='robot_state_publisher',
                 executable='robot_state_publisher',
@@ -121,6 +175,7 @@ def generate_launch_description() -> LaunchDescription:
                     {'use_sim_time': True, 'robot_description': robot_description}
                 ],
             ),
+<<<<<<<< HEAD:nav2_system_tests/src/route/test_route_launch.py
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
                     os.path.join(nav2_bringup_dir, 'launch', 'bringup_launch.py')
@@ -136,6 +191,26 @@ def generate_launch_description() -> LaunchDescription:
                     'use_composition': 'False',
                     'autostart': 'True',
                 }.items(),
+========
+            # Server under test
+            Node(
+                package='nav2_behaviors',
+                executable='behavior_server',
+                name='behavior_server',
+                output='screen',
+                parameters=[configured_params],
+            ),
+            Node(
+                package='nav2_lifecycle_manager',
+                executable='lifecycle_manager',
+                name='lifecycle_manager_navigation',
+                output='screen',
+                parameters=[
+                    {'use_sim_time': True},
+                    {'autostart': True},
+                    {'node_names': ['behavior_server']},
+                ],
+>>>>>>>> jazzy:nav2_system_tests/src/behaviors/spin/test_spin_behavior.launch.py
             ),
         ]
     )
@@ -145,6 +220,7 @@ def main(argv: list[str] = sys.argv[1:]):  # type: ignore[no-untyped-def]
     ld = generate_launch_description()
 
     test1_action = ExecuteProcess(
+<<<<<<<< HEAD:nav2_system_tests/src/route/test_route_launch.py
         cmd=[
             os.path.join(os.getenv('TEST_DIR', ''), os.getenv('TESTER', '')),
             '-r',
@@ -155,6 +231,10 @@ def main(argv: list[str] = sys.argv[1:]):  # type: ignore[no-untyped-def]
             '-e',
             'True',
         ],
+========
+        cmd=[os.path.join(
+            os.getenv('TEST_DIR'), 'spin_tester.py'), '--ros-args', '-p', 'use_sim_time:=True'],
+>>>>>>>> jazzy:nav2_system_tests/src/behaviors/spin/test_spin_behavior.launch.py
         name='tester_node',
         output='screen',
     )
@@ -163,7 +243,11 @@ def main(argv: list[str] = sys.argv[1:]):  # type: ignore[no-untyped-def]
     lts.add_test_action(ld, test1_action)  # type: ignore[no-untyped-call]
     ls = LaunchService(argv=argv)
     ls.include_launch_description(ld)
+<<<<<<<< HEAD:nav2_system_tests/src/route/test_route_launch.py
     return_code = lts.run(ls)  # type: ignore[no-untyped-call]
+========
+    return_code = lts.run(ls)
+>>>>>>>> jazzy:nav2_system_tests/src/behaviors/spin/test_spin_behavior.launch.py
     return return_code
 
 

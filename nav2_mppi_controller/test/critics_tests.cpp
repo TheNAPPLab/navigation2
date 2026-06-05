@@ -76,11 +76,19 @@ TEST(CriticTests, ConstraintsCritic)
   models::Trajectories generated_trajectories;
   models::Path path;
   geometry_msgs::msg::Pose goal;
+<<<<<<< HEAD
   Eigen::ArrayXf costs = Eigen::ArrayXf::Zero(1000);
   float model_dt = 0.1;
   CriticData data =
   {state, generated_trajectories, path, goal, costs, model_dt,
     false, nullptr, nullptr, std::nullopt, std::nullopt, {}};
+=======
+  xt::xtensor<float, 1> costs = xt::zeros<float>({1000});
+  float model_dt = 0.1;
+  CriticData data =
+  {state, generated_trajectories, path, goal, costs, model_dt,
+    false, nullptr, nullptr, std::nullopt, std::nullopt};
+>>>>>>> jazzy
   data.motion_model = std::make_shared<DiffDriveMotionModel>();
 
   // Initialization testing
@@ -121,6 +129,7 @@ TEST(CriticTests, ConstraintsCritic)
   costs.setZero();
 
   // Now with ackermann, all in constraint so no costs to score
+<<<<<<< HEAD
   state.vx.setConstant(0.40f);
   state.wz.setConstant(1.5f);
   auto ackermann_model = std::make_shared<AckermannMotionModel>();
@@ -129,6 +138,11 @@ TEST(CriticTests, ConstraintsCritic)
   node->set_parameter(rclcpp::Parameter("critic.cost_power", 1));
   critic = ConstraintCritic();
   critic.on_configure(node, "mppi", "critic", costmap_ros, &param_handler);
+=======
+  state.vx = 0.40 * xt::ones<float>({1000, 30});
+  state.wz = 1.5 * xt::ones<float>({1000, 30});
+  data.motion_model = std::make_shared<AckermannMotionModel>(&param_handler, node->get_name());
+>>>>>>> jazzy
   critic.score(data);
   EXPECT_NEAR(costs.sum(), 0, 1e-6);
 
@@ -282,6 +296,81 @@ TEST(CriticTests, CostCriticAlignedParams) {
   EXPECT_EQ(critic.getName(), "critic");
 }
 
+TEST(CriticTests, ObstacleCriticMisalignedParams) {
+  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("my_node");
+  auto costmap_ros = std::make_shared<nav2_costmap_2d::Costmap2DROS>(
+    "dummy_costmap", "", "dummy_costmap", true);
+  ParametersHandler param_handler(node);
+  auto getParam = param_handler.getParamGetter("critic");
+  bool consider_footprint;
+  getParam(consider_footprint, "consider_footprint", true);
+
+  rclcpp_lifecycle::State lstate;
+  costmap_ros->on_configure(lstate);
+
+  ObstaclesCritic critic;
+  // Expect throw when settings mismatched
+  EXPECT_THROW(
+    critic.on_configure(node, "mppi", "critic", costmap_ros, &param_handler),
+    nav2_core::ControllerException
+  );
+}
+
+TEST(CriticTests, ObstacleCriticAlignedParams) {
+  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("my_node");
+  auto costmap_ros = std::make_shared<nav2_costmap_2d::Costmap2DROS>(
+    "dummy_costmap", "", "dummy_costmap", true);
+  ParametersHandler param_handler(node);
+  auto getParam = param_handler.getParamGetter("critic");
+  bool consider_footprint;
+  getParam(consider_footprint, "consider_footprint", false);
+
+  rclcpp_lifecycle::State lstate;
+  costmap_ros->on_configure(lstate);
+
+  ObstaclesCritic critic;
+  critic.on_configure(node, "mppi", "critic", costmap_ros, &param_handler);
+  EXPECT_EQ(critic.getName(), "critic");
+}
+
+
+TEST(CriticTests, CostCriticMisAlignedParams) {
+  // Standard preamble
+  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("my_node");
+  auto costmap_ros = std::make_shared<nav2_costmap_2d::Costmap2DROS>(
+    "dummy_costmap", "", "dummy_costmap", true);
+  ParametersHandler param_handler(node);
+  rclcpp_lifecycle::State lstate;
+   auto getParam = param_handler.getParamGetter("critic");
+  bool consider_footprint;
+  getParam(consider_footprint, "consider_footprint", true);
+  costmap_ros->on_configure(lstate);
+
+  CostCritic critic;
+  // Expect throw when settings mismatched
+  EXPECT_THROW(
+    critic.on_configure(node, "mppi", "critic", costmap_ros, &param_handler),
+    nav2_core::ControllerException
+  );
+}
+
+TEST(CriticTests, CostCriticAlignedParams) {
+  // Standard preamble
+  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("my_node");
+  auto costmap_ros = std::make_shared<nav2_costmap_2d::Costmap2DROS>(
+    "dummy_costmap", "", "dummy_costmap", true);
+  ParametersHandler param_handler(node);
+  rclcpp_lifecycle::State lstate;
+   auto getParam = param_handler.getParamGetter("critic");
+  bool consider_footprint;
+  getParam(consider_footprint, "consider_footprint", false);
+  costmap_ros->on_configure(lstate);
+
+  CostCritic critic;
+  critic.on_configure(node, "mppi", "critic", costmap_ros, &param_handler);
+  EXPECT_EQ(critic.getName(), "critic");
+}
+
 TEST(CriticTests, GoalAngleCritic)
 {
   // Standard preamble
@@ -299,12 +388,20 @@ TEST(CriticTests, GoalAngleCritic)
   generated_trajectories.reset(1000, 30);
   models::Path path;
   geometry_msgs::msg::Pose goal;
+<<<<<<< HEAD
   path.reset(10);
   Eigen::ArrayXf costs = Eigen::ArrayXf::Zero(1000);
   float model_dt = 0.1;
   CriticData data =
   {state, generated_trajectories, path, goal, costs, model_dt,
     false, nullptr, nullptr, std::nullopt, std::nullopt, {}};
+=======
+  xt::xtensor<float, 1> costs = xt::zeros<float>({1000});
+  float model_dt = 0.1;
+  CriticData data =
+  {state, generated_trajectories, path, goal, costs, model_dt,
+    false, nullptr, nullptr, std::nullopt, std::nullopt};
+>>>>>>> jazzy
   data.motion_model = std::make_shared<DiffDriveMotionModel>();
 
   // Initialization testing
@@ -322,12 +419,15 @@ TEST(CriticTests, GoalAngleCritic)
   path.y(9) = 0.0;
   path.yaws(9) = 3.14;
   goal.position.x = 10.0;
+<<<<<<< HEAD
   goal.position.y = 0.0;
   goal.orientation.x = 0.0;
   goal.orientation.y = 0.0;
   goal.orientation.z = 1.0;
   goal.orientation.w = 0.0;
   state.local_path_length = std::abs(state.pose.pose.position.x - goal.position.x);
+=======
+>>>>>>> jazzy
   critic.score(data);
   EXPECT_NEAR(costs.sum(), 0, 1e-6);
 
@@ -345,7 +445,62 @@ TEST(CriticTests, GoalAngleCritic)
   EXPECT_NEAR(costs(0), 9.42, 0.02);  // (3.14 - 0.0) * 3.0 weight
 }
 
+<<<<<<< HEAD
 TEST(CriticTests, GoalAngleCriticSymmetric)
+=======
+TEST(CriticTests, GoalAngleSymmetricCritic)
+{
+  // Standard preamble
+  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("my_node");
+  auto costmap_ros = std::make_shared<nav2_costmap_2d::Costmap2DROS>(
+    "dummy_costmap", "", "dummy_costmap", true);
+  ParametersHandler param_handler(node);
+  rclcpp_lifecycle::State lstate;
+  costmap_ros->on_configure(lstate);
+
+  models::State state;
+  models::ControlSequence control_sequence;
+  models::Trajectories generated_trajectories;
+  generated_trajectories.reset(1000, 30);
+  models::Path path;
+  geometry_msgs::msg::Pose goal;
+  xt::xtensor<float, 1> costs = xt::zeros<float>({1000});
+  float model_dt = 0.1;
+  CriticData data =
+  {state, generated_trajectories, path, goal, costs, model_dt,
+    false, nullptr, nullptr, std::nullopt, std::nullopt};
+  data.motion_model = std::make_shared<DiffDriveMotionModel>();
+
+  // Initialization testing
+
+  // Make sure initializes correctly
+  auto getParam = param_handler.getParamGetter("critic");
+  bool symmetric_yaw_tolerance = true;
+  getParam(symmetric_yaw_tolerance, "symmetric_yaw_tolerance", true);
+  GoalAngleCritic critic;
+  critic.on_configure(node, "mppi", "critic", costmap_ros, &param_handler);
+  EXPECT_EQ(critic.getName(), "critic");
+
+  // Scoring testing
+
+  // provide state poses and path too far from `threshold_to_consider` to consider
+  state.pose.pose.position.x = 9.7;
+  path.reset(10);
+  path.x(9) = 10.0;
+  path.y(9) = 0.0;
+  path.yaws(9) = 3.14;
+  goal.position.x = 10.0;
+  critic.score(data);
+  EXPECT_GT(xt::sum(costs, immediate)(), 0);
+  EXPECT_NEAR(costs(0), 0, 0.02);  // Should be zero cost due to symmetry
+
+  path.yaws(9) = 0.0;
+  critic.score(data);
+  EXPECT_NEAR(costs(0), 0, 0.02);  // (0.0 - 0.0) * 3.0 weight
+}
+
+TEST(CriticTests, GoalCritic)
+>>>>>>> jazzy
 {
   auto node = std::make_shared<nav2::LifecycleNode>("my_node");
   auto costmap_ros = std::make_shared<nav2_costmap_2d::Costmap2DROS>(
@@ -361,6 +516,7 @@ TEST(CriticTests, GoalAngleCriticSymmetric)
   generated_trajectories.reset(1000, 30);
   models::Path path;
   geometry_msgs::msg::Pose goal;
+<<<<<<< HEAD
   path.reset(10);
   Eigen::ArrayXf costs = Eigen::ArrayXf::Zero(1000);
   float model_dt = 0.1;
@@ -428,6 +584,13 @@ TEST(CriticTests, GoalCritic)
   CriticData data =
   {state, generated_trajectories, path, goal, costs, model_dt,
     false, nullptr, nullptr, std::nullopt, std::nullopt, {}};
+=======
+  xt::xtensor<float, 1> costs = xt::zeros<float>({1000});
+  float model_dt = 0.1;
+  CriticData data =
+  {state, generated_trajectories, path, goal, costs, model_dt,
+    false, nullptr, nullptr, std::nullopt, std::nullopt};
+>>>>>>> jazzy
   data.motion_model = std::make_shared<DiffDriveMotionModel>();
 
   // Initialization testing
@@ -444,7 +607,10 @@ TEST(CriticTests, GoalCritic)
   path.x(9) = 10.0;
   path.y(9) = 0.0;
   goal.position.x = 10.0;
+<<<<<<< HEAD
   state.local_path_length = std::abs(state.pose.pose.position.x - goal.position.x);
+=======
+>>>>>>> jazzy
   critic.score(data);
   EXPECT_NEAR(costs(2), 0.0, 1e-6);  // (0 * 5.0 weight
   EXPECT_NEAR(costs.sum(), 0.0, 1e-6);  // Should all be 0 * 1000
@@ -454,7 +620,10 @@ TEST(CriticTests, GoalCritic)
   path.x(9) = 0.5;
   path.y(9) = 0.0;
   goal.position.x = 0.5;
+<<<<<<< HEAD
   state.local_path_length = std::abs(state.pose.pose.position.x - goal.position.x);
+=======
+>>>>>>> jazzy
   critic.score(data);
   EXPECT_NEAR(costs(2), 2.5, 1e-6);  // (sqrt(10.0 * 10.0) * 5.0 weight
   EXPECT_NEAR(costs.sum(), 2500.0, 1e-3);  // should be 2.5 * 1000
@@ -478,12 +647,20 @@ TEST(CriticTests, PathAngleCritic)
   generated_trajectories.reset(1000, 30);
   models::Path path;
   geometry_msgs::msg::Pose goal;
+<<<<<<< HEAD
   path.reset(10);
   Eigen::ArrayXf costs = Eigen::ArrayXf::Zero(1000);
   float model_dt = 0.1;
   CriticData data =
   {state, generated_trajectories, path, goal, costs, model_dt,
     false, nullptr, nullptr, std::nullopt, std::nullopt, {}};
+=======
+  xt::xtensor<float, 1> costs = xt::zeros<float>({1000});
+  float model_dt = 0.1;
+  CriticData data =
+  {state, generated_trajectories, path, goal, costs, model_dt,
+    false, nullptr, nullptr, std::nullopt, std::nullopt};
+>>>>>>> jazzy
   data.motion_model = std::make_shared<DiffDriveMotionModel>();
   TestGoalChecker goal_checker;  // from utils_tests tolerance of 0.25 positionally
 
@@ -501,14 +678,20 @@ TEST(CriticTests, PathAngleCritic)
   state.pose.pose.position.y = 0.0;
   path.x(9) = 0.15;
   goal.position.x = 0.15;
+<<<<<<< HEAD
   state.local_path_length = std::abs(state.pose.pose.position.x - goal.position.x);
+=======
+>>>>>>> jazzy
   critic.score(data);
   EXPECT_NEAR(costs.sum(), 0.0, 1e-6);
 
   // provide state pose and path close but outside of tol. with less than PI/2 angular diff.
   path.x(9) = 0.95;
   goal.position.x = 0.95;
+<<<<<<< HEAD
   state.local_path_length = std::abs(state.pose.pose.position.x - goal.position.x);
+=======
+>>>>>>> jazzy
   data.furthest_reached_path_point = 2;  // So it grabs the 2 + offset_from_furthest_ = 6th point
   path.x(6) = 1.0;  // angle between path point and pose = 0 < max_angle_to_furthest_
   path.y(6) = 0.0;
@@ -599,12 +782,20 @@ TEST(CriticTests, PreferForwardCritic)
   generated_trajectories.reset(1000, 30);
   models::Path path;
   geometry_msgs::msg::Pose goal;
+<<<<<<< HEAD
   path.reset(10);
   Eigen::ArrayXf costs = Eigen::ArrayXf::Zero(1000);
   float model_dt = 0.1;
   CriticData data =
   {state, generated_trajectories, path, goal, costs, model_dt,
     false, nullptr, nullptr, std::nullopt, std::nullopt, {}};
+=======
+  xt::xtensor<float, 1> costs = xt::zeros<float>({1000});
+  float model_dt = 0.1;
+  CriticData data =
+  {state, generated_trajectories, path, goal, costs, model_dt,
+    false, nullptr, nullptr, std::nullopt, std::nullopt};
+>>>>>>> jazzy
   data.motion_model = std::make_shared<DiffDriveMotionModel>();
   TestGoalChecker goal_checker;  // from utils_tests tolerance of 0.25 positionally
 
@@ -621,15 +812,22 @@ TEST(CriticTests, PreferForwardCritic)
   state.pose.pose.position.x = 1.0;
   path.x(9) = 10.0;
   goal.position.x = 10.0;
+<<<<<<< HEAD
   state.local_path_length = std::abs(state.pose.pose.position.x - goal.position.x);
+=======
+>>>>>>> jazzy
   critic.score(data);
   EXPECT_NEAR(costs.sum(), 0.0f, 1e-6f);
 
   // provide state pose and path close to trigger behavior but with all forward motion
   path.x(9) = 0.15;
   goal.position.x = 0.15;
+<<<<<<< HEAD
   state.local_path_length = std::abs(state.pose.pose.position.x - goal.position.x);
   state.vx.setOnes();
+=======
+  state.vx = xt::ones<float>({1000, 30});
+>>>>>>> jazzy
   critic.score(data);
   EXPECT_NEAR(costs.sum(), 0.0f, 1e-6f);
 
@@ -658,12 +856,20 @@ TEST(CriticTests, TwirlingCritic)
   generated_trajectories.reset(1000, 30);
   models::Path path;
   geometry_msgs::msg::Pose goal;
+<<<<<<< HEAD
   path.reset(10);
   Eigen::ArrayXf costs = Eigen::ArrayXf::Zero(1000);
   float model_dt = 0.1;
   CriticData data =
   {state, generated_trajectories, path, goal, costs, model_dt,
     false, nullptr, nullptr, std::nullopt, std::nullopt, {}};
+=======
+  xt::xtensor<float, 1> costs = xt::zeros<float>({1000});
+  float model_dt = 0.1;
+  CriticData data =
+  {state, generated_trajectories, path, goal, costs, model_dt,
+    false, nullptr, nullptr, std::nullopt, std::nullopt};
+>>>>>>> jazzy
   data.motion_model = std::make_shared<DiffDriveMotionModel>();
   TestGoalChecker goal_checker;  // from utils_tests tolerance of 0.25 positionally
   data.goal_checker = &goal_checker;
@@ -681,15 +887,22 @@ TEST(CriticTests, TwirlingCritic)
   state.pose.pose.position.x = 1.0;
   path.x(9) = 10.0;
   goal.position.x = 10.0;
+<<<<<<< HEAD
   state.local_path_length = std::abs(state.pose.pose.position.x - goal.position.x);
+=======
+>>>>>>> jazzy
   critic.score(data);
   EXPECT_NEAR(costs.sum(), 0.0, 1e-6);
 
   // provide state pose and path close to trigger behavior but with no angular variation
   path.x(9) = 0.15;
   goal.position.x = 0.15;
+<<<<<<< HEAD
   state.local_path_length = std::abs(state.pose.pose.position.x - goal.position.x);
   state.wz.setZero();
+=======
+  state.wz = xt::zeros<float>({1000, 30});
+>>>>>>> jazzy
   critic.score(data);
   EXPECT_NEAR(costs.sum(), 0.0, 1e-6);
 
@@ -725,12 +938,20 @@ TEST(CriticTests, PathFollowCritic)
   generated_trajectories.reset(1000, 30);
   models::Path path;
   geometry_msgs::msg::Pose goal;
+<<<<<<< HEAD
   path.reset(6);
   Eigen::ArrayXf costs = Eigen::ArrayXf::Zero(1000);
   float model_dt = 0.1;
   CriticData data =
   {state, generated_trajectories, path, goal, costs, model_dt,
     false, nullptr, nullptr, std::nullopt, std::nullopt, {}};
+=======
+  xt::xtensor<float, 1> costs = xt::zeros<float>({1000});
+  float model_dt = 0.1;
+  CriticData data =
+  {state, generated_trajectories, path, goal, costs, model_dt,
+    false, nullptr, nullptr, std::nullopt, std::nullopt};
+>>>>>>> jazzy
   data.motion_model = std::make_shared<DiffDriveMotionModel>();
   TestGoalChecker goal_checker;  // from utils_tests tolerance of 0.25 positionally
   data.goal_checker = &goal_checker;
@@ -746,9 +967,15 @@ TEST(CriticTests, PathFollowCritic)
 
   // provide state poses and goal close within positional tolerances
   state.pose.pose.position.x = 2.0;
+<<<<<<< HEAD
   path.x(5) = 1.8;
   goal.position.x = 1.8;
   state.local_path_length = std::abs(state.pose.pose.position.x - goal.position.x);
+=======
+  path.reset(6);
+  path.x(5) = 1.8;
+  goal.position.x = 1.8;
+>>>>>>> jazzy
   critic.score(data);
   EXPECT_NEAR(costs.sum(), 0.0, 1e-6);
 
@@ -756,7 +983,10 @@ TEST(CriticTests, PathFollowCritic)
   // pose differential is (0, 0) and (0.15, 0)
   path.x(5) = 0.15;
   goal.position.x = 0.15;
+<<<<<<< HEAD
   state.local_path_length = std::abs(state.pose.pose.position.x - goal.position.x);
+=======
+>>>>>>> jazzy
   critic.score(data);
   EXPECT_NEAR(costs.sum(), 750.0, 1e-2);  // 0.15 * 5 weight * 1000
 }
@@ -779,12 +1009,20 @@ TEST(CriticTests, PathAlignCritic)
   generated_trajectories.reset(1000, 30);
   models::Path path;
   geometry_msgs::msg::Pose goal;
+<<<<<<< HEAD
   path.reset(10);
   Eigen::ArrayXf costs = Eigen::ArrayXf::Zero(1000);
   float model_dt = 0.1;
   CriticData data =
   {state, generated_trajectories, path, goal, costs, model_dt,
     false, nullptr, nullptr, std::nullopt, std::nullopt, {}};
+=======
+  xt::xtensor<float, 1> costs = xt::zeros<float>({1000});
+  float model_dt = 0.1;
+  CriticData data =
+  {state, generated_trajectories, path, goal, costs, model_dt,
+    false, nullptr, nullptr, std::nullopt, std::nullopt};
+>>>>>>> jazzy
   data.motion_model = std::make_shared<DiffDriveMotionModel>();
   TestGoalChecker goal_checker;  // from utils_tests tolerance of 0.25 positionally
   data.goal_checker = &goal_checker;
@@ -802,7 +1040,10 @@ TEST(CriticTests, PathAlignCritic)
   state.pose.pose.position.x = 1.0;
   path.x(9) = 0.85;
   goal.position.x = 0.85;
+<<<<<<< HEAD
   state.local_path_length = std::abs(state.pose.pose.position.x - goal.position.x);
+=======
+>>>>>>> jazzy
   critic.score(data);
   EXPECT_NEAR(costs.sum(), 0.0, 1e-6);
 
@@ -810,7 +1051,10 @@ TEST(CriticTests, PathAlignCritic)
   // but data furthest point reached is 0 and offset default is 20, so returns
   path.x(9) = 0.15;
   goal.position.x = 0.15;
+<<<<<<< HEAD
   state.local_path_length = std::abs(state.pose.pose.position.x - goal.position.x);
+=======
+>>>>>>> jazzy
   critic.score(data);
   EXPECT_NEAR(costs.sum(), 0.0, 1e-6);
 
@@ -819,7 +1063,10 @@ TEST(CriticTests, PathAlignCritic)
   *data.furthest_reached_path_point = 21;
   path.x(9) = 0.15;
   goal.position.x = 0.15;
+<<<<<<< HEAD
   state.local_path_length = std::abs(state.pose.pose.position.x - goal.position.x);
+=======
+>>>>>>> jazzy
   critic.score(data);
   EXPECT_NEAR(costs.sum(), 0.0, 1e-6);
 
@@ -851,8 +1098,12 @@ TEST(CriticTests, PathAlignCritic)
   path.x(20) = 0.9;
   path.x(21) = 0.9;
   goal.position.x = 0.9;
+<<<<<<< HEAD
   state.local_path_length = std::abs(state.pose.pose.position.x - goal.position.x);
   generated_trajectories.x.setConstant(0.66f);
+=======
+  generated_trajectories.x = 0.66 * xt::ones<float>({1000, 30});
+>>>>>>> jazzy
   critic.score(data);
   // 0.66 * 1000 * 10 weight * 6 num pts eval / 6 normalization term
   EXPECT_NEAR(costs.sum(), 6600.0, 1e-2);
@@ -868,11 +1119,18 @@ TEST(CriticTests, PathAlignCritic)
   }
 
   data.path_pts_valid.reset();  // Recompute on new path
+<<<<<<< HEAD
   costs.setZero();
   path.x.setConstant(1.5f);
   path.y.setConstant(1.5f);
   goal.position.x = 1.5;
   state.local_path_length = std::abs(state.pose.pose.position.x - goal.position.x);
+=======
+  costs = xt::zeros<float>({1000});
+  path.x = 1.5 * xt::ones<float>({22});
+  path.y = 1.5 * xt::ones<float>({22});
+  goal.position.x = 1.5;
+>>>>>>> jazzy
   critic.score(data);
   EXPECT_NEAR(costs.sum(), 0.0, 1e-6);
 }
@@ -897,11 +1155,19 @@ TEST(CriticTests, VelocityDeadbandCritic)
   models::Trajectories generated_trajectories;
   models::Path path;
   geometry_msgs::msg::Pose goal;
+<<<<<<< HEAD
   Eigen::ArrayXf costs = Eigen::ArrayXf::Zero(1000);
   float model_dt = 0.1;
   CriticData data =
   {state, generated_trajectories, path, goal, costs, model_dt,
     false, nullptr, nullptr, std::nullopt, std::nullopt, {}};
+=======
+  xt::xtensor<float, 1> costs = xt::zeros<float>({1000});
+  float model_dt = 0.1;
+  CriticData data =
+  {state, generated_trajectories, path, goal, costs, model_dt,
+    false, nullptr, nullptr, std::nullopt, std::nullopt};
+>>>>>>> jazzy
   data.motion_model = std::make_shared<OmniMotionModel>();
 
   // Initialization testing

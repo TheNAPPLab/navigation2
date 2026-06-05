@@ -19,6 +19,7 @@
 #include "gtest/gtest.h"
 #include "rclcpp/rclcpp.hpp"
 
+<<<<<<< HEAD:nav2_ros_common/test/test_node_utils.cpp
 using nav2::sanitize_node_name;
 using nav2::generate_internal_node_name;
 using nav2::generate_internal_node;
@@ -27,6 +28,24 @@ using nav2::time_to_string;
 using nav2::declare_parameter_if_not_declared;
 using nav2::declare_or_get_parameter;
 using nav2::get_plugin_type_param;
+=======
+using nav2_util::sanitize_node_name;
+using nav2_util::generate_internal_node_name;
+using nav2_util::generate_internal_node;
+using nav2_util::add_namespaces;
+using nav2_util::time_to_string;
+using nav2_util::declare_parameter_if_not_declared;
+using nav2_util::declare_or_get_parameter;
+using nav2_util::get_plugin_type_param;
+
+class RclCppFixture
+{
+public:
+  RclCppFixture() {rclcpp::init(0, nullptr);}
+  ~RclCppFixture() {rclcpp::shutdown();}
+};
+RclCppFixture g_rclcppfixture;
+>>>>>>> jazzy:nav2_util/test/test_node_utils.cpp
 
 TEST(SanitizeNodeName, SanitizeNodeName)
 {
@@ -108,13 +127,23 @@ TEST(DeclareOrGetParam, DeclareOrGetParam)
   EXPECT_TRUE(declare_or_get_parameter(node, "burpy", true));
 
   // test declaration by type of existing param
+<<<<<<< HEAD:nav2_ros_common/test/test_node_utils.cpp
   int_param = declare_or_get_parameter<int>(node, "waldo");
+=======
+  int_param = declare_or_get_parameter<int>(node, "waldo",
+    rclcpp::ParameterType::PARAMETER_INTEGER);
+>>>>>>> jazzy:nav2_util/test/test_node_utils.cpp
   EXPECT_EQ(int_param, 3);
 
   // test declaration by type of non existing param
   got_exception = false;
   try {
+<<<<<<< HEAD:nav2_ros_common/test/test_node_utils.cpp
     int_param = declare_or_get_parameter<int>(node, "wololo");
+=======
+    int_param = declare_or_get_parameter<int>(node, "wololo",
+      rclcpp::ParameterType::PARAMETER_INTEGER);
+>>>>>>> jazzy:nav2_util/test/test_node_utils.cpp
   } catch (const rclcpp::exceptions::InvalidParameterValueException & exc) {
     got_exception = true;
   }

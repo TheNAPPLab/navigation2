@@ -27,6 +27,7 @@ enum class MotionModel
   REEDS_SHEPP = 3,
   STATE_LATTICE = 4,
   OMNI = 5,
+<<<<<<< HEAD
 };
 
 enum class GoalHeadingMode
@@ -35,6 +36,8 @@ enum class GoalHeadingMode
   DEFAULT = 1,
   BIDIRECTIONAL = 2,
   ALL_DIRECTION = 3,
+=======
+>>>>>>> jazzy
 };
 
 inline std::string toString(const MotionModel & n)

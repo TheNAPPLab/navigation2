@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 nav2_add_test(test_drive_on_heading_behavior
+=======
+ament_add_test(test_drive_on_heading_behavior
+>>>>>>> jazzy
   GENERATE_RESULT_FOR_RETURN_CODE_ZERO
   COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/test_drive_on_heading_behavior.launch.py"
   WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"

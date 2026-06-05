@@ -18,7 +18,10 @@
 
 #include <memory>
 #include <string>
+<<<<<<< HEAD
 #include <utility>
+=======
+>>>>>>> jazzy
 
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/point_cloud2_iterator.hpp"
@@ -28,9 +31,14 @@
 #include "nav2_costmap_2d/range_sensor_layer.hpp"
 #include "nav2_costmap_2d/obstacle_layer.hpp"
 #include "nav2_costmap_2d/inflation_layer.hpp"
+<<<<<<< HEAD
 #include "nav2_costmap_2d/legacy_inflation_layer.hpp"
 #include "nav2_costmap_2d/plugin_container_layer.hpp"
 #include "nav2_ros_common/lifecycle_node.hpp"
+=======
+#include "nav2_costmap_2d/plugin_container_layer.hpp"
+#include "nav2_util/lifecycle_node.hpp"
+>>>>>>> jazzy
 
 const double MAX_Z(1.0);
 
@@ -147,6 +155,7 @@ void addInflationLayer(
   layers.addPlugin(ipointer);
 }
 
+<<<<<<< HEAD
 void addLegacyInflationLayer(
   nav2_costmap_2d::LayeredCostmap & layers,
   tf2_ros::Buffer & tf, nav2::LifecycleNode::SharedPtr node,
@@ -162,6 +171,11 @@ void addLegacyInflationLayer(
 void addPluginContainerLayer(
   nav2_costmap_2d::LayeredCostmap & layers,
   tf2_ros::Buffer & tf, nav2::LifecycleNode::SharedPtr node,
+=======
+void addPluginContainerLayer(
+  nav2_costmap_2d::LayeredCostmap & layers,
+  tf2_ros::Buffer & tf, nav2_util::LifecycleNode::SharedPtr node,
+>>>>>>> jazzy
   std::shared_ptr<nav2_costmap_2d::PluginContainerLayer> & pclayer,
   std::string name,
   rclcpp::CallbackGroup::SharedPtr callback_group = nullptr)

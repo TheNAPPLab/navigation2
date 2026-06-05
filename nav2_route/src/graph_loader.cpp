@@ -15,12 +15,20 @@
 #include <memory>
 
 #include "nav2_route/graph_loader.hpp"
+<<<<<<< HEAD
+=======
+#include "ament_index_cpp/get_package_share_directory.hpp"
+>>>>>>> jazzy
 
 namespace nav2_route
 {
 
 GraphLoader::GraphLoader(
+<<<<<<< HEAD
   nav2::LifecycleNode::SharedPtr node,
+=======
+  nav2_util::LifecycleNode::SharedPtr node,
+>>>>>>> jazzy
   std::shared_ptr<tf2_ros::Buffer> tf,
   const std::string frame)
 : plugin_loader_("nav2_route", "nav2_route::GraphFileLoader"),
@@ -30,6 +38,7 @@ GraphLoader::GraphLoader(
   tf_ = tf;
   route_frame_ = frame;
 
+<<<<<<< HEAD
   graph_filepath_ = node->declare_or_get_parameter(
     "graph_filepath", std::string(""));
 
@@ -38,13 +47,29 @@ GraphLoader::GraphLoader(
     "graph_file_loader", default_plugin_id_);
   if (graph_file_loader_id == default_plugin_id_) {
     nav2::declare_parameter_if_not_declared(
+=======
+  nav2_util::declare_parameter_if_not_declared(
+    node, "graph_filepath", rclcpp::ParameterValue(std::string("")));
+  graph_filepath_ = node->get_parameter("graph_filepath").as_string();
+
+  // Default Graph Parser
+  nav2_util::declare_parameter_if_not_declared(
+    node, "graph_file_loader", rclcpp::ParameterValue(default_plugin_id_));
+  auto graph_file_loader_id = node->get_parameter("graph_file_loader").as_string();
+  if (graph_file_loader_id == default_plugin_id_) {
+    nav2_util::declare_parameter_if_not_declared(
+>>>>>>> jazzy
       node, default_plugin_id_ + ".plugin",
       rclcpp::ParameterValue("nav2_route::GeoJsonGraphFileLoader"));
   }
 
   // Create graph file loader plugin
   try {
+<<<<<<< HEAD
     plugin_type_ = nav2::get_plugin_type_param(node, graph_file_loader_id);
+=======
+    plugin_type_ = nav2_util::get_plugin_type_param(node, graph_file_loader_id);
+>>>>>>> jazzy
     graph_file_loader_ = plugin_loader_.createSharedInstance((plugin_type_));
     RCLCPP_INFO(
       logger_, "Created GraphFileLoader %s of type %s",

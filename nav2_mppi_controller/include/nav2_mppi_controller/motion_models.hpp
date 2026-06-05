@@ -81,7 +81,23 @@ public:
     float max_delta_vy = model_dt_ * control_constraints_.ay_max;
     float min_delta_vy = model_dt_ * control_constraints_.ay_min;
     float max_delta_wz = model_dt_ * control_constraints_.az_max;
+<<<<<<< HEAD
     unsigned int n_cols = state.vx.cols();
+=======
+    for (unsigned int i = 0; i != state.vx.shape(0); i++) {
+      float vx_last = state.vx(i, 0);
+      float vy_last = state.vy(i, 0);
+      float wz_last = state.wz(i, 0);
+      for (unsigned int j = 1; j != state.vx.shape(1); j++) {
+        float & cvx_curr = state.cvx(i, j - 1);
+        if (vx_last > 0) {
+          cvx_curr = std::clamp(cvx_curr, vx_last + min_delta_vx, vx_last + max_delta_vx);
+        } else {
+          cvx_curr = std::clamp(cvx_curr, vx_last - max_delta_vx, vx_last - min_delta_vx);
+        }
+        state.vx(i, j) = cvx_curr;
+        vx_last = cvx_curr;
+>>>>>>> jazzy
 
     // Set dynamic limits to the platform velocities from the raw controls sampling
     for (unsigned int i = 1; i < n_cols; i++) {
@@ -97,6 +113,7 @@ public:
         .cwiseMax(lower_bound_vx)
         .cwiseMin(upper_bound_vx);
 
+<<<<<<< HEAD
       state.wz.col(i) = state.cwz.col(i - 1)
         .cwiseMax(state.wz.col(i - 1) - max_delta_wz)
         .cwiseMin(state.wz.col(i - 1) + max_delta_wz);
@@ -113,6 +130,18 @@ public:
         state.vy.col(i) = state.cvy.col(i - 1)
           .cwiseMax(lower_bound_vy)
           .cwiseMin(upper_bound_vy);
+=======
+        if (is_holo) {
+          float & cvy_curr = state.cvy(i, j - 1);
+          if (vy_last > 0) {
+            cvy_curr = std::clamp(cvy_curr, vy_last + min_delta_vy, vy_last + max_delta_vy);
+          } else {
+            cvy_curr = std::clamp(cvy_curr, vy_last - max_delta_vy, vy_last - min_delta_vy);
+          }
+          state.vy(i, j) = cvy_curr;
+          vy_last = cvy_curr;
+        }
+>>>>>>> jazzy
       }
     }
   }
@@ -145,6 +174,7 @@ public:
   /**
     * @brief Constructor for mppi::AckermannMotionModel
     */
+<<<<<<< HEAD
   AckermannMotionModel() = default;
 
   /**
@@ -158,6 +188,12 @@ public:
   {
     auto getParam = param_handler->getParamGetter(plugin_name);
     getParam(min_turning_r_, "min_turning_r", 0.2f);
+=======
+  explicit AckermannMotionModel(ParametersHandler * param_handler, const std::string & name)
+  {
+    auto getParam = param_handler->getParamGetter(name + ".AckermannConstraints");
+    getParam(min_turning_r_, "min_turning_r", 0.2);
+>>>>>>> jazzy
   }
 
   /**
@@ -175,10 +211,18 @@ public:
    */
   void applyConstraints(models::ControlSequence & control_sequence) override
   {
+<<<<<<< HEAD
     const auto wz_constrained = control_sequence.vx.abs() / min_turning_r_;
     control_sequence.wz = control_sequence.wz
       .max((-wz_constrained))
       .min(wz_constrained);
+=======
+    auto & vx = control_sequence.vx;
+    auto & wz = control_sequence.wz;
+
+    auto view = xt::masked_view(wz, (xt::fabs(vx) / xt::fabs(wz)) < min_turning_r_);
+    view = xt::sign(wz) * xt::fabs(vx) / min_turning_r_;
+>>>>>>> jazzy
   }
   /**
    * @brief Get minimum turning radius of ackermann drive

@@ -147,9 +147,15 @@ protected:
   nav2::Publisher<nav_msgs::msg::Path>::SharedPtr _raw_plan_publisher;
   nav2::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr
     _planned_footprints_publisher;
+<<<<<<< HEAD
   nav2::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr
     _smoothed_footprints_publisher;
   nav2::Publisher<geometry_msgs::msg::PoseArray>::SharedPtr
+=======
+  rclcpp_lifecycle::LifecyclePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr
+    _smoothed_footprints_publisher;
+  rclcpp_lifecycle::LifecyclePublisher<geometry_msgs::msg::PoseArray>::SharedPtr
+>>>>>>> jazzy
     _expansions_publisher;
   std::mutex _mutex;
   nav2::LifecycleNode::WeakPtr _node;

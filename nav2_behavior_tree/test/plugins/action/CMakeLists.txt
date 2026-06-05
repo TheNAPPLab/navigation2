@@ -55,7 +55,21 @@ plugin_add_test(test_action_navigate_through_poses_action test_navigate_through_
 
 plugin_add_test(test_truncate_path_action test_truncate_path_action.cpp nav2_truncate_path_action_bt_node)
 
+<<<<<<< HEAD
 plugin_add_test(test_truncate_path_local_action test_truncate_path_local_action.cpp nav2_truncate_path_local_action_bt_node)
+=======
+ament_add_gtest(test_get_pose_from_path_action test_get_pose_from_path_action.cpp)
+target_link_libraries(test_get_pose_from_path_action nav2_get_pose_from_path_action_bt_node)
+ament_target_dependencies(test_get_pose_from_path_action ${dependencies})
+
+ament_add_gtest(test_get_current_pose_action test_get_current_pose_action.cpp)
+target_link_libraries(test_get_current_pose_action nav2_get_current_pose_action_bt_node)
+ament_target_dependencies(test_get_current_pose_action ${dependencies})
+
+ament_add_gtest(test_planner_selector_node test_planner_selector_node.cpp)
+target_link_libraries(test_planner_selector_node nav2_planner_selector_bt_node)
+ament_target_dependencies(test_planner_selector_node ${dependencies})
+>>>>>>> jazzy
 
 plugin_add_test(test_concatenate_paths_action test_concatenate_paths_action.cpp nav2_concatenate_paths_action_bt_node)
 
@@ -63,6 +77,7 @@ plugin_add_test(test_get_current_pose_action test_get_current_pose_action.cpp na
 
 plugin_add_test(test_remove_passed_goals_action test_remove_passed_goals_action.cpp nav2_remove_passed_goals_action_bt_node)
 
+<<<<<<< HEAD
 plugin_add_test(test_get_next_few_goals_action test_get_next_few_goals_action.cpp nav2_get_next_few_goals_action_bt_node)
 
 plugin_add_test(
@@ -106,3 +121,24 @@ plugin_add_test(test_check_stop_status_action test_check_stop_status_action.cpp 
 plugin_add_test(test_check_pose_occupancy_action test_check_pose_occupancy_action.cpp check_pose_occupancy_action_bt_node)
 
 plugin_add_test(test_validate_path_action test_validate_path_action.cpp validate_path_action_bt_node)
+=======
+ament_add_gtest(test_progress_checker_selector_node test_progress_checker_selector_node.cpp)
+target_link_libraries(test_progress_checker_selector_node nav2_progress_checker_selector_bt_node)
+ament_target_dependencies(test_progress_checker_selector_node ${dependencies})
+
+ament_add_gtest(test_compute_and_track_route test_compute_and_track_route_action.cpp)
+target_link_libraries(test_compute_and_track_route nav2_compute_and_track_route_bt_node)
+ament_target_dependencies(test_compute_and_track_route ${dependencies})
+
+ament_add_gtest(test_compute_route test_compute_route_action.cpp)
+target_link_libraries(test_compute_route nav2_compute_route_bt_node)
+ament_target_dependencies(test_compute_route ${dependencies})
+
+ament_add_gtest(test_concatenate_paths_action test_concatenate_paths_action.cpp)
+target_link_libraries(test_concatenate_paths_action nav2_concatenate_paths_action_bt_node)
+ament_target_dependencies(test_concatenate_paths_action ${dependencies})
+
+ament_add_gtest(test_compute_and_track_route_cancel test_compute_and_track_route_cancel_node.cpp)
+target_link_libraries(test_compute_and_track_route_cancel nav2_compute_and_track_route_cancel_bt_node)
+ament_target_dependencies(test_compute_and_track_route_cancel ${dependencies})
+>>>>>>> jazzy

@@ -272,11 +272,14 @@ TEST(OptimizerTests, BasicInitializedFunctions)
   node->declare_parameter("controller_frequency", rclcpp::ParameterValue(30.0));
   node->declare_parameter("mppic.ax_min", rclcpp::ParameterValue(3.0));
   node->declare_parameter("mppic.ay_min", rclcpp::ParameterValue(3.0));
+<<<<<<< HEAD
 
   node->declare_parameter(
     "mppic.diff_drive.plugin", rclcpp::ParameterValue("mppi::DiffDriveMotionModel"));
   node->declare_parameter(
     "mppic.omni.plugin", rclcpp::ParameterValue("mppi::OmniMotionModel"));
+=======
+>>>>>>> jazzy
   auto costmap_ros = std::make_shared<nav2_costmap_2d::Costmap2DROS>(
     "dummy_costmap", "", true);
   std::string name = "test";

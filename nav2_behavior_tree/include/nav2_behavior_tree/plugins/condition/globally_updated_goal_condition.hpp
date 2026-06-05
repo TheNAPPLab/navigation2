@@ -18,10 +18,18 @@
 #include <string>
 #include <vector>
 
+<<<<<<< HEAD
 #include "nav2_ros_common/lifecycle_node.hpp"
 #include "behaviortree_cpp/condition_node.h"
 #include "behaviortree_cpp/json_export.h"
 #include "nav_msgs/msg/goals.hpp"
+=======
+#include "rclcpp/rclcpp.hpp"
+
+#include "behaviortree_cpp/json_export.h"
+#include "behaviortree_cpp/condition_node.h"
+#include "geometry_msgs/msg/pose_stamped.hpp"
+>>>>>>> jazzy
 #include "nav2_behavior_tree/bt_utils.hpp"
 #include "nav2_behavior_tree/json_utils.hpp"
 
@@ -66,7 +74,11 @@ public:
   {
     // Register JSON definitions for the types used in the ports
     BT::RegisterJsonDefinition<geometry_msgs::msg::PoseStamped>();
+<<<<<<< HEAD
     BT::RegisterJsonDefinition<nav_msgs::msg::Goals>();
+=======
+    BT::RegisterJsonDefinition<std::vector<geometry_msgs::msg::PoseStamped>>();
+>>>>>>> jazzy
 
     return {
       BT::InputPort<nav_msgs::msg::Goals>(

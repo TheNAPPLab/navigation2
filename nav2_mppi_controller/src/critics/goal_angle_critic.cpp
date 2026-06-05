@@ -35,7 +35,13 @@ void GoalAngleCritic::initialize()
 
 void GoalAngleCritic::score(CriticData & data)
 {
+<<<<<<< HEAD
   if (!enabled_ || data.state.local_path_length > threshold_to_consider_) {
+=======
+  if (!enabled_ || !utils::withinPositionGoalTolerance(
+      threshold_to_consider_, data.state.pose.pose, data.goal))
+  {
+>>>>>>> jazzy
     return;
   }
 
@@ -53,10 +59,29 @@ void GoalAngleCritic::score(CriticData & data)
     angular_distances = angular_distances.min(symmetric_distances);
   }
 
+  auto angular_distances =
+    xt::eval(xt::fabs(utils::shortest_angular_distance(data.trajectories.yaws, goal_yaw)));
+
+  if (symmetric_yaw_tolerance_) {
+    // For symmetric robots: use minimum distance to either goal orientation or goal + 180°
+    const float symmetric_goal_yaw = angles::normalize_angle(goal_yaw + M_PI);
+    auto symmetric_distances =
+      xt::eval(xt::fabs(utils::shortest_angular_distance(data.trajectories.yaws,
+        symmetric_goal_yaw)));
+    angular_distances = xt::eval(xt::minimum(angular_distances, symmetric_distances));
+  }
+
   if (power_ > 1u) {
+<<<<<<< HEAD
     data.costs += ((angular_distances.rowwise().mean()) * weight_).pow(power_).eval();
   } else {
     data.costs += ((angular_distances.rowwise().mean()) * weight_).eval();
+=======
+    data.costs += xt::pow(
+      xt::mean(angular_distances, {1}) * weight_, power_);
+  } else {
+    data.costs += xt::mean(angular_distances, {1}) * weight_;
+>>>>>>> jazzy
   }
 }
 

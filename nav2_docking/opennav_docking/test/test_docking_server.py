@@ -26,15 +26,24 @@ from launch_ros.actions import Node
 import launch_testing
 import launch_testing.actions
 import launch_testing.asserts
+<<<<<<< HEAD
 from lifecycle_msgs.srv import GetState
+=======
+import launch_testing.markers
+import launch_testing.util
+>>>>>>> jazzy
 from nav2_common.launch import RewrittenYaml
 from nav2_msgs.action import DockRobot, NavigateToPose, UndockRobot
 from nav_msgs.msg import Odometry
 import pytest
 import rclpy
 from rclpy.action.client import ActionClient
+<<<<<<< HEAD
 from rclpy.action.server import ActionServer, ServerGoalHandle
 from rclpy.client import Client
+=======
+from rclpy.action.server import ActionServer
+>>>>>>> jazzy
 from sensor_msgs.msg import BatteryState
 import tf2_ros
 from tf2_ros import TransformBroadcaster
@@ -46,7 +55,10 @@ from tf2_ros import TransformBroadcaster
 # try to identify flaky ness.
 # python3 -u -m pytest --force-flaky --min-passes 3 --max-runs 5 -s -v test_docking_server.py
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> jazzy
 @pytest.mark.rostest
 # @pytest.mark.flaky
 # @pytest.mark.flaky(max_runs=5, min_passes=3)
@@ -65,6 +77,7 @@ def generate_test_description() -> LaunchDescription:
         param_substitutions.update({'plugin': 'opennav_docking::SimpleNonChargingDock'})
 
     if os.getenv('BACKWARD') == 'True':
+<<<<<<< HEAD
         param_substitutions.update({'dock_direction': 'backward'})
         param_substitutions.update({'staging_yaw_offset': '3.14'})
 
@@ -72,6 +85,11 @@ def generate_test_description() -> LaunchDescription:
         param_substitutions.update({'dock_direction': 'backward'})
         param_substitutions.update({'rotate_to_dock': 'True'})
 
+=======
+        param_substitutions.update({'dock_backwards': 'True'})
+        param_substitutions.update({'staging_yaw_offset': '3.14'})
+
+>>>>>>> jazzy
     configured_params = RewrittenYaml(
         source_file=params_file,
         root_key='',
@@ -110,10 +128,17 @@ class TestDockingServer(unittest.TestCase):
         rclpy.init()
 
     @classmethod
+<<<<<<< HEAD
     def tearDownClass(cls) -> None:
         rclpy.shutdown()
 
     def setUp(self) -> None:
+=======
+    def tearDownClass(cls):
+        rclpy.shutdown()
+
+    def setUp(self):
+>>>>>>> jazzy
         # Create a ROS node for tests
         # Latest odom -> base_link
         self.x = 0.0
@@ -127,10 +152,20 @@ class TestDockingServer(unittest.TestCase):
         # Latest command velocity
         self.command = Twist()
         self.node = rclpy.create_node('test_docking_server')
+<<<<<<< HEAD
         # Publish odometry
         self.tf_buffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self.node)
         self.odom_pub = self.node.create_publisher(Odometry, 'odom', 10)
+=======
+
+    def tearDown(self):
+        self.node.destroy_node()
+
+    def command_velocity_callback(self, msg):
+        self.node.get_logger().info('Command: %f %f' % (msg.linear.x, msg.angular.z))
+        self.command = msg
+>>>>>>> jazzy
 
     def wait_for_node_to_be_active(self, node_name: str, timeout_sec: float = 30.0) -> None:
         """Wait for a managed node to become active."""
@@ -179,7 +214,10 @@ class TestDockingServer(unittest.TestCase):
         t.transform.rotation.z = sin(self.theta / 2.0)
         t.transform.rotation.w = cos(self.theta / 2.0)
         self.tf_broadcaster.sendTransform(t)
+<<<<<<< HEAD
         self.publish_odometry(t)
+=======
+>>>>>>> jazzy
         # Publish the battery state if we are using a charging dock
         if os.getenv('NON_CHARGING_DOCK') == 'False':
             b = BatteryState()
@@ -270,6 +308,7 @@ class TestDockingServer(unittest.TestCase):
         # Publish transform
         self.publish()
 
+<<<<<<< HEAD
         # Wait until the transform is available.
         self.node.get_logger().info('Waiting for TF odom->base_link to be available...')
         start_time = time.time()
@@ -283,11 +322,21 @@ class TestDockingServer(unittest.TestCase):
 
         # Wait until the docking server is active.
         self.wait_for_node_to_be_active('docking_server')
+=======
+        # Run for 1 seconds to allow tf to propogate
+        for _ in range(10):
+            rclpy.spin_once(self.node, timeout_sec=0.1)
+            time.sleep(0.1)
+>>>>>>> jazzy
 
         # Test docking action
         self.action_result = []
         assert self.dock_action_client.wait_for_server(timeout_sec=5.0), \
+<<<<<<< HEAD
             'dock_robot service not available'
+=======
+               'dock_robot service not available'
+>>>>>>> jazzy
 
         goal = DockRobot.Goal()
         goal.use_dock_id = True
@@ -373,6 +422,7 @@ class TestDockingServer(unittest.TestCase):
         rclpy.spin_until_future_complete(self.node, result_future)
         self.action_result.append(result_future.result())
 
+<<<<<<< HEAD
         self.assertIsNotNone(self.action_result[3])
         if self.action_result[3] is not None:
             self.assertEqual(self.action_result[3].status, GoalStatus.STATUS_SUCCEEDED)
@@ -385,3 +435,15 @@ class TestProcessOutput(unittest.TestCase):
     def test_exit_code(self, proc_info: launch_testing.ProcInfoHandler) -> None:
         # Check that all processes in the launch exit with code 0
         launch_testing.asserts.assertExitCodes(proc_info)  # type: ignore[no-untyped-call]
+=======
+        self.assertEqual(self.action_result[3].status, GoalStatus.STATUS_SUCCEEDED)
+        self.assertTrue(self.action_result[3].result.success)
+
+
+@launch_testing.post_shutdown_test()
+class TestProcessOutput(unittest.TestCase):
+
+    def test_exit_code(self, proc_info):
+        # Check that all processes in the launch exit with code 0
+        launch_testing.asserts.assertExitCodes(proc_info)
+>>>>>>> jazzy

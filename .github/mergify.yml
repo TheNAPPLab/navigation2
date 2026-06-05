@@ -1,5 +1,17 @@
 pull_request_rules:
   - name: backport to jazzy at reviewers discretion
+<<<<<<< HEAD
+=======
+    conditions:
+      - base=main
+      - "label=backport-jazzy"
+    actions:
+      backport:
+        branches:
+          - jazzy
+  
+  - name: backport to iron at reviewers discretion
+>>>>>>> jazzy
     conditions:
       - base=main
       - "label=backport-jazzy"
@@ -26,6 +38,7 @@ pull_request_rules:
         branches:
           - humble
 
+<<<<<<< HEAD
   - name: backport to kilted at reviewers discretion
     conditions:
       - base=main
@@ -35,6 +48,13 @@ pull_request_rules:
         branches:
           - kilted
 
+=======
+  - name: delete head branch after merge
+    conditions:
+      - merged
+    actions:
+      delete_head_branch:
+>>>>>>> jazzy
 
   - name: ask to resolve conflict
     conditions:

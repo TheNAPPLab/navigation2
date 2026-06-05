@@ -14,6 +14,10 @@
 
 #include "nav2_route/route_server.hpp"
 
+<<<<<<< HEAD
+=======
+using nav2_util::declare_parameter_if_not_declared;
+>>>>>>> jazzy
 using std::placeholders::_1;
 using std::placeholders::_2;
 
@@ -21,10 +25,17 @@ namespace nav2_route
 {
 
 RouteServer::RouteServer(const rclcpp::NodeOptions & options)
+<<<<<<< HEAD
 : nav2::LifecycleNode("route_server", "", options)
 {}
 
 nav2::CallbackReturn
+=======
+: nav2_util::LifecycleNode("route_server", "", options)
+{}
+
+nav2_util::CallbackReturn
+>>>>>>> jazzy
 RouteServer::on_configure(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Configuring");
@@ -39,6 +50,7 @@ RouteServer::on_configure(const rclcpp_lifecycle::State & /*state*/)
   auto node = shared_from_this();
   graph_vis_publisher_ =
     node->create_publisher<visualization_msgs::msg::MarkerArray>(
+<<<<<<< HEAD
     "route_graph", nav2::qos::LatchedPublisherQoS());
 
   route_publisher_ = create_publisher<nav2_msgs::msg::Route>("route");
@@ -52,6 +64,32 @@ RouteServer::on_configure(const rclcpp_lifecycle::State & /*state*/)
     "compute_and_track_route",
     std::bind(&RouteServer::computeAndTrackRoute, this),
     nullptr, std::chrono::milliseconds(500), true);
+=======
+    "route_graph", rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable());
+
+  declare_parameter_if_not_declared(
+    node, "action_server_result_timeout", rclcpp::ParameterValue(10.0));
+  double action_server_result_timeout = 10.0;
+  get_parameter("action_server_result_timeout", action_server_result_timeout);
+  rcl_action_server_options_t server_options = rcl_action_server_get_default_options();
+  server_options.result_timeout.nanoseconds = RCL_S_TO_NS(action_server_result_timeout);
+
+  compute_route_server_ = std::make_unique<ComputeRouteServer>(
+    shared_from_this(),
+    "compute_route",
+    std::bind(&RouteServer::computeRoute, this),
+    nullptr,
+    std::chrono::milliseconds(500),
+    true, server_options);
+
+  compute_and_track_route_server_ = std::make_unique<ComputeAndTrackRouteServer>(
+    shared_from_this(),
+    "compute_and_track_route",
+    std::bind(&RouteServer::computeAndTrackRoute, this),
+    nullptr,
+    std::chrono::milliseconds(500),
+    true, server_options);
+>>>>>>> jazzy
 
   set_graph_service_ = node->create_service<nav2_msgs::srv::SetRouteGraph>(
     std::string(node->get_name()) + "/set_route_graph",
@@ -59,6 +97,7 @@ RouteServer::on_configure(const rclcpp_lifecycle::State & /*state*/)
       &RouteServer::setRouteGraph, this,
       std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
+<<<<<<< HEAD
   route_frame_ = this->declare_or_get_parameter(
     "route_frame", std::string("map"));
   base_frame_ = this->declare_or_get_parameter(
@@ -69,17 +108,47 @@ RouteServer::on_configure(const rclcpp_lifecycle::State & /*state*/)
   // Create costmap subscriber
   std::string costmap_topic = this->declare_or_get_parameter(
     "costmap_topic", std::string("global_costmap/costmap_raw"));
+=======
+  declare_parameter_if_not_declared(
+    node, "route_frame", rclcpp::ParameterValue(std::string("map")));
+  declare_parameter_if_not_declared(
+    node, "base_frame", rclcpp::ParameterValue(std::string("base_link")));
+  declare_parameter_if_not_declared(
+    node, "global_frame", rclcpp::ParameterValue(std::string("map")));
+  declare_parameter_if_not_declared(
+    node, "max_planning_time", rclcpp::ParameterValue(2.0));
+
+  route_frame_ = node->get_parameter("route_frame").as_string();
+  base_frame_ = node->get_parameter("base_frame").as_string();
+  global_frame_ = node->get_parameter("global_frame").as_string();
+  max_planning_time_ = node->get_parameter("max_planning_time").as_double();
+
+  // Create costmap subscriber
+  nav2_util::declare_parameter_if_not_declared(
+    node, "costmap_topic",
+    rclcpp::ParameterValue(std::string("global_costmap/costmap_raw")));
+  std::string costmap_topic = node->get_parameter("costmap_topic").as_string();
+>>>>>>> jazzy
   costmap_subscriber_ = std::make_shared<nav2_costmap_2d::CostmapSubscriber>(node, costmap_topic);
 
   try {
     graph_loader_ = std::make_shared<GraphLoader>(node, tf_, route_frame_);
     if (!graph_loader_->loadGraphFromParameter(graph_, id_to_graph_map_)) {
+<<<<<<< HEAD
       return nav2::CallbackReturn::FAILURE;
+=======
+      return nav2_util::CallbackReturn::FAILURE;
+>>>>>>> jazzy
     }
 
     goal_intent_extractor_ = std::make_shared<GoalIntentExtractor>();
     goal_intent_extractor_->configure(
+<<<<<<< HEAD
       node, graph_, &id_to_graph_map_, tf_, costmap_subscriber_, route_frame_, base_frame_);
+=======
+      node, graph_, &id_to_graph_map_, tf_, costmap_subscriber_,
+      route_frame_, global_frame_, base_frame_);
+>>>>>>> jazzy
 
     route_planner_ = std::make_shared<RoutePlanner>();
     route_planner_->configure(node, tf_, costmap_subscriber_);
@@ -92,6 +161,7 @@ RouteServer::on_configure(const rclcpp_lifecycle::State & /*state*/)
     path_converter_->configure(node);
   } catch (std::exception & e) {
     RCLCPP_FATAL(get_logger(), "Failed to configure route server: %s", e.what());
+<<<<<<< HEAD
     return nav2::CallbackReturn::FAILURE;
   }
 
@@ -99,6 +169,15 @@ RouteServer::on_configure(const rclcpp_lifecycle::State & /*state*/)
 }
 
 nav2::CallbackReturn
+=======
+    return nav2_util::CallbackReturn::FAILURE;
+  }
+
+  return nav2_util::CallbackReturn::SUCCESS;
+}
+
+nav2_util::CallbackReturn
+>>>>>>> jazzy
 RouteServer::on_activate(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Activating");
@@ -106,24 +185,40 @@ RouteServer::on_activate(const rclcpp_lifecycle::State & /*state*/)
   compute_and_track_route_server_->activate();
   graph_vis_publisher_->on_activate();
   graph_vis_publisher_->publish(utils::toMsg(graph_, route_frame_, this->now()));
+<<<<<<< HEAD
   route_publisher_->on_activate();
   createBond();
   return nav2::CallbackReturn::SUCCESS;
 }
 
 nav2::CallbackReturn
+=======
+  createBond();
+  return nav2_util::CallbackReturn::SUCCESS;
+}
+
+nav2_util::CallbackReturn
+>>>>>>> jazzy
 RouteServer::on_deactivate(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Deactivating");
   compute_route_server_->deactivate();
   compute_and_track_route_server_->deactivate();
   graph_vis_publisher_->on_deactivate();
+<<<<<<< HEAD
   route_publisher_->on_deactivate();
   destroyBond();
   return nav2::CallbackReturn::SUCCESS;
 }
 
 nav2::CallbackReturn
+=======
+  destroyBond();
+  return nav2_util::CallbackReturn::SUCCESS;
+}
+
+nav2_util::CallbackReturn
+>>>>>>> jazzy
 RouteServer::on_cleanup(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Cleaning up");
@@ -136,6 +231,7 @@ RouteServer::on_cleanup(const rclcpp_lifecycle::State & /*state*/)
   path_converter_.reset();
   goal_intent_extractor_.reset();
   graph_vis_publisher_.reset();
+<<<<<<< HEAD
   route_publisher_.reset();
   transform_listener_.reset();
   tf_.reset();
@@ -148,6 +244,19 @@ RouteServer::on_shutdown(const rclcpp_lifecycle::State &)
 {
   RCLCPP_INFO(get_logger(), "Shutting down");
   return nav2::CallbackReturn::SUCCESS;
+=======
+  transform_listener_.reset();
+  tf_.reset();
+  graph_.clear();
+  return nav2_util::CallbackReturn::SUCCESS;
+}
+
+nav2_util::CallbackReturn
+RouteServer::on_shutdown(const rclcpp_lifecycle::State &)
+{
+  RCLCPP_INFO(get_logger(), "Shutting down");
+  return nav2_util::CallbackReturn::SUCCESS;
+>>>>>>> jazzy
 }
 
 rclcpp::Duration
@@ -167,7 +276,11 @@ RouteServer::findPlanningDuration(const rclcpp::Time & start_time)
 template<typename ActionT>
 bool
 RouteServer::isRequestValid(
+<<<<<<< HEAD
   typename nav2::SimpleActionServer<ActionT>::SharedPtr & action_server)
+=======
+  std::shared_ptr<nav2_util::SimpleActionServer<ActionT>> & action_server)
+>>>>>>> jazzy
 {
   if (!action_server || !action_server->is_server_active()) {
     RCLCPP_DEBUG(get_logger(), "Action server unavailable or inactive. Stopping.");
@@ -210,6 +323,16 @@ void RouteServer::populateActionResult(
 }
 
 template<typename GoalT>
+<<<<<<< HEAD
+=======
+Route RouteServer::findRoute(const std::shared_ptr<const GoalT> goal)
+{
+  ReroutingState rerouting_info = ReroutingState();
+  return findRoute(goal, rerouting_info);
+}
+
+template<typename GoalT>
+>>>>>>> jazzy
 Route RouteServer::findRoute(
   const std::shared_ptr<const GoalT> goal,
   ReroutingState & rerouting_info)
@@ -248,7 +371,11 @@ Route RouteServer::findRoute(
 template<typename ActionT>
 void
 RouteServer::processRouteRequest(
+<<<<<<< HEAD
   typename nav2::SimpleActionServer<ActionT>::SharedPtr & action_server)
+=======
+  std::shared_ptr<nav2_util::SimpleActionServer<ActionT>> & action_server)
+>>>>>>> jazzy
 {
   auto goal = action_server->get_current_goal();
   auto result = std::make_shared<typename ActionT::Result>();
@@ -269,10 +396,15 @@ RouteServer::processRouteRequest(
 
       // Find the route
       Route route = findRoute(goal, rerouting_info);
+<<<<<<< HEAD
       RCLCPP_INFO(
         get_logger(), "Route found with %zu nodes and %zu edges",
         route.edges.size() + 1u, route.edges.size());
       publishRoute(route);
+=======
+      RCLCPP_INFO(get_logger(), "Route found with %zu nodes and %zu edges",
+        route.edges.size() + 1u, route.edges.size());
+>>>>>>> jazzy
       auto path = path_converter_->densify(route, rerouting_info, route_frame_, this->now());
 
       if (std::is_same<ActionT, ComputeAndTrackRoute>::value) {
@@ -299,49 +431,76 @@ RouteServer::processRouteRequest(
   } catch (nav2_core::NoValidRouteCouldBeFound & ex) {
     exceptionWarning(goal, ex);
     result->error_code = ActionT::Result::NO_VALID_ROUTE;
+<<<<<<< HEAD
     result->error_msg = ex.what();
+=======
+>>>>>>> jazzy
     action_server->terminate_current(result);
   } catch (nav2_core::TimedOut & ex) {
     exceptionWarning(goal, ex);
     result->error_code = ActionT::Result::TIMEOUT;
+<<<<<<< HEAD
     result->error_msg = ex.what();
+=======
+>>>>>>> jazzy
     action_server->terminate_current(result);
   } catch (nav2_core::RouteTFError & ex) {
     exceptionWarning(goal, ex);
     result->error_code = ActionT::Result::TF_ERROR;
+<<<<<<< HEAD
     result->error_msg = ex.what();
+=======
+>>>>>>> jazzy
     action_server->terminate_current(result);
   } catch (nav2_core::NoValidGraph & ex) {
     exceptionWarning(goal, ex);
     result->error_code = ActionT::Result::NO_VALID_GRAPH;
+<<<<<<< HEAD
     result->error_msg = ex.what();
+=======
+>>>>>>> jazzy
     action_server->terminate_current(result);
   } catch (nav2_core::IndeterminantNodesOnGraph & ex) {
     exceptionWarning(goal, ex);
     result->error_code = ActionT::Result::INDETERMINANT_NODES_ON_GRAPH;
+<<<<<<< HEAD
     result->error_msg = ex.what();
+=======
+>>>>>>> jazzy
     action_server->terminate_current(result);
   } catch (nav2_core::InvalidEdgeScorerUse & ex) {
     exceptionWarning(goal, ex);
     result->error_code = ActionT::Result::INVALID_EDGE_SCORER_USE;
+<<<<<<< HEAD
     result->error_msg = ex.what();
+=======
+>>>>>>> jazzy
     action_server->terminate_current(result);
   } catch (nav2_core::OperationFailed & ex) {
     // A special case since Operation Failed is only in Compute & Track
     // actions, specifying it to allow otherwise fully shared code
     exceptionWarning(goal, ex);
     result->error_code = ComputeAndTrackRoute::Result::OPERATION_FAILED;
+<<<<<<< HEAD
     result->error_msg = ex.what();
+=======
+>>>>>>> jazzy
     action_server->terminate_current(result);
   } catch (nav2_core::RouteException & ex) {
     exceptionWarning(goal, ex);
     result->error_code = ActionT::Result::UNKNOWN;
+<<<<<<< HEAD
     result->error_msg = ex.what();
+=======
+>>>>>>> jazzy
     action_server->terminate_current(result);
   } catch (std::exception & ex) {
     exceptionWarning(goal, ex);
     result->error_code = ActionT::Result::UNKNOWN;
+<<<<<<< HEAD
     result->error_msg = ex.what();
+=======
+>>>>>>> jazzy
     action_server->terminate_current(result);
   }
 }
@@ -384,6 +543,7 @@ void RouteServer::setRouteGraph(
   response->success = false;
 }
 
+<<<<<<< HEAD
 void
 RouteServer::publishRoute(const Route & route)
 {
@@ -394,6 +554,8 @@ RouteServer::publishRoute(const Route & route)
   }
 }
 
+=======
+>>>>>>> jazzy
 template<typename GoalT>
 void RouteServer::exceptionWarning(
   const std::shared_ptr<const GoalT> goal,

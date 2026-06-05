@@ -20,6 +20,27 @@ find_package(tf2_ros REQUIRED)
 find_package(nav2_ros_common REQUIRED)
 
 nav2_package()
+<<<<<<< HEAD
+=======
+set(CMAKE_CXX_STANDARD 17)
+
+include_directories(
+  include
+)
+
+set(dependencies
+  rclcpp
+  geometry_msgs
+  nav2_costmap_2d
+  pluginlib
+  nav_msgs
+  nav2_util
+  nav2_core
+  tf2
+  angles
+  nav2_controller
+)
+>>>>>>> jazzy
 
 set(library_name nav2_rotation_shim_controller)
 

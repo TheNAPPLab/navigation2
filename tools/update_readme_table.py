@@ -18,8 +18,13 @@
 import requests
 
 # Global information about current distributions, shouldn't need to update
+<<<<<<< HEAD
 OSs = {'humble': 'jammy', 'jazzy': 'noble', 'kilted': 'noble'}
 Prefixs = {'humble': 'H', 'jazzy': 'J', 'kilted': 'K'}
+=======
+OSs = {'humble': 'jammy', 'iron': 'jammy', 'jazzy': 'noble'}
+Prefixs = {'humble': 'H', 'iron': 'I', 'jazzy': 'J'}
+>>>>>>> jazzy
 
 # Set your packages here
 Packages = [
@@ -39,7 +44,10 @@ Packages = [
     'nav2_dwb_controller',  # Controller plugin for DWB packages
     'nav2_graceful_controller',
     'nav2_lifecycle_manager',
+<<<<<<< HEAD
     'nav2_loopback_sim',
+=======
+>>>>>>> jazzy
     'nav2_map_server',
     'nav2_mppi_controller',
     'nav2_msgs',
@@ -47,8 +55,11 @@ Packages = [
     'nav2_planner',
     'nav2_regulated_pure_pursuit_controller',
     'nav2_rotation_shim_controller',
+<<<<<<< HEAD
     'nav2_ros_common',
     'nav2_route',
+=======
+>>>>>>> jazzy
     'nav2_rviz_plugins',
     'nav2_simple_commander',
     'nav2_smac_planner',
@@ -62,6 +73,7 @@ Packages = [
 ]
 
 # Set which distributions you care about
+<<<<<<< HEAD
 Distros = ['humble', 'jazzy', 'kilted']
 
 
@@ -81,14 +93,32 @@ def createPreamble(Distros: list[str]) -> str:
     for distro in Distros:
         table += distro + ' Source | ' + distro + ' Debian | '
     table = table[:-1]  # Remove the last space
+=======
+Distros = ['humble', 'iron', 'jazzy']
+
+def getSrcPath(package, prefix, OS):
+    return f'https://build.ros2.org/job/{prefix}src_u{OS[0]}__{package}__ubuntu_{OS}__source/'
+
+def getBinPath(package, prefix, OS):
+    return f'https://build.ros2.org/job/{prefix}bin_u{OS[0]}64__{package}__ubuntu_{OS}_amd64__binary/'
+
+def createPreamble(Distros):
+    table = '| Package | '
+    for distro in Distros:
+        table += distro + ' Source | ' + distro + ' Debian | '
+>>>>>>> jazzy
     table += '\n'
     table += '| :---: |'
     for distro in Distros:
         table += ' :---: | :---: |'
     return table
 
+<<<<<<< HEAD
 
 def main() -> None:
+=======
+def main():
+>>>>>>> jazzy
     header = createPreamble(Distros)
 
     body = ''
@@ -107,6 +137,7 @@ def main() -> None:
             else:
                 entry += f'[![Build Status]({srcURL}badge/icon)]({srcURL}) | '
                 entry += f'[![Build Status]({binURL}badge/icon)]({binURL}) | '
+<<<<<<< HEAD
         entry = entry[:-1]
         entry += '\n'
         body += entry
@@ -120,5 +151,17 @@ def main() -> None:
     print(header + '\n' + body)
 
 
+=======
+        entry += '\n'
+        body += entry
+    
+    # Special case for Opennav Docking for directory structure of Nav2
+    body = body.replace('| opennav_docking |', '| nav2_docking |')
+    # Special case for reducing the label length
+    body = body.replace('| nav2_regulated_pure_pursuit_controller |', '| nav2_regulated_pure_pursuit |')
+    
+    print(header + '\n' + body)
+
+>>>>>>> jazzy
 if __name__ == '__main__':
     main()

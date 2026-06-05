@@ -32,7 +32,14 @@ void TwirlingCritic::initialize()
 
 void TwirlingCritic::score(CriticData & data)
 {
+<<<<<<< HEAD
   if (!enabled_) {
+=======
+  using xt::evaluation_strategy::immediate;
+  if (!enabled_ ||
+    utils::withinPositionGoalTolerance(data.goal_checker, data.state.pose.pose, data.goal))
+  {
+>>>>>>> jazzy
     return;
   }
 

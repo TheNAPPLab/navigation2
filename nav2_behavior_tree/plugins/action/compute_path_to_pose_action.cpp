@@ -33,11 +33,14 @@ void ComputePathToPoseAction::on_tick()
   getInput("goal", goal_.goal);
   getInput("planner_id", goal_.planner_id);
 
+<<<<<<< HEAD
   // use waypoints if available
   if (!getInput("viapoints", goal_.viapoints)) {
     goal_.viapoints = std::vector<geometry_msgs::msg::PoseStamped>();
   }
 
+=======
+>>>>>>> jazzy
   // if "use_start" is provided try to enforce it (true or false), but we cannot enforce true if
   // start is not provided
   goal_.use_start = false;
@@ -46,9 +49,15 @@ void ComputePathToPoseAction::on_tick()
       // in case we don't have a "start" pose
       goal_.use_start = false;
       RCLCPP_ERROR(
+<<<<<<< HEAD
         node_->get_logger(),
         "use_start is set to true but no start pose was provided, falling back to default "
         "behavior, i.e. using the current robot pose");
+=======
+          node_->get_logger(),
+          "use_start is set to true but no start pose was provided, falling back to default "
+          "behavior, i.e. using the current robot pose");
+>>>>>>> jazzy
     }
   } else {
     // else if "use_start" is not provided, but "start" is, then use it in order to not change

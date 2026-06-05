@@ -54,12 +54,29 @@ public:
 
   /**
    * @brief A destructor
+<<<<<<< HEAD
+=======
    */
   ~ClearCostmapService();
 
   /**
    * @brief Clears the region outside of a user-specified area reverting to the static map
+>>>>>>> jazzy
+   */
+  ~ClearCostmapService();
+
+  /**
+<<<<<<< HEAD
+   * @brief Clears the region outside of a user-specified area reverting to the static map
    * @return true if the requested plugins were successfully cleared, false otherwise
+=======
+   * @brief Clears the region around a specific pose
+   */
+  void clearAroundPose(const geometry_msgs::msg::PoseStamped & pose, double reset_distance);
+
+  /**
+   * @brief Clears all layers
+>>>>>>> jazzy
    */
   bool clearRegion(double reset_distance, bool invert, const std::vector<std::string> & plugins);
 
@@ -108,7 +125,11 @@ private:
     const std::shared_ptr<nav2_msgs::srv::ClearCostmapAroundRobot::Request> request,
     const std::shared_ptr<nav2_msgs::srv::ClearCostmapAroundRobot::Response> response);
 
+<<<<<<< HEAD
   nav2::ServiceServer<nav2_msgs::srv::ClearCostmapAroundPose>::SharedPtr
+=======
+  rclcpp::Service<nav2_msgs::srv::ClearCostmapAroundPose>::SharedPtr
+>>>>>>> jazzy
     clear_around_pose_service_;
   /**
    * @brief Callback to clear costmap around a given pose
@@ -118,8 +139,12 @@ private:
     const std::shared_ptr<nav2_msgs::srv::ClearCostmapAroundPose::Request> request,
     const std::shared_ptr<nav2_msgs::srv::ClearCostmapAroundPose::Response> response);
 
+<<<<<<< HEAD
   nav2::ServiceServer<nav2_msgs::srv::ClearEntireCostmap>::SharedPtr
     clear_entire_service_;
+=======
+  rclcpp::Service<nav2_msgs::srv::ClearEntireCostmap>::SharedPtr clear_entire_service_;
+>>>>>>> jazzy
   /**
    * @brief Callback to clear costmap
    */

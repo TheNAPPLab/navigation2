@@ -20,10 +20,16 @@
 
 #include "behaviortree_cpp/condition_node.h"
 #include "behaviortree_cpp/json_export.h"
+<<<<<<< HEAD
 #include "nav_msgs/msg/goals.hpp"
 #include "nav2_behavior_tree/bt_utils.hpp"
 #include "nav2_behavior_tree/json_utils.hpp"
 
+=======
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "nav2_behavior_tree/bt_utils.hpp"
+#include "nav2_behavior_tree/json_utils.hpp"
+>>>>>>> jazzy
 
 namespace nav2_behavior_tree
 {
@@ -66,7 +72,11 @@ public:
   {
     // Register JSON definitions for the types used in the ports
     BT::RegisterJsonDefinition<geometry_msgs::msg::PoseStamped>();
+<<<<<<< HEAD
     BT::RegisterJsonDefinition<nav_msgs::msg::Goals>();
+=======
+    BT::RegisterJsonDefinition<std::vector<geometry_msgs::msg::PoseStamped>>();
+>>>>>>> jazzy
 
     return {
       BT::InputPort<nav_msgs::msg::Goals>(

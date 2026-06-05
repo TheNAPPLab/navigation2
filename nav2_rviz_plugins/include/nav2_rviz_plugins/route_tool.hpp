@@ -27,6 +27,10 @@
 #include "nav2_route/types.hpp"
 #include "nav2_route/utils.hpp"
 #include "rclcpp/rclcpp.hpp"
+<<<<<<< HEAD
+=======
+#include "nav2_util/lifecycle_node.hpp"
+>>>>>>> jazzy
 #include "rviz_common/panel.hpp"
 #include "std_msgs/msg/int16.hpp"
 #include "std_msgs/msg/string.hpp"
@@ -66,8 +70,13 @@ public:
            *  Now we declare overrides of rviz_common::Panel functions for saving and
            *  loading data from the config file.  Here the data is the topic name.
            */
+<<<<<<< HEAD
   void save(rviz_common::Config config) const override;
   void load(const rviz_common::Config & config) override;
+=======
+  virtual void save(rviz_common::Config config) const;
+  virtual void load(const rviz_common::Config & config);
+>>>>>>> jazzy
 
 
   /**
@@ -99,7 +108,11 @@ protected:
 
 private:
   void update_route_graph(void);
+<<<<<<< HEAD
   nav2::LifecycleNode::SharedPtr node_;
+=======
+  nav2_util::LifecycleNode::SharedPtr node_;
+>>>>>>> jazzy
   std::shared_ptr<nav2_route::GraphLoader> graph_loader_;
   std::shared_ptr<nav2_route::GraphSaver> graph_saver_;
   std::shared_ptr<tf2_ros::Buffer> tf_;
@@ -110,7 +123,11 @@ private:
 
   rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr
     graph_vis_publisher_;
+<<<<<<< HEAD
   nav2::Subscription<geometry_msgs::msg::PointStamped>::SharedPtr
+=======
+  rclcpp::Subscription<geometry_msgs::msg::PointStamped>::SharedPtr
+>>>>>>> jazzy
     clicked_point_subscription_;
 
   unsigned int next_node_id_ = 0;

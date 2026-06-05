@@ -18,11 +18,15 @@
 // QT
 #include <QtWidgets>
 #include <QBasicTimer>
+<<<<<<< HEAD
 #include <QStateMachine>
 #include <QState>
 #include <QSignalTransition>
 
 #include <memory>
+=======
+
+>>>>>>> jazzy
 #include <string>
 
 // ROS
@@ -30,7 +34,10 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rviz_common/panel.hpp"
+<<<<<<< HEAD
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
+=======
+>>>>>>> jazzy
 #include "sensor_msgs/msg/battery_state.hpp"
 #include "nav2_msgs/action/dock_robot.hpp"
 #include "nav2_msgs/action/undock_robot.hpp"
@@ -60,6 +67,10 @@ public:
 
 private Q_SLOTS:
   void startThread();
+<<<<<<< HEAD
+=======
+  void onStartup();
+>>>>>>> jazzy
   void onDockingButtonPressed();
   void onUndockingButtonPressed();
   void onCancelDocking();
@@ -91,10 +102,13 @@ private:
 
   // The (non-spinning) client node used to invoke the action client
   rclcpp::Node::SharedPtr client_node_;
+<<<<<<< HEAD
   rclcpp::executors::SingleThreadedExecutor::SharedPtr executor_;
 
   // The Node pointer that we need to keep alive for the duration of this plugin.
   std::shared_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> node_ptr_;
+=======
+>>>>>>> jazzy
 
   // Timeout value when waiting for action servers to respond
   std::chrono::milliseconds server_timeout_;
@@ -103,6 +117,7 @@ private:
   QBasicTimer action_timer_;
 
   // The Dock and Undock action client
+<<<<<<< HEAD
   nav2::ActionClient<Dock>::SharedPtr dock_client_;
   nav2::ActionClient<Undock>::SharedPtr undock_client_;
 
@@ -111,6 +126,16 @@ private:
   nav2::Subscription<Undock::Impl::FeedbackMessage>::SharedPtr undocking_feedback_sub_;
   nav2::Subscription<Dock::Impl::GoalStatusMessage>::SharedPtr docking_goal_status_sub_;
   nav2::Subscription<Undock::Impl::GoalStatusMessage>::SharedPtr undocking_goal_status_sub_;
+=======
+  rclcpp_action::Client<Dock>::SharedPtr dock_client_;
+  rclcpp_action::Client<Undock>::SharedPtr undock_client_;
+
+  // Docking / Undocking action feedback subscribers
+  rclcpp::Subscription<Dock::Impl::FeedbackMessage>::SharedPtr docking_feedback_sub_;
+  rclcpp::Subscription<Undock::Impl::FeedbackMessage>::SharedPtr undocking_feedback_sub_;
+  rclcpp::Subscription<Dock::Impl::GoalStatusMessage>::SharedPtr docking_goal_status_sub_;
+  rclcpp::Subscription<Undock::Impl::GoalStatusMessage>::SharedPtr undocking_goal_status_sub_;
+>>>>>>> jazzy
 
   // Goal related state
   DockGoalHandle::SharedPtr dock_goal_handle_;
@@ -165,8 +190,13 @@ class InitialDockThread : public QThread
 
 public:
   explicit InitialDockThread(
+<<<<<<< HEAD
     nav2::ActionClient<nav2_msgs::action::DockRobot>::SharedPtr & dock_client,
     nav2::ActionClient<nav2_msgs::action::UndockRobot>::SharedPtr & undock_client)
+=======
+    rclcpp_action::Client<nav2_msgs::action::DockRobot>::SharedPtr & dock_client,
+    rclcpp_action::Client<nav2_msgs::action::UndockRobot>::SharedPtr & undock_client)
+>>>>>>> jazzy
   : dock_client_(dock_client), undock_client_(undock_client)
   {}
 
@@ -200,8 +230,13 @@ signals:
   void undockingInactive();
 
 private:
+<<<<<<< HEAD
   nav2::ActionClient<nav2_msgs::action::DockRobot>::SharedPtr dock_client_;
   nav2::ActionClient<nav2_msgs::action::UndockRobot>::SharedPtr undock_client_;
+=======
+  rclcpp_action::Client<nav2_msgs::action::DockRobot>::SharedPtr dock_client_;
+  rclcpp_action::Client<nav2_msgs::action::UndockRobot>::SharedPtr undock_client_;
+>>>>>>> jazzy
   bool dock_active_ = false;
   bool undock_active_ = false;
 };

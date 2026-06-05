@@ -37,6 +37,13 @@ void RateController::initialize()
 
 BT::NodeStatus RateController::tick()
 {
+<<<<<<< HEAD
+=======
+  if (!BT::isStatusActive(status())) {
+    initialize();
+  }
+
+>>>>>>> jazzy
   if (!BT::isStatusActive(status())) {
     initialize();
     // Reset the starting point since we're starting a new iteration of

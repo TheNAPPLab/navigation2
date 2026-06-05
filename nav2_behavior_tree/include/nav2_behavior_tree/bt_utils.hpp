@@ -23,10 +23,14 @@
 #include "behaviortree_cpp/behavior_tree.h"
 #include "geometry_msgs/msg/point.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
+<<<<<<< HEAD
 #include "geometry_msgs/msg/quaternion.hpp"
 #include "nav_msgs/msg/path.hpp"
 #include "nav_msgs/msg/goals.hpp"
 #include "nav2_msgs/msg/waypoint_status.hpp"
+=======
+#include "nav_msgs/msg/path.hpp"
+>>>>>>> jazzy
 
 namespace BT
 {
@@ -134,6 +138,7 @@ inline geometry_msgs::msg::PoseStamped convertFromString(const StringView key)
 template<>
 inline std::vector<geometry_msgs::msg::PoseStamped> convertFromString(const StringView key)
 {
+<<<<<<< HEAD
   // if string starts with "json:{", try to parse it as json
   if (StartWith(key, "json:")) {
     auto new_key = key;
@@ -141,6 +146,9 @@ inline std::vector<geometry_msgs::msg::PoseStamped> convertFromString(const Stri
     return convertFromJSON<std::vector<geometry_msgs::msg::PoseStamped>>(new_key);
   }
 
+=======
+  // 9 real numbers separated by semicolons
+>>>>>>> jazzy
   auto parts = BT::splitString(key, ';');
   if (parts.size() % 9 != 0) {
     throw std::runtime_error("invalid number of fields for std::vector<PoseStamped> attribute)");
@@ -164,6 +172,7 @@ inline std::vector<geometry_msgs::msg::PoseStamped> convertFromString(const Stri
 }
 
 /**
+<<<<<<< HEAD
  * @brief Parse XML string to nav_msgs::msg::Goals
  * @param key XML string
  * @return nav_msgs::msg::Goals
@@ -203,6 +212,8 @@ inline nav_msgs::msg::Goals convertFromString(const StringView key)
 }
 
 /**
+=======
+>>>>>>> jazzy
  * @brief Parse XML string to nav_msgs::msg::Path
  * @param key XML string
  * @return nav_msgs::msg::Path
@@ -217,6 +228,10 @@ inline nav_msgs::msg::Path convertFromString(const StringView key)
     return convertFromJSON<nav_msgs::msg::Path>(new_key);
   }
 
+<<<<<<< HEAD
+=======
+  // 9 real numbers separated by semicolons
+>>>>>>> jazzy
   auto parts = BT::splitString(key, ';');
   if ((parts.size() - 2) % 9 != 0) {
     throw std::runtime_error("invalid number of fields for Path attribute)");
@@ -242,6 +257,7 @@ inline nav_msgs::msg::Path convertFromString(const StringView key)
 }
 
 /**
+<<<<<<< HEAD
  * @brief Parse XML string to nav2_msgs::msg::WaypointStatus
  * @param key XML string
  * @return nav2_msgs::msg::WaypointStatus
@@ -322,6 +338,8 @@ inline std::vector<nav2_msgs::msg::WaypointStatus> convertFromString(const Strin
 }
 
 /**
+=======
+>>>>>>> jazzy
  * @brief Parse XML string to std::chrono::milliseconds
  * @param key XML string
  * @return std::chrono::milliseconds
@@ -335,7 +353,10 @@ inline std::chrono::milliseconds convertFromString<std::chrono::milliseconds>(co
     new_key.remove_prefix(5);
     return convertFromJSON<std::chrono::milliseconds>(new_key);
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> jazzy
   return std::chrono::milliseconds(std::stoul(key.data()));
 }
 

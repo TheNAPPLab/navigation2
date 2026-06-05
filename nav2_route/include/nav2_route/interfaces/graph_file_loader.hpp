@@ -20,7 +20,11 @@
 
 
 #include "rclcpp/rclcpp.hpp"
+<<<<<<< HEAD
 #include "nav2_ros_common/lifecycle_node.hpp"
+=======
+#include "nav2_util/lifecycle_node.hpp"
+>>>>>>> jazzy
 #include "nav2_route/types.hpp"
 
 namespace nav2_route
@@ -50,7 +54,11 @@ public:
    * @param parent pointer to user's node
    */
   virtual void configure(
+<<<<<<< HEAD
     const nav2::LifecycleNode::SharedPtr node) = 0;
+=======
+    const nav2_util::LifecycleNode::SharedPtr node) = 0;
+>>>>>>> jazzy
 
   /**
    * @brief Method to load the graph from the filepath

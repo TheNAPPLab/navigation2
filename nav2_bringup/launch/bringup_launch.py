@@ -46,9 +46,13 @@ def generate_launch_description() -> LaunchDescription:
     container_name = LaunchConfiguration('container_name')
     use_respawn = LaunchConfigAsBool('use_respawn')
     log_level = LaunchConfiguration('log_level')
+<<<<<<< HEAD
     use_localization = LaunchConfigAsBool('use_localization')
     use_keepout_zones = LaunchConfigAsBool('use_keepout_zones')
     use_speed_zones = LaunchConfigAsBool('use_speed_zones')
+=======
+    use_localization = LaunchConfiguration('use_localization')
+>>>>>>> jazzy
 
     # Map fully qualified names to relative ones so the node's namespace can be prepended.
     remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
@@ -85,6 +89,7 @@ def generate_launch_description() -> LaunchDescription:
         'map', default_value='', description='Full path to map yaml file to load'
     )
 
+<<<<<<< HEAD
     declare_keepout_mask_yaml_cmd = DeclareLaunchArgument(
         'keepout_mask', default_value='',
         description='Full path to keepout mask yaml file to load'
@@ -100,11 +105,14 @@ def generate_launch_description() -> LaunchDescription:
         default_value='', description='Path to the graph file to load'
     )
 
+=======
+>>>>>>> jazzy
     declare_use_localization_cmd = DeclareLaunchArgument(
         'use_localization', default_value='True',
         description='Whether to enable localization or not'
     )
 
+<<<<<<< HEAD
     declare_use_keepout_zones_cmd = DeclareLaunchArgument(
         'use_keepout_zones', default_value='True',
         description='Whether to enable keepout zones or not'
@@ -115,6 +123,8 @@ def generate_launch_description() -> LaunchDescription:
         description='Whether to enable speed zones or not'
     )
 
+=======
+>>>>>>> jazzy
     declare_use_sim_time_cmd = DeclareLaunchArgument(
         'use_sim_time',
         default_value='false',
@@ -283,8 +293,11 @@ def generate_launch_description() -> LaunchDescription:
     ld.add_action(declare_use_respawn_cmd)
     ld.add_action(declare_log_level_cmd)
     ld.add_action(declare_use_localization_cmd)
+<<<<<<< HEAD
     ld.add_action(declare_use_keepout_zones_cmd)
     ld.add_action(declare_use_speed_zones_cmd)
+=======
+>>>>>>> jazzy
 
     # Add the actions to launch all of the navigation nodes
     ld.add_action(bringup_cmd_group)

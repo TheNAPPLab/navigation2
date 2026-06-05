@@ -86,6 +86,7 @@ void ClearCostmapAroundRobotService::on_tick()
   increment_recovery_count();
 }
 
+<<<<<<< HEAD
 BT::NodeStatus ClearCostmapAroundRobotService::on_completion(
   std::shared_ptr<typename nav2_msgs::srv::ClearCostmapAroundRobot::Response> response)
 {
@@ -94,6 +95,8 @@ BT::NodeStatus ClearCostmapAroundRobotService::on_completion(
   return response->success ? BT::NodeStatus::SUCCESS : BT::NodeStatus::FAILURE;
 }
 
+=======
+>>>>>>> jazzy
 ClearCostmapAroundPoseService::ClearCostmapAroundPoseService(
   const std::string & service_node_name,
   const BT::NodeConfiguration & conf)
@@ -105,6 +108,7 @@ void ClearCostmapAroundPoseService::on_tick()
 {
   getInput("pose", request_->pose);
   getInput("reset_distance", request_->reset_distance);
+<<<<<<< HEAD
 
   if (!getInput("plugins", request_->plugins)) {
     request_->plugins.clear();
@@ -121,6 +125,11 @@ BT::NodeStatus ClearCostmapAroundPoseService::on_completion(
   return response->success ? BT::NodeStatus::SUCCESS : BT::NodeStatus::FAILURE;
 }
 
+=======
+  increment_recovery_count();
+}
+
+>>>>>>> jazzy
 }  // namespace nav2_behavior_tree
 
 #include "behaviortree_cpp/bt_factory.h"

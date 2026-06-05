@@ -153,7 +153,10 @@ public:
   {
     pointcloud_pub_ = this->create_publisher<sensor_msgs::msg::PointCloud2>(
       POINTCLOUD_TOPIC, rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable());
+<<<<<<< HEAD
     pointcloud_pub_->on_activate();
+=======
+>>>>>>> jazzy
 
     std::unique_ptr<sensor_msgs::msg::PointCloud2> msg =
       std::make_unique<sensor_msgs::msg::PointCloud2>();
@@ -448,7 +451,10 @@ protected:
   std::shared_ptr<PointCloudWrapper> pointcloud_;
   std::shared_ptr<RangeWrapper> range_;
   std::shared_ptr<PolygonWrapper> polygon_;
+<<<<<<< HEAD
   std::shared_ptr<CostmapWrapper> costmap_;
+=======
+>>>>>>> jazzy
 };  // Tester
 
 Tester::Tester()
@@ -893,12 +899,29 @@ TEST_F(Tester, testPointCloudMinRange)
   // Create PointCloud object with min_range = 0.2
   test_node_->declare_parameter(
     std::string(POINTCLOUD_NAME) + ".topic", rclcpp::ParameterValue(POINTCLOUD_TOPIC));
+<<<<<<< HEAD
   test_node_->declare_parameter(
     std::string(POINTCLOUD_NAME) + ".min_height", rclcpp::ParameterValue(0.1));
   test_node_->declare_parameter(
     std::string(POINTCLOUD_NAME) + ".max_height", rclcpp::ParameterValue(1.0));
   test_node_->declare_parameter(
     std::string(POINTCLOUD_NAME) + ".min_range", rclcpp::ParameterValue(0.16));
+=======
+  test_node_->set_parameter(
+    rclcpp::Parameter(std::string(POINTCLOUD_NAME) + ".topic", POINTCLOUD_TOPIC));
+  test_node_->declare_parameter(
+    std::string(POINTCLOUD_NAME) + ".min_height", rclcpp::ParameterValue(0.1));
+  test_node_->set_parameter(
+    rclcpp::Parameter(std::string(POINTCLOUD_NAME) + ".min_height", 0.1));
+  test_node_->declare_parameter(
+    std::string(POINTCLOUD_NAME) + ".max_height", rclcpp::ParameterValue(1.0));
+  test_node_->set_parameter(
+    rclcpp::Parameter(std::string(POINTCLOUD_NAME) + ".max_height", 1.0));
+  test_node_->declare_parameter(
+    std::string(POINTCLOUD_NAME) + ".min_range", rclcpp::ParameterValue(0.16));
+  test_node_->set_parameter(
+    rclcpp::Parameter(std::string(POINTCLOUD_NAME) + ".min_range", 0.16));
+>>>>>>> jazzy
 
   pointcloud_ = std::make_shared<PointCloudWrapper>(
     test_node_, POINTCLOUD_NAME, tf_buffer_,
@@ -934,6 +957,7 @@ TEST_F(Tester, testPointCloudMinRange)
   EXPECT_NEAR(data[2].y, 0.1, EPSILON);
 }
 
+<<<<<<< HEAD
 TEST_F(Tester, testCostmapTransformFailure)
 {
   rclcpp::Time curr_time = test_node_->now();
@@ -957,6 +981,8 @@ TEST_F(Tester, testCostmapTransformFailure)
   ASSERT_EQ(data.size(), 0u);
 }
 
+=======
+>>>>>>> jazzy
 int main(int argc, char ** argv)
 {
   // Initialize the system

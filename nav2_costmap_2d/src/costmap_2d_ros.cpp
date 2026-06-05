@@ -114,6 +114,17 @@ Costmap2DROS::Costmap2DROS(
 void Costmap2DROS::init()
 {
   RCLCPP_INFO(get_logger(), "Creating Costmap");
+<<<<<<< HEAD
+=======
+
+  declare_parameter("always_send_full_costmap", rclcpp::ParameterValue(false));
+  declare_parameter("map_vis_z", rclcpp::ParameterValue(0.0));
+  declare_parameter("footprint_padding", rclcpp::ParameterValue(0.01f));
+  declare_parameter("footprint", rclcpp::ParameterValue(std::string("[]")));
+  declare_parameter("global_frame", rclcpp::ParameterValue(std::string("map")));
+  declare_parameter("height", rclcpp::ParameterValue(5));
+  declare_parameter("width", rclcpp::ParameterValue(5));
+>>>>>>> jazzy
   declare_parameter("lethal_cost_threshold", rclcpp::ParameterValue(100));
   declare_parameter("trinary_costmap", rclcpp::ParameterValue(true));
   declare_parameter("unknown_cost_value", rclcpp::ParameterValue(static_cast<unsigned char>(0xff)));
@@ -170,6 +181,7 @@ Costmap2DROS::on_configure(const rclcpp_lifecycle::State & /*state*/)
 
     layered_costmap_->addPlugin(plugin);
 
+<<<<<<< HEAD
     try {
       plugin->initialize(
         layered_costmap_.get(), plugin_names_[i], tf_buffer_.get(),
@@ -179,6 +191,16 @@ Costmap2DROS::on_configure(const rclcpp_lifecycle::State & /*state*/)
         get_logger(), "Failed to initialize costmap plugin %s! %s.",
         plugin_names_[i].c_str(), e.what());
       return nav2::CallbackReturn::FAILURE;
+=======
+    // TODO(mjeronimo): instead of get(), use a shared ptr
+    try {
+      plugin->initialize(layered_costmap_.get(), plugin_names_[i], tf_buffer_.get(),
+          shared_from_this(), callback_group_);
+    } catch (const std::exception & e) {
+      RCLCPP_ERROR(get_logger(), "Failed to initialize costmap plugin %s! %s.",
+          plugin_names_[i].c_str(), e.what());
+      return nav2_util::CallbackReturn::FAILURE;
+>>>>>>> jazzy
     }
 
     lock.unlock();
@@ -248,10 +270,16 @@ Costmap2DROS::on_configure(const rclcpp_lifecycle::State & /*state*/)
   }
 
   // Service to get the cost at a point
+<<<<<<< HEAD
   get_cost_service_ = create_service<nav2_msgs::srv::GetCosts>(
     std::string("get_cost_") + get_name(),
     std::bind(
       &Costmap2DROS::getCostsCallback, this, std::placeholders::_1, std::placeholders::_2,
+=======
+  get_cost_service_ = create_service<nav2_msgs::srv::GetCost>(
+    "get_cost_" + getName(),
+    std::bind(&Costmap2DROS::getCostCallback, this, std::placeholders::_1, std::placeholders::_2,
+>>>>>>> jazzy
       std::placeholders::_3));
 
   // Add cleaning service
@@ -337,10 +365,15 @@ Costmap2DROS::on_deactivate(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Deactivating");
 
+<<<<<<< HEAD
   remove_post_set_parameters_callback(post_set_params_handler_.get());
   post_set_params_handler_.reset();
   remove_on_set_parameters_callback(on_set_params_handler.get());
   on_set_params_handler.reset();
+=======
+  remove_on_set_parameters_callback(dyn_params_handler.get());
+  dyn_params_handler.reset();
+>>>>>>> jazzy
 
   stop();
 
@@ -396,6 +429,7 @@ Costmap2DROS::getParameters()
   RCLCPP_DEBUG(get_logger(), " getParameters");
 
   // Get all of the required parameters
+<<<<<<< HEAD
   always_send_full_costmap_ = declare_or_get_parameter(
     "always_send_full_costmap", false);
   map_vis_z_ = declare_or_get_parameter("map_vis_z", 0.0);
@@ -436,6 +470,28 @@ Costmap2DROS::getParameters()
     "update_frequency", 5.0);
   subscribe_to_stamped_footprint_ = declare_or_get_parameter(
     "subscribe_to_stamped_footprint", false);
+=======
+  get_parameter("always_send_full_costmap", always_send_full_costmap_);
+  get_parameter("map_vis_z", map_vis_z_);
+  get_parameter("footprint", footprint_);
+  get_parameter("footprint_padding", footprint_padding_);
+  get_parameter("global_frame", global_frame_);
+  get_parameter("height", map_height_meters_);
+  get_parameter("origin_x", origin_x_);
+  get_parameter("origin_y", origin_y_);
+  get_parameter("publish_frequency", map_publish_frequency_);
+  get_parameter("resolution", resolution_);
+  get_parameter("robot_base_frame", robot_base_frame_);
+  get_parameter("robot_radius", robot_radius_);
+  get_parameter("rolling_window", rolling_window_);
+  get_parameter("track_unknown_space", track_unknown_space_);
+  get_parameter("transform_tolerance", transform_tolerance_);
+  get_parameter("initial_transform_timeout", initial_transform_timeout_);
+  get_parameter("update_frequency", map_update_frequency_);
+  get_parameter("width", map_width_meters_);
+  get_parameter("plugins", plugin_names_);
+  get_parameter("filters", filter_names_);
+>>>>>>> jazzy
 
   auto node = shared_from_this();
 
@@ -939,6 +995,37 @@ void Costmap2DROS::getCostsCallback(
       // Get the cost at the map coordinates
       response->costs.push_back(static_cast<float>(costmap->getCost(mx, my)));
     }
+  }
+}
+
+void Costmap2DROS::getCostCallback(
+  const std::shared_ptr<rmw_request_id_t>,
+  const std::shared_ptr<nav2_msgs::srv::GetCost::Request> request,
+  const std::shared_ptr<nav2_msgs::srv::GetCost::Response> response)
+{
+  unsigned int mx, my;
+
+  Costmap2D * costmap = layered_costmap_->getCostmap();
+
+  if (request->use_footprint) {
+    Footprint footprint = layered_costmap_->getFootprint();
+    FootprintCollisionChecker<Costmap2D *> collision_checker(costmap);
+
+    RCLCPP_INFO(
+      get_logger(), "Received request to get cost at footprint pose (%.2f, %.2f, %.2f)",
+      request->x, request->y, request->theta);
+
+    response->cost = collision_checker.footprintCostAtPose(
+      request->x, request->y, request->theta, footprint);
+  } else if (costmap->worldToMap(request->x, request->y, mx, my)) {
+    RCLCPP_INFO(
+      get_logger(), "Received request to get cost at point (%f, %f)", request->x, request->y);
+
+    // Get the cost at the map coordinates
+    response->cost = static_cast<float>(costmap->getCost(mx, my));
+  } else {
+    RCLCPP_WARN(get_logger(), "Point (%f, %f) is out of bounds", request->x, request->y);
+    response->cost = -1.0;
   }
 }
 

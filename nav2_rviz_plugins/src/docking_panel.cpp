@@ -12,11 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+<<<<<<< HEAD
+=======
+// C++
+#include <stdio.h>
+
+>>>>>>> jazzy
 // QT
 #include <QLineEdit>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+<<<<<<< HEAD
 
 // C++
 #include <chrono>
@@ -25,6 +32,8 @@
 #include <string>
 
 #include <rclcpp/rclcpp.hpp>
+=======
+>>>>>>> jazzy
 #include <rviz_common/display_context.hpp>
 
 #include "nav2_util/geometry_utils.hpp"
@@ -152,7 +161,11 @@ DockingPanel::DockingPanel(QWidget * parent)
 
   // ROSAction Transitions: So when actions are updated remotely (failing, succeeding, etc)
   // the state of the application will also update. This means that if in the processing
+<<<<<<< HEAD
   // states and then goes inactive, move back to the idle state. Vice versa as well.
+=======
+  // states and then goes inactive, move back to the idle state. Vise versa as well.
+>>>>>>> jazzy
   ROSActionQTransition * idleDockTransition = new ROSActionQTransition(QActionState::INACTIVE);
   idleDockTransition->setTargetState(docking_);
   idle_->addTransition(idleDockTransition);
@@ -170,8 +183,11 @@ DockingPanel::DockingPanel(QWidget * parent)
   undocking_->addTransition(undockingTransition);
 
   client_node_ = std::make_shared<rclcpp::Node>("nav2_rviz_docking_panel_node");
+<<<<<<< HEAD
   executor_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
   executor_->add_node(client_node_);
+=======
+>>>>>>> jazzy
 
   state_machine_.addState(pre_initial_);
   state_machine_.addState(idle_);
@@ -254,18 +270,27 @@ DockingPanel::DockingPanel(QWidget * parent)
       if (!plugins_loaded_) {
         RCLCPP_INFO(client_node_->get_logger(), "Loading dock plugins");
         nav2_rviz_plugins::pluginLoader(
+<<<<<<< HEAD
           client_node_, server_failed_, "docking_server", "dock_plugins", dock_type_, executor_);
+=======
+        client_node_, server_failed_, "docking_server", "dock_plugins", dock_type_);
+>>>>>>> jazzy
         plugins_loaded_ = true;
       }
     });
 
+<<<<<<< HEAD
   // Connect buttons with functions
+=======
+  // Conect buttons with functions
+>>>>>>> jazzy
   QObject::connect(
     use_dock_id_checkbox_, &QCheckBox::stateChanged, this, &DockingPanel::dockIdCheckbox);
 }
 
 void DockingPanel::onInitialize()
 {
+<<<<<<< HEAD
   node_ptr_ = getDisplayContext()->getRosNodeAbstraction().lock();
   if (node_ptr_ == nullptr) {
     // The node no longer exists, so just don't initialize
@@ -275,12 +300,19 @@ void DockingPanel::onInitialize()
     return;
   }
   rclcpp::Node::SharedPtr node = node_ptr_->get_raw_node();
+=======
+  auto node = getDisplayContext()->getRosNodeAbstraction().lock()->get_raw_node();
+>>>>>>> jazzy
 
   // Create action feedback subscriber
   docking_feedback_sub_ = node->create_subscription<Dock::Impl::FeedbackMessage>(
     "dock_robot/_action/feedback",
     rclcpp::SystemDefaultsQoS(),
+<<<<<<< HEAD
     [this](const Dock::Impl::FeedbackMessage::ConstSharedPtr & msg) {
+=======
+    [this](const Dock::Impl::FeedbackMessage::SharedPtr msg) {
+>>>>>>> jazzy
       docking_feedback_indicator_->setText(getDockFeedbackLabel(msg->feedback));
     });
 
@@ -288,7 +320,11 @@ void DockingPanel::onInitialize()
   docking_goal_status_sub_ = node->create_subscription<action_msgs::msg::GoalStatusArray>(
     "dock_robot/_action/status",
     rclcpp::SystemDefaultsQoS(),
+<<<<<<< HEAD
     [this](const action_msgs::msg::GoalStatusArray::ConstSharedPtr & msg) {
+=======
+    [this](const action_msgs::msg::GoalStatusArray::SharedPtr msg) {
+>>>>>>> jazzy
       docking_goal_status_indicator_->setText(
         nav2_rviz_plugins::getGoalStatusLabel("Feedback", msg->status_list.back().status));
       // Reset values when action is completed
@@ -300,7 +336,11 @@ void DockingPanel::onInitialize()
   undocking_goal_status_sub_ = node->create_subscription<action_msgs::msg::GoalStatusArray>(
     "undock_robot/_action/status",
     rclcpp::SystemDefaultsQoS(),
+<<<<<<< HEAD
     [this](const action_msgs::msg::GoalStatusArray::ConstSharedPtr & msg) {
+=======
+    [this](const action_msgs::msg::GoalStatusArray::SharedPtr msg) {
+>>>>>>> jazzy
       docking_goal_status_indicator_->setText(
         nav2_rviz_plugins::getGoalStatusLabel("Feedback", msg->status_list.back().status));
     });
@@ -383,7 +423,11 @@ void DockingPanel::onDockingButtonPressed()
   }
 
   // Enable result awareness by providing an empty lambda function
+<<<<<<< HEAD
   auto send_goal_options = nav2::ActionClient<Dock>::SendGoalOptions();
+=======
+  auto send_goal_options = rclcpp_action::Client<Dock>::SendGoalOptions();
+>>>>>>> jazzy
   send_goal_options.result_callback = [this](const DockGoalHandle::WrappedResult & result) {
       dock_goal_handle_.reset();
       if (result.result->success) {
@@ -395,7 +439,11 @@ void DockingPanel::onDockingButtonPressed()
     };
 
   auto future_goal_handle = dock_client_->async_send_goal(goal_msg, send_goal_options);
+<<<<<<< HEAD
   if (executor_->spin_until_future_complete(future_goal_handle, server_timeout_) !=
+=======
+  if (rclcpp::spin_until_future_complete(client_node_, future_goal_handle, server_timeout_) !=
+>>>>>>> jazzy
     rclcpp::FutureReturnCode::SUCCESS)
   {
     RCLCPP_ERROR(client_node_->get_logger(), "Send goal call failed");
@@ -441,7 +489,11 @@ void DockingPanel::onUndockingButtonPressed()
     goal_msg.dock_type.c_str());
 
   // Enable result awareness by providing an empty lambda function
+<<<<<<< HEAD
   auto send_goal_options = nav2::ActionClient<Undock>::SendGoalOptions();
+=======
+  auto send_goal_options = rclcpp_action::Client<Undock>::SendGoalOptions();
+>>>>>>> jazzy
   send_goal_options.result_callback = [this](const UndockGoalHandle::WrappedResult & result) {
       undock_goal_handle_.reset();
       if (result.result->success) {
@@ -453,7 +505,11 @@ void DockingPanel::onUndockingButtonPressed()
     };
 
   auto future_goal_handle = undock_client_->async_send_goal(goal_msg, send_goal_options);
+<<<<<<< HEAD
   if (executor_->spin_until_future_complete(future_goal_handle, server_timeout_) !=
+=======
+  if (rclcpp::spin_until_future_complete(client_node_, future_goal_handle, server_timeout_) !=
+>>>>>>> jazzy
     rclcpp::FutureReturnCode::SUCCESS)
   {
     RCLCPP_ERROR(client_node_->get_logger(), "Send goal call failed");
@@ -492,7 +548,11 @@ void DockingPanel::onCancelDocking()
   if (dock_goal_handle_) {
     auto future_cancel = dock_client_->async_cancel_goal(dock_goal_handle_);
 
+<<<<<<< HEAD
     if (executor_->spin_until_future_complete(future_cancel, server_timeout_) !=
+=======
+    if (rclcpp::spin_until_future_complete(client_node_, future_cancel, server_timeout_) !=
+>>>>>>> jazzy
       rclcpp::FutureReturnCode::SUCCESS)
     {
       RCLCPP_ERROR(client_node_->get_logger(), "Failed to cancel goal");
@@ -509,7 +569,11 @@ void DockingPanel::onCancelUndocking()
   if (undock_goal_handle_) {
     auto future_cancel = undock_client_->async_cancel_goal(undock_goal_handle_);
 
+<<<<<<< HEAD
     if (executor_->spin_until_future_complete(future_cancel, server_timeout_) !=
+=======
+    if (rclcpp::spin_until_future_complete(client_node_, future_cancel, server_timeout_) !=
+>>>>>>> jazzy
       rclcpp::FutureReturnCode::SUCCESS)
     {
       RCLCPP_ERROR(client_node_->get_logger(), "Failed to cancel goal");
@@ -532,7 +596,11 @@ void DockingPanel::timerEvent(QTimerEvent * event)
         return;
       }
 
+<<<<<<< HEAD
       executor_->spin_some();
+=======
+      rclcpp::spin_some(client_node_);
+>>>>>>> jazzy
       auto status = dock_goal_handle_->get_status();
 
       // Check if the goal is still executing
@@ -551,7 +619,11 @@ void DockingPanel::timerEvent(QTimerEvent * event)
         return;
       }
 
+<<<<<<< HEAD
       executor_->spin_some();
+=======
+      rclcpp::spin_some(client_node_);
+>>>>>>> jazzy
       auto status = undock_goal_handle_->get_status();
 
       // Check if the goal is still executing

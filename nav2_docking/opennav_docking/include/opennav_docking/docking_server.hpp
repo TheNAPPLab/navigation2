@@ -20,7 +20,12 @@
 #include <mutex>
 #include <optional>
 #include <string>
+<<<<<<< HEAD
 #include <vector>
+=======
+#include <mutex>
+#include <functional>
+>>>>>>> jazzy
 
 #include "rclcpp/rclcpp.hpp"
 #include "nav2_ros_common/lifecycle_node.hpp"
@@ -226,6 +231,26 @@ protected:
   std::unique_ptr<opennav_docking::ParameterHandler> param_handler_;
   Parameters * params_;
 
+<<<<<<< HEAD
+=======
+  // Dynamic parameters handler
+  rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr dyn_params_handler_;
+
+  // Mutex for dynamic parameters and dock database
+  std::shared_ptr<std::mutex> mutex_;
+
+  // Frequency to run control loops
+  double controller_frequency_;
+  // Timeout for initially detecting the charge dock
+  double initial_perception_timeout_;
+  // Timeout after making contact with dock for charging to start
+  // If this is exceeded, the robot returns to the staging pose and retries
+  double wait_charge_timeout_;
+  // Timeout to approach into the dock and reset its approach is retrying
+  double dock_approach_timeout_;
+  // When undocking, these are the tolerances for arriving at the staging pose
+  double undock_linear_tolerance_, undock_angular_tolerance_;
+>>>>>>> jazzy
   // Maximum number of times the robot will return to staging pose and retry docking
   int num_retries_;
 

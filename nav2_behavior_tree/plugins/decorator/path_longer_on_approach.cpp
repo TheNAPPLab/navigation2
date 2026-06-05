@@ -28,7 +28,21 @@ PathLongerOnApproach::PathLongerOnApproach(
   const BT::NodeConfiguration & conf)
 : BT::DecoratorNode(name, conf)
 {
+<<<<<<< HEAD
   node_ = config().blackboard->get<nav2::LifecycleNode::SharedPtr>("node");
+=======
+  node_ = config().blackboard->get<rclcpp::Node::SharedPtr>("node");
+}
+
+bool PathLongerOnApproach::isPathUpdated(
+  nav_msgs::msg::Path & new_path,
+  nav_msgs::msg::Path & old_path)
+{
+  return old_path.poses.size() != 0 &&
+         new_path.poses.size() != 0 &&
+         new_path.poses.size() != old_path.poses.size() &&
+         old_path.poses.back().pose.position == new_path.poses.back().pose.position;
+>>>>>>> jazzy
 }
 
 bool PathLongerOnApproach::isRobotInGoalProximity(

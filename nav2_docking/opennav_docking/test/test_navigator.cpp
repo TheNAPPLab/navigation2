@@ -83,7 +83,11 @@ protected:
 
 TEST(NavigatorTests, TestNavigatorReconfigure)
 {
+<<<<<<< HEAD
   auto node = std::make_shared<nav2::LifecycleNode>("test_node");
+=======
+  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("test_node");
+>>>>>>> jazzy
   auto navigator = std::make_unique<Navigator>(node);
   node->configure();
   node->activate();
@@ -116,37 +120,57 @@ TEST(NavigatorTests, TestNavigator)
   // Should succeed, action server set to succeed
   dummy_navigator_node->setReturn(true);
   EXPECT_NO_THROW(
+<<<<<<< HEAD
     navigator->goToPose(
       geometry_msgs::msg::PoseStamped(), rclcpp::Duration(10.0, 10.0),
+=======
+    navigator->goToPose(geometry_msgs::msg::PoseStamped(), rclcpp::Duration(10.0, 10.0),
+>>>>>>> jazzy
       is_preempted_false));
 
   // Should fail, timeout exceeded
   EXPECT_THROW(
+<<<<<<< HEAD
     navigator->goToPose(
       geometry_msgs::msg::PoseStamped(), rclcpp::Duration(0.0, 0.0),
+=======
+    navigator->goToPose(geometry_msgs::msg::PoseStamped(), rclcpp::Duration(0.0, 0.0),
+>>>>>>> jazzy
       is_preempted_false),
     opennav_docking_core::FailedToStage);
 
   // Should fail, action server set to succeed
   dummy_navigator_node->setReturn(false);
   EXPECT_THROW(
+<<<<<<< HEAD
     navigator->goToPose(
       geometry_msgs::msg::PoseStamped(), rclcpp::Duration(10.0, 10.0),
+=======
+    navigator->goToPose(geometry_msgs::msg::PoseStamped(), rclcpp::Duration(10.0, 10.0),
+>>>>>>> jazzy
       is_preempted_false),
     opennav_docking_core::FailedToStage);
 
   // First should fail, recursion should succeed
   dummy_navigator_node->setToggle();
   EXPECT_NO_THROW(
+<<<<<<< HEAD
     navigator->goToPose(
       geometry_msgs::msg::PoseStamped(), rclcpp::Duration(10.0, 10.0),
+=======
+    navigator->goToPose(geometry_msgs::msg::PoseStamped(), rclcpp::Duration(10.0, 10.0),
+>>>>>>> jazzy
       is_preempted_false));
 
   // Should fail, preempted
   dummy_navigator_node->setReturn(true);
   EXPECT_THROW(
+<<<<<<< HEAD
     navigator->goToPose(
       geometry_msgs::msg::PoseStamped(), rclcpp::Duration(10.0, 10.0),
+=======
+    navigator->goToPose(geometry_msgs::msg::PoseStamped(), rclcpp::Duration(10.0, 10.0),
+>>>>>>> jazzy
       is_preempted_true),
     opennav_docking_core::FailedToStage);
 

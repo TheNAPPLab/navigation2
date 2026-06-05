@@ -391,7 +391,10 @@ private:
   MotionPrimitive * _motion_primitive;
   bool _backwards;
   bool _is_node_valid{false};
+<<<<<<< HEAD
   NodeContext * _ctx = nullptr;
+=======
+>>>>>>> jazzy
 };
 
 }  // namespace nav2_smac_planner

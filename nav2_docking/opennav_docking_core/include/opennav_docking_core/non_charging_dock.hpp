@@ -44,7 +44,11 @@ public:
    * @param  tf A pointer to a TF buffer
    */
   virtual void configure(
+<<<<<<< HEAD
     const nav2::LifecycleNode::WeakPtr & parent,
+=======
+    const rclcpp_lifecycle::LifecycleNode::WeakPtr & parent,
+>>>>>>> jazzy
     const std::string & name, std::shared_ptr<tf2_ros::Buffer> tf) = 0;
 
   /**
@@ -58,7 +62,11 @@ public:
   virtual void activate() = 0;
 
   /**
+<<<<<<< HEAD
    * @brief Method to deactivate Behavior and any threads involved in execution.
+=======
+   * @brief Method to deactive Behavior and any threads involved in execution.
+>>>>>>> jazzy
    */
   virtual void deactivate() = 0;
 
@@ -126,6 +134,7 @@ public:
   }
 
   /**
+<<<<<<< HEAD
    * @brief Start any detection pipelines required for pose refinement.
    */
   virtual bool startDetectionProcess() = 0;
@@ -136,6 +145,8 @@ public:
   virtual bool stopDetectionProcess() = 0;
 
   /**
+=======
+>>>>>>> jazzy
    * @brief Gets if this is a charging-typed dock
    */
   bool isCharger() final {return false;}

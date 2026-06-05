@@ -220,6 +220,7 @@ inline models::Path toTensor(const nav_msgs::msg::Path & path)
 }
 
 /**
+<<<<<<< HEAD
  * @brief Get the last pose from a path
  * @param path Reference to the path
  * @return geometry_msgs::msg::Pose Last pose in the path
@@ -229,10 +230,28 @@ inline geometry_msgs::msg::Pose getLastPathPose(const models::Path & path)
   const unsigned int path_last_idx = path.x.size() - 1;
 
   auto last_orientation = path.yaws(path_last_idx);
+=======
+ * @brief Check if the robot pose is within the Goal Checker's tolerances to goal
+ * @param global_checker Pointer to the goal checker
+ * @param robot Pose of robot
+ * @param goal Goal pose
+ * @return bool If robot is within goal checker tolerances to the goal
+ */
+inline bool withinPositionGoalTolerance(
+  nav2_core::GoalChecker * goal_checker,
+  const geometry_msgs::msg::Pose & robot,
+  const geometry_msgs::msg::Pose & goal)
+{
+  if (goal_checker) {
+    geometry_msgs::msg::Pose pose_tolerance;
+    geometry_msgs::msg::Twist velocity_tolerance;
+    goal_checker->getTolerances(pose_tolerance, velocity_tolerance);
+>>>>>>> jazzy
 
   tf2::Quaternion pose_orientation;
   pose_orientation.setRPY(0.0, 0.0, last_orientation);
 
+<<<<<<< HEAD
   geometry_msgs::msg::Pose pathPose;
   pathPose.position.x = path.x(path_last_idx);
   pathPose.position.y = path.y(path_last_idx);
@@ -242,6 +261,44 @@ inline geometry_msgs::msg::Pose getLastPathPose(const models::Path & path)
   pathPose.orientation.w = pose_orientation.w();
 
   return pathPose;
+=======
+    auto dx = robot.position.x - goal.position.x;
+    auto dy = robot.position.y - goal.position.y;
+
+    auto dist_sq = dx * dx + dy * dy;
+
+    if (dist_sq < pose_tolerance_sq) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * @brief Check if the robot pose is within tolerance to the goal
+ * @param pose_tolerance Pose tolerance to use
+ * @param robot Pose of robot
+ * @param goal Goal pose
+ * @return bool If robot is within tolerance to the goal
+ */
+inline bool withinPositionGoalTolerance(
+  float pose_tolerance,
+  const geometry_msgs::msg::Pose & robot,
+  const geometry_msgs::msg::Pose & goal)
+{
+  const double & dist_sq =
+    std::pow(goal.position.x - robot.position.x, 2) +
+    std::pow(goal.position.y - robot.position.y, 2);
+
+  const float pose_tolerance_sq = pose_tolerance * pose_tolerance;
+
+  if (dist_sq < pose_tolerance_sq) {
+    return true;
+  }
+
+  return false;
+>>>>>>> jazzy
 }
 
 /**
@@ -460,6 +517,7 @@ inline void savitskyGolayFilter(
   std::array<mppi::models::Control, 4> & control_history,
   const models::OptimizerSettings & settings)
 {
+<<<<<<< HEAD
   // Savitzky-Golay filter coefficients, 9-point window
   Eigen::Array<float, 9, 1> filter;
   if (settings.sgf_order == 1) {
@@ -474,6 +532,14 @@ inline void savitskyGolayFilter(
 
   // Too short to smooth meaningfully
   const unsigned int num_sequences = control_sequence.vx.size() - 1;
+=======
+  // Savitzky-Golay Quadratic, 9-point Coefficients
+  xt::xarray<float> filter = {-21.0, 14.0, 39.0, 54.0, 59.0, 54.0, 39.0, 14.0, -21.0};
+  filter /= 231.0;
+
+  // Too short to smooth meaningfully
+  const unsigned int num_sequences = control_sequence.vx.shape(0) - 1;
+>>>>>>> jazzy
   if (num_sequences < 20) {
     return;
   }
@@ -483,7 +549,11 @@ inline void savitskyGolayFilter(
     };
 
   auto applyFilterOverAxis =
+<<<<<<< HEAD
     [&](Eigen::ArrayXf & sequence, const Eigen::ArrayXf & initial_sequence,
+=======
+    [&](xt::xtensor<float, 1> & sequence, const xt::xtensor<float, 1> & initial_sequence,
+>>>>>>> jazzy
     const float hist_0, const float hist_1, const float hist_2, const float hist_3) -> void
     {
       float pt_m4 = hist_0;

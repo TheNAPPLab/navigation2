@@ -98,7 +98,10 @@ private:
   double min_battery_;
   bool is_voltage_;
   bool is_battery_low_;
+<<<<<<< HEAD
   std::chrono::milliseconds bt_loop_duration_;
+=======
+>>>>>>> jazzy
 };
 
 }  // namespace nav2_behavior_tree

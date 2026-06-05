@@ -300,6 +300,7 @@ int Polygon::getPointsInside(
 }
 
 int Polygon::getPointsInside(
+<<<<<<< HEAD
   const std::vector<Point> & points,
   std::vector<std::size_t> & out_triggering_indices) const
 {
@@ -316,6 +317,10 @@ int Polygon::getPointsInside(
 int Polygon::getPointsInside(
   const std::unordered_map<std::string, std::vector<Point>> & sources_collision_points_map,
   std::vector<Point> & out_triggering_points) const
+=======
+  const std::unordered_map<std::string,
+  std::vector<Point>> & sources_collision_points_map) const
+>>>>>>> jazzy
 {
   int num = 0;
   std::vector<std::string> polygon_sources_names = getSourcesNames();
@@ -324,7 +329,11 @@ int Polygon::getPointsInside(
   for (const auto & source_name : polygon_sources_names) {
     const auto & iter = sources_collision_points_map.find(source_name);
     if (iter != sources_collision_points_map.end()) {
+<<<<<<< HEAD
       num += getPointsInside(iter->second, out_triggering_points);
+=======
+      num += getPointsInside(iter->second);
+>>>>>>> jazzy
     }
   }
 
@@ -333,8 +342,12 @@ int Polygon::getPointsInside(
 
 double Polygon::getCollisionTime(
   const std::unordered_map<std::string, std::vector<Point>> & sources_collision_points_map,
+<<<<<<< HEAD
   const Velocity & velocity,
   std::vector<Point> & out_triggering_points) const
+=======
+  const Velocity & velocity) const
+>>>>>>> jazzy
 {
   // Initial robot pose is {0,0} in base_footprint coordinates
   Pose pose = {0.0, 0.0, 0.0};
@@ -355,7 +368,11 @@ double Polygon::getCollisionTime(
   std::vector<Point> points_transformed = collision_points;
 
   // Check static polygon
+<<<<<<< HEAD
   if (getPointsInside(collision_points, out_triggering_points) >= min_points_) {
+=======
+  if (getPointsInside(collision_points) >= min_points_) {
+>>>>>>> jazzy
     return 0.0;
   }
 
@@ -502,6 +519,29 @@ bool Polygon::getCommonParameters(
       node->declare_or_get_parameter<std::vector<std::string>>("observation_sources");
     sources_names_ = node->declare_or_get_parameter(
       polygon_name_ + ".sources_names", observation_sources);
+
+    // Check the observation sources configured for polygon are defined
+    for (auto source_name : sources_names_) {
+      if (std::find(observation_sources.begin(), observation_sources.end(), source_name) ==
+        observation_sources.end())
+      {
+        RCLCPP_ERROR_STREAM(
+          logger_,
+          "Observation source [" << source_name <<
+            "] configured for polygon [" << getName() <<
+            "] is not defined as one of the node's observation_source!");
+        return false;
+      }
+    }
+
+    // By default, use all observation sources for polygon
+    nav2_util::declare_parameter_if_not_declared(
+      node, "observation_sources", rclcpp::PARAMETER_STRING_ARRAY);
+    const std::vector<std::string> observation_sources =
+      node->get_parameter("observation_sources").as_string_array();
+    nav2_util::declare_parameter_if_not_declared(
+      node, polygon_name_ + ".sources_names", rclcpp::ParameterValue(observation_sources));
+    sources_names_ = node->get_parameter(polygon_name_ + ".sources_names").as_string_array();
 
     // Check the observation sources configured for polygon are defined
     for (auto source_name : sources_names_) {

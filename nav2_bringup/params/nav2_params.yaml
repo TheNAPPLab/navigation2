@@ -390,7 +390,10 @@ planner_server:
     expected_planner_frequency: 20.0
     planner_plugins: ["GridBased"]
     costmap_update_timeout: 1.0
+<<<<<<< HEAD
     introspection_mode: "disabled"
+=======
+>>>>>>> jazzy
     GridBased:
       plugin: "nav2_navfn_planner::NavfnPlanner"
       tolerance: 0.5
@@ -488,7 +491,12 @@ route_server:
 velocity_smoother:
   ros__parameters:
     smoothing_frequency: 20.0
+<<<<<<< HEAD
     scale_velocities: false
+=======
+    stamp_smoothed_velocity_with_smoothing_time: False
+    scale_velocities: False
+>>>>>>> jazzy
     feedback: "OPEN_LOOP"
     max_velocity: [0.5, 0.0, 2.0]
     min_velocity: [-0.5, 0.0, -2.0]
@@ -590,7 +598,11 @@ loopback_simulator:
     base_frame_id: "base_footprint"
     odom_frame_id: "odom"
     map_frame_id: "map"
+<<<<<<< HEAD
     scan_frame_id: "base_scan" # tb4_loopback_simulator.launch.py remaps to 'rplidar_link'
+=======
+    scan_frame_id: "base_scan"  # tb4_loopback_simulator.launch.py remaps to 'rplidar_link'
+>>>>>>> jazzy
     update_duration: 0.02
     scan_range_min: 0.05
     scan_range_max: 30.0

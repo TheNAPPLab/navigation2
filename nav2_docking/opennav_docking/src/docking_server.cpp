@@ -31,7 +31,11 @@ DockingServer::DockingServer(const rclcpp::NodeOptions & options)
   RCLCPP_INFO(get_logger(), "Creating %s", get_name());
 }
 
+<<<<<<< HEAD
 nav2::CallbackReturn
+=======
+nav2_util::CallbackReturn
+>>>>>>> jazzy
 DockingServer::on_configure(const rclcpp_lifecycle::State & state)
 {
   RCLCPP_INFO(get_logger(), "Configuring %s", get_name());
@@ -61,6 +65,7 @@ DockingServer::on_configure(const rclcpp_lifecycle::State & state)
     true);
 
   // Create composed utilities
+<<<<<<< HEAD
   controller_ = std::make_unique<Controller>(node, tf2_buffer_, params_->fixed_frame,
       params_->base_frame);
   navigator_ = std::make_unique<Navigator>(node);
@@ -68,6 +73,15 @@ DockingServer::on_configure(const rclcpp_lifecycle::State & state)
   if (!dock_db_->initialize(node, tf2_buffer_)) {
     on_cleanup(state);
     return nav2::CallbackReturn::FAILURE;
+=======
+  mutex_ = std::make_shared<std::mutex>();
+  controller_ = std::make_unique<Controller>(node, tf2_buffer_, fixed_frame_, base_frame_);
+  navigator_ = std::make_unique<Navigator>(node);
+  dock_db_ = std::make_unique<DockDatabase>(mutex_);
+  if (!dock_db_->initialize(node, tf2_buffer_)) {
+    on_cleanup(state);
+    return nav2_util::CallbackReturn::FAILURE;
+>>>>>>> jazzy
   }
 
   return nav2::CallbackReturn::SUCCESS;
@@ -105,7 +119,13 @@ DockingServer::on_deactivate(const rclcpp_lifecycle::State & /*state*/)
   dock_db_->deactivate();
   navigator_->deactivate();
   vel_publisher_->on_deactivate();
+<<<<<<< HEAD
   param_handler_->deactivate();
+=======
+
+  remove_on_set_parameters_callback(dyn_params_handler_.get());
+  dyn_params_handler_.reset();
+>>>>>>> jazzy
   tf2_listener_.reset();
 
   // Destroy bond connection
@@ -174,7 +194,11 @@ bool DockingServer::checkAndWarnIfPreempted(
 
 void DockingServer::dockRobot()
 {
+<<<<<<< HEAD
   std::lock_guard<std::mutex> lock_reinit(param_handler_->getMutex());
+=======
+  std::lock_guard<std::mutex> lock(*mutex_);
+>>>>>>> jazzy
   action_start_time_ = this->now();
   nav2::Rate loop_rate(this, params_->controller_frequency);
 
@@ -231,8 +255,13 @@ void DockingServer::dockRobot()
       RCLCPP_INFO(get_logger(), "Robot already within pre-staging pose tolerance for dock");
     } else {
       std::function<bool()> isPreempted = [this]() {
+<<<<<<< HEAD
           return checkAndWarnIfCancelled<DockRobot>(docking_action_server_, "dock_robot") ||
                  checkAndWarnIfPreempted<DockRobot>(docking_action_server_, "dock_robot");
+=======
+          return checkAndWarnIfCancelled(docking_action_server_, "dock_robot") ||
+                 checkAndWarnIfPreempted(docking_action_server_, "dock_robot");
+>>>>>>> jazzy
         };
 
       navigator_->goToPose(
@@ -276,7 +305,10 @@ void DockingServer::dockRobot()
           // We are docked, wait for charging to begin
           RCLCPP_INFO(
             get_logger(), "Made contact with dock, waiting for charge to start (if applicable).");
+<<<<<<< HEAD
           publishZeroVelocity();
+=======
+>>>>>>> jazzy
           if (waitForCharge(dock)) {
             if (dock->plugin->isCharger()) {
               RCLCPP_INFO(get_logger(), "Robot is charging!");
@@ -396,7 +428,11 @@ void DockingServer::doInitialPerception(Dock * dock, geometry_msgs::msg::PoseSta
 
   nav2::Rate loop_rate(this, params_->controller_frequency);
   auto start = this->now();
+<<<<<<< HEAD
   auto timeout = rclcpp::Duration::from_seconds(params_->initial_perception_timeout);
+=======
+  auto timeout = rclcpp::Duration::from_seconds(initial_perception_timeout_);
+>>>>>>> jazzy
   while (!dock->plugin->getRefinedPose(dock_pose, dock->id)) {
     if (this->now() - start > timeout) {
       throw opennav_docking_core::FailedToDetectDock(
@@ -473,7 +509,11 @@ bool DockingServer::approachDock(
     }
 
     // Update perception
+<<<<<<< HEAD
     if (!dock->plugin->getRefinedPose(dock_pose, dock->id) && !dock->plugin->shouldRotateToDock()) {
+=======
+    if (!dock->plugin->getRefinedPose(dock_pose, dock->id)) {
+>>>>>>> jazzy
       throw opennav_docking_core::FailedToDetectDock("Failed dock detection");
     }
 
@@ -498,10 +538,23 @@ bool DockingServer::approachDock(
         tf2::getYaw(target_pose.pose.orientation) + M_PI);
     }
 
+    // Make sure that the target pose is pointing at the robot when moving backwards
+    // This is to ensure that the robot doesn't try to dock from the wrong side
+    if (dock_backwards_) {
+      target_pose.pose.orientation = nav2_util::geometry_utils::orientationAroundZAxis(
+        tf2::getYaw(target_pose.pose.orientation) + M_PI);
+    }
+
     // Compute and publish controls
     auto command = std::make_unique<geometry_msgs::msg::TwistStamped>();
     command->header.stamp = now();
+<<<<<<< HEAD
     if (!controller_->computeVelocityCommand(target_pose.pose, command->twist, true, backward)) {
+=======
+    if (!controller_->computeVelocityCommand(target_pose.pose, command->twist, true,
+        dock_backwards_))
+    {
+>>>>>>> jazzy
       throw opennav_docking_core::FailedToControl("Failed to get control");
     }
     vel_publisher_->publish(std::move(command));
@@ -523,7 +576,11 @@ bool DockingServer::waitForCharge(Dock * dock)
     return true;
   }
 
+<<<<<<< HEAD
   nav2::Rate loop_rate(this, params_->controller_frequency);
+=======
+  rclcpp::Rate loop_rate(controller_frequency_);
+>>>>>>> jazzy
   auto start = this->now();
   auto timeout = rclcpp::Duration::from_seconds(params_->wait_charge_timeout);
   while (rclcpp::ok()) {
@@ -568,9 +625,14 @@ bool DockingServer::resetApproach(
     auto command = std::make_unique<geometry_msgs::msg::TwistStamped>();
     command->header.stamp = now();
     if (getCommandToPose(
+<<<<<<< HEAD
         command->twist, staging_pose, params_->undock_linear_tolerance,
         params_->undock_angular_tolerance, false,
         !backward))
+=======
+        command->twist, staging_pose, undock_linear_tolerance_, undock_angular_tolerance_, false,
+        !dock_backwards_))
+>>>>>>> jazzy
     {
       return true;
     }
@@ -620,7 +682,11 @@ bool DockingServer::getCommandToPose(
 
 void DockingServer::undockRobot()
 {
+<<<<<<< HEAD
   std::lock_guard<std::mutex> lock_reinit(param_handler_->getMutex());
+=======
+  std::lock_guard<std::mutex> lock(*mutex_);
+>>>>>>> jazzy
   action_start_time_ = this->now();
   nav2::Rate loop_rate(this, params_->controller_frequency);
 
@@ -675,6 +741,12 @@ void DockingServer::undockRobot()
         tf2::getYaw(dock_pose.pose.orientation) + M_PI);
     }
 
+    // Make sure that the staging pose is pointing in the same direction when moving backwards
+    if (dock_backwards_) {
+      dock_pose.pose.orientation = nav2_util::geometry_utils::orientationAroundZAxis(
+        tf2::getYaw(dock_pose.pose.orientation) + M_PI);
+    }
+
     // Get staging pose (in fixed frame)
     geometry_msgs::msg::PoseStamped staging_pose =
       dock->getStagingPose(dock_pose.pose, dock_pose.header.frame_id);
@@ -715,9 +787,14 @@ void DockingServer::undockRobot()
       command->header.stamp = now();
 
       if (getCommandToPose(
+<<<<<<< HEAD
           command->twist, staging_pose, params_->undock_linear_tolerance,
           params_->undock_angular_tolerance, false,
           !dock_backward))
+=======
+          command->twist, staging_pose, undock_linear_tolerance_, undock_angular_tolerance_, false,
+          !dock_backwards_))
+>>>>>>> jazzy
       {
         // Perform a 180º to the original staging pose
         if (dock->shouldRotateToDock()) {
@@ -793,6 +870,49 @@ void DockingServer::publishDockingFeedback(uint16_t state)
   feedback->num_retries = num_retries_;
   docking_action_server_->publish_feedback(feedback);
 }
+<<<<<<< HEAD
+=======
+
+rcl_interfaces::msg::SetParametersResult
+DockingServer::dynamicParametersCallback(std::vector<rclcpp::Parameter> parameters)
+{
+  std::lock_guard<std::mutex> lock(*mutex_);
+
+  rcl_interfaces::msg::SetParametersResult result;
+  for (auto parameter : parameters) {
+    const auto & type = parameter.get_type();
+    const auto & name = parameter.get_name();
+
+    if (type == ParameterType::PARAMETER_DOUBLE) {
+      if (name == "controller_frequency") {
+        controller_frequency_ = parameter.as_double();
+      } else if (name == "initial_perception_timeout") {
+        initial_perception_timeout_ = parameter.as_double();
+      } else if (name == "wait_charge_timeout") {
+        wait_charge_timeout_ = parameter.as_double();
+      } else if (name == "undock_linear_tolerance") {
+        undock_linear_tolerance_ = parameter.as_double();
+      } else if (name == "undock_angular_tolerance") {
+        undock_angular_tolerance_ = parameter.as_double();
+      }
+    } else if (type == ParameterType::PARAMETER_STRING) {
+      if (name == "base_frame") {
+        base_frame_ = parameter.as_string();
+      } else if (name == "fixed_frame") {
+        fixed_frame_ = parameter.as_string();
+      }
+    } else if (type == ParameterType::PARAMETER_INTEGER) {
+      if (name == "max_retries") {
+        max_retries_ = parameter.as_int();
+      }
+    }
+  }
+
+  result.successful = true;
+  return result;
+}
+
+>>>>>>> jazzy
 }  // namespace opennav_docking
 
 #include "rclcpp_components/register_node_macro.hpp"

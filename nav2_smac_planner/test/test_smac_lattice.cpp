@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "gtest/gtest.h"
+#include "ament_index_cpp/get_package_share_directory.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "nav2_costmap_2d/costmap_2d.hpp"
 #include "nav2_costmap_2d/costmap_subscriber.hpp"
@@ -64,6 +65,21 @@ public:
   nav2_smac_planner::GoalHeadingMode getGoalHeadingMode()
   {
     return _goal_heading_mode;
+  }
+
+  bool getAllowReverseExpansion()
+  {
+    return _search_info.allow_reverse_expansion;
+  }
+
+  std::string getMotionModelName()
+  {
+    return _metadata.motion_model;
+  }
+
+  bool hasSmootherInitialized()
+  {
+    return _smoother != nullptr;
   }
 
   bool getAllowReverseExpansion()
@@ -174,6 +190,7 @@ TEST(SmacTest, test_smac_lattice)
   } catch (...) {
   }
 
+<<<<<<< HEAD
   executor.spin_all(std::chrono::milliseconds(50));
   EXPECT_EQ(expansions_received, true);
   EXPECT_FALSE(received_expansions->poses.empty());
@@ -193,10 +210,13 @@ TEST(SmacTest, test_smac_lattice)
   }
 
 
+=======
+>>>>>>> jazzy
   // corner case where the start and goal are on the same cell
   goal.pose.position.x = 0.01;
   goal.pose.position.y = 0.01;
 
+<<<<<<< HEAD
   nav_msgs::msg::Path plan = planner->createPlan(start, goal, no_viapoints, dummy_cancel_checker);
   EXPECT_EQ(plan.poses.size(), 1);  // single point path
 
@@ -214,6 +234,11 @@ TEST(SmacTest, test_smac_lattice)
   EXPECT_THROW(planner->createPlan(
     start, goal, no_viapoints, dummy_cancel_checker), std::runtime_error);
 
+=======
+  nav_msgs::msg::Path plan = planner->createPlan(start, goal, dummy_cancel_checker);
+  EXPECT_EQ(plan.poses.size(), 1);  // single point path
+
+>>>>>>> jazzy
   planner->deactivate();
   planner->cleanup();
 
@@ -326,15 +351,24 @@ TEST(SmacTest, test_smac_lattice_reconfigure)
 
 TEST(SmacTest, test_smac_lattice_omni_configure)
 {
+<<<<<<< HEAD
   nav2::LifecycleNode::SharedPtr nodeLattice =
     std::make_shared<nav2::LifecycleNode>("SmacLatticeOmniTest");
+=======
+  rclcpp_lifecycle::LifecycleNode::SharedPtr nodeLattice =
+    std::make_shared<rclcpp_lifecycle::LifecycleNode>("SmacLatticeOmniTest");
+>>>>>>> jazzy
 
   std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros =
     std::make_shared<nav2_costmap_2d::Costmap2DROS>("global_costmap");
   costmap_ros->on_configure(rclcpp_lifecycle::State());
 
   std::string omni_filepath =
+<<<<<<< HEAD
     nav2::get_package_share_directory("nav2_smac_planner") +
+=======
+    ament_index_cpp::get_package_share_directory("nav2_smac_planner") +
+>>>>>>> jazzy
     "/sample_primitives/5cm_resolution/0.5m_turning_radius/omni/output.json";
 
   nodeLattice->declare_parameter("test_omni.lattice_filepath", omni_filepath);
@@ -359,8 +393,13 @@ TEST(SmacTest, test_smac_lattice_omni_configure)
 
 TEST(SmacTest, test_smac_lattice_omni_reconfigure)
 {
+<<<<<<< HEAD
   nav2::LifecycleNode::SharedPtr nodeLattice =
     std::make_shared<nav2::LifecycleNode>("SmacLatticeOmniReconfigTest");
+=======
+  rclcpp_lifecycle::LifecycleNode::SharedPtr nodeLattice =
+    std::make_shared<rclcpp_lifecycle::LifecycleNode>("SmacLatticeOmniReconfigTest");
+>>>>>>> jazzy
 
   std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros =
     std::make_shared<nav2_costmap_2d::Costmap2DROS>("global_costmap");
@@ -374,7 +413,11 @@ TEST(SmacTest, test_smac_lattice_omni_reconfigure)
   planner->activate();
 
   std::string omni_filepath =
+<<<<<<< HEAD
     nav2::get_package_share_directory("nav2_smac_planner") +
+=======
+    ament_index_cpp::get_package_share_directory("nav2_smac_planner") +
+>>>>>>> jazzy
     "/sample_primitives/5cm_resolution/0.5m_turning_radius/omni/output.json";
 
   // Reconfigure to OMNI with reverse expansion enabled
@@ -397,6 +440,7 @@ TEST(SmacTest, test_smac_lattice_omni_reconfigure)
   costmap_ros.reset();
   nodeLattice.reset();
 }
+<<<<<<< HEAD
 
 int main(int argc, char ** argv)
 {
@@ -410,3 +454,5 @@ int main(int argc, char ** argv)
 
   return result;
 }
+=======
+>>>>>>> jazzy

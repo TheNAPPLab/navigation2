@@ -8,6 +8,7 @@ target_link_libraries(costmap_conversion_test
   nav2_costmap_2d_core
 )
 
+<<<<<<< HEAD
 nav2_add_gtest(costmap_cost_service_test costmap_cost_service_test.cpp)
 target_link_libraries(costmap_cost_service_test
   nav2_costmap_2d_core
@@ -19,6 +20,14 @@ target_link_libraries(clear_costmap_service_test
 )
 
 nav2_add_gtest(declare_parameter_test declare_parameter_test.cpp)
+=======
+ament_add_gtest(costmap_cost_service_test costmap_cost_service_test.cpp)
+target_link_libraries(costmap_cost_service_test
+  ${PROJECT_NAME}::nav2_costmap_2d_core
+)
+
+ament_add_gtest(declare_parameter_test declare_parameter_test.cpp)
+>>>>>>> jazzy
 target_link_libraries(declare_parameter_test
   nav2_costmap_2d_core
 )
@@ -65,6 +74,7 @@ target_link_libraries(denoise_layer_test
 
 nav2_add_gtest(lifecycle_test lifecycle_test.cpp)
 target_link_libraries(lifecycle_test
+<<<<<<< HEAD
   nav2_costmap_2d_core
 )
 
@@ -80,5 +90,13 @@ target_link_libraries(observation_buffer_test
 nav2_add_gtest(obstacle_layer_test obstacle_layer_test.cpp)
 target_link_libraries(obstacle_layer_test
   nav2_costmap_2d_core
+=======
+  ${PROJECT_NAME}::nav2_costmap_2d_core
+)
+
+ament_add_gtest(obstacle_layer_test obstacle_layer_test.cpp)
+target_link_libraries(obstacle_layer_test
+  ${PROJECT_NAME}::nav2_costmap_2d_core
+>>>>>>> jazzy
   layers
 )

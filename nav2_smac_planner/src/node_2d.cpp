@@ -28,8 +28,12 @@ Node2D::Node2D(const uint64_t index, NodeContext * ctx)
   _index(index),
   _was_visited(false),
   _is_queued(false),
+<<<<<<< HEAD
   _in_collision(false),
   _ctx(ctx)
+=======
+  _in_collision(false)
+>>>>>>> jazzy
 {
 }
 

@@ -169,6 +169,7 @@ TEST(SmacTest, test_smac_se2)
   } catch (...) {
   }
 
+<<<<<<< HEAD
   executor.spin_all(std::chrono::milliseconds(50));
   EXPECT_EQ(expansions_received, true);
   EXPECT_FALSE(received_expansions->poses.empty());
@@ -187,10 +188,13 @@ TEST(SmacTest, test_smac_se2)
     EXPECT_FALSE(std::isnan(pose_stamped.pose.orientation.w));
   }
 
+=======
+>>>>>>> jazzy
   // corner case where the start and goal are on the same cell
   goal.pose.position.x = 0.01;
   goal.pose.position.y = 0.01;
 
+<<<<<<< HEAD
   nav_msgs::msg::Path plan = planner->createPlan(
     start, goal, no_viapoints, dummy_cancel_checker);
   EXPECT_EQ(plan.poses.size(), 1);  // single point path
@@ -209,6 +213,11 @@ TEST(SmacTest, test_smac_se2)
   EXPECT_THROW(planner->createPlan(
     start, goal, no_viapoints, dummy_cancel_checker), std::runtime_error);
 
+=======
+  nav_msgs::msg::Path plan = planner->createPlan(start, goal, dummy_cancel_checker);
+  EXPECT_EQ(plan.poses.size(), 1);  // single point path
+
+>>>>>>> jazzy
   planner->deactivate();
   planner->cleanup();
 

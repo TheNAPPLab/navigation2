@@ -18,9 +18,18 @@
 #include <string>
 #include <memory>
 
+<<<<<<< HEAD
 #include "nav2_ros_common/lifecycle_node.hpp"
 #include "behaviortree_cpp/condition_node.h"
 #include "tf2_ros/buffer.hpp"
+=======
+#include "rclcpp/rclcpp.hpp"
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "tf2_ros/buffer.h"
+#include "behaviortree_cpp/condition_node.h"
+#include "nav2_util/robot_utils.hpp"
+#include "nav2_util/node_utils.hpp"
+>>>>>>> jazzy
 #include "nav2_behavior_tree/bt_utils.hpp"
 
 namespace nav2_behavior_tree
@@ -29,11 +38,14 @@ namespace nav2_behavior_tree
 /**
  * @brief A BT::ConditionNode that returns SUCCESS when a specified goal
  * is reached and FAILURE otherwise
+<<<<<<< HEAD
  *
  * Usage in XML:
  * @code
  * <ArePosesNear ref_pose="{init_pose}" target_pose="{goal_pose}" tolerance="0.10"/>
  * @endcode
+=======
+>>>>>>> jazzy
  */
 class ArePosesNearCondition : public BT::ConditionNode
 {
@@ -47,6 +59,11 @@ public:
     const std::string & condition_name,
     const BT::NodeConfiguration & conf);
 
+<<<<<<< HEAD
+=======
+  ArePosesNearCondition() = delete;
+
+>>>>>>> jazzy
   /**
    * @brief A destructor for nav2_behavior_tree::ArePosesNearCondition
    */
@@ -83,8 +100,13 @@ public:
     };
   }
 
+<<<<<<< HEAD
 private:
   nav2::LifecycleNode::SharedPtr node_;
+=======
+protected:
+  rclcpp::Node::SharedPtr node_;
+>>>>>>> jazzy
   std::shared_ptr<tf2_ros::Buffer> tf_;
   double transform_tolerance_;
   std::string global_frame_;

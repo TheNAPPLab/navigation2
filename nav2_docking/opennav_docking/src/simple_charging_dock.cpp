@@ -90,6 +90,7 @@ void SimpleChargingDock::configure(
   staging_yaw_offset_ = node_->declare_or_get_parameter(
     name + ".staging_yaw_offset", 0.0);
 
+<<<<<<< HEAD
   // Direction of docking and if we should rotate to dock
   std::string dock_direction = node_->declare_or_get_parameter(
     name + ".dock_direction", std::string("forward"));
@@ -123,6 +124,27 @@ void SimpleChargingDock::configure(
     throw std::runtime_error{"Parameter rotate_to_dock is enabled but dock direction is not "
             "backward. Please set dock direction to backward."};
   }
+=======
+  node_->get_parameter(name + ".use_battery_status", use_battery_status_);
+  node_->get_parameter(name + ".use_external_detection_pose", use_external_detection_pose_);
+  node_->get_parameter(name + ".external_detection_timeout", external_detection_timeout_);
+  node_->get_parameter(
+    name + ".external_detection_translation_x", external_detection_translation_x_);
+  node_->get_parameter(
+    name + ".external_detection_translation_y", external_detection_translation_y_);
+  double yaw, pitch, roll;
+  node_->get_parameter(name + ".external_detection_rotation_yaw", yaw);
+  node_->get_parameter(name + ".external_detection_rotation_pitch", pitch);
+  node_->get_parameter(name + ".external_detection_rotation_roll", roll);
+  external_detection_rotation_.setEuler(pitch, roll, yaw);
+  node_->get_parameter(name + ".charging_threshold", charging_threshold_);
+  node_->get_parameter(name + ".stall_velocity_threshold", stall_velocity_threshold_);
+  node_->get_parameter(name + ".stall_effort_threshold", stall_effort_threshold_);
+  node_->get_parameter(name + ".docking_threshold", docking_threshold_);
+  node_->get_parameter("base_frame", base_frame_id_);  // Get server base frame ID
+  node_->get_parameter(name + ".staging_x_offset", staging_x_offset_);
+  node_->get_parameter(name + ".staging_yaw_offset", staging_yaw_offset_);
+>>>>>>> jazzy
 
   // Setup filter
   external_detection_rotation_.setRPY(roll, pitch, yaw);

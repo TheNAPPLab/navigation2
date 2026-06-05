@@ -43,7 +43,11 @@ public:
   /**
    * @brief A constructor for opennav_docking::DockDatabase
    */
+<<<<<<< HEAD
   explicit DockDatabase(std::mutex & mutex);
+=======
+  explicit DockDatabase(std::shared_ptr<std::mutex> mutex = std::make_shared<std::mutex>());
+>>>>>>> jazzy
 
   /**
    * @brief A setup function to populate database
@@ -128,8 +132,13 @@ protected:
     const std::shared_ptr<nav2_msgs::srv::ReloadDockDatabase::Request> request,
     std::shared_ptr<nav2_msgs::srv::ReloadDockDatabase::Response> response);
 
+<<<<<<< HEAD
   nav2::LifecycleNode::WeakPtr node_;
   std::mutex & mutex_;  // Don't reload database while actively docking
+=======
+  rclcpp_lifecycle::LifecycleNode::WeakPtr node_;
+  std::shared_ptr<std::mutex> mutex_;  // Don't reload database while actively docking
+>>>>>>> jazzy
   DockPluginMap dock_plugins_;
   DockMap dock_instances_;
   pluginlib::ClassLoader<opennav_docking_core::ChargingDock> dock_loader_;

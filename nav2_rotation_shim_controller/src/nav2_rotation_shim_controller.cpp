@@ -43,6 +43,8 @@ void RotationShimController::configure(
   std::string name, std::shared_ptr<tf2_ros::Buffer> tf,
   std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros)
 {
+  position_goal_checker_ = std::make_unique<nav2_controller::PositionGoalChecker>();
+  position_goal_checker_->initialize(parent, plugin_name_ + ".position_checker", costmap_ros);
   plugin_name_ = name;
   node_ = parent;
   auto node = parent.lock();
@@ -52,11 +54,60 @@ void RotationShimController::configure(
   logger_ = node->get_logger();
   clock_ = node->get_clock();
 
+<<<<<<< HEAD
   // Handles storage and dynamic configuration of parameters.
   // Returns pointer to data current param settings.
   param_handler_ = std::make_unique<ParameterHandler>(
     node, plugin_name_, logger_);
   params_ = param_handler_->getParams();
+=======
+  std::string primary_controller;
+  double control_frequency;
+  nav2_util::declare_parameter_if_not_declared(
+    node, plugin_name_ + ".angular_dist_threshold", rclcpp::ParameterValue(0.785));  // 45 deg
+  nav2_util::declare_parameter_if_not_declared(
+    node, plugin_name_ + ".angular_disengage_threshold", rclcpp::ParameterValue(0.785 / 2.0));
+  nav2_util::declare_parameter_if_not_declared(
+    node, plugin_name_ + ".forward_sampling_distance", rclcpp::ParameterValue(0.5));
+  nav2_util::declare_parameter_if_not_declared(
+    node, plugin_name_ + ".rotate_to_heading_angular_vel", rclcpp::ParameterValue(1.8));
+  nav2_util::declare_parameter_if_not_declared(
+    node, plugin_name_ + ".max_angular_accel", rclcpp::ParameterValue(3.2));
+  nav2_util::declare_parameter_if_not_declared(
+    node, plugin_name_ + ".max_cost_threshold",
+    rclcpp::ParameterValue(static_cast<double>(nav2_costmap_2d::LETHAL_OBSTACLE)));
+  nav2_util::declare_parameter_if_not_declared(
+    node, plugin_name_ + ".simulate_ahead_time", rclcpp::ParameterValue(1.0));
+  nav2_util::declare_parameter_if_not_declared(
+    node, plugin_name_ + ".primary_controller", rclcpp::PARAMETER_STRING);
+  nav2_util::declare_parameter_if_not_declared(
+    node, plugin_name_ + ".rotate_to_goal_heading", rclcpp::ParameterValue(false));
+  nav2_util::declare_parameter_if_not_declared(
+    node, plugin_name_ + ".rotate_to_heading_once", rclcpp::ParameterValue(false));
+  nav2_util::declare_parameter_if_not_declared(
+    node, plugin_name_ + ".closed_loop", rclcpp::ParameterValue(true));
+  nav2_util::declare_parameter_if_not_declared(
+    node, plugin_name_ + ".use_path_orientations", rclcpp::ParameterValue(false));
+
+  node->get_parameter(plugin_name_ + ".angular_dist_threshold", angular_dist_threshold_);
+  node->get_parameter(plugin_name_ + ".angular_disengage_threshold", angular_disengage_threshold_);
+  node->get_parameter(plugin_name_ + ".forward_sampling_distance", forward_sampling_distance_);
+  node->get_parameter(
+    plugin_name_ + ".rotate_to_heading_angular_vel",
+    rotate_to_heading_angular_vel_);
+  node->get_parameter(plugin_name_ + ".max_angular_accel", max_angular_accel_);
+  node->get_parameter(plugin_name_ + ".max_cost_threshold", max_cost_threshold_);
+  node->get_parameter(plugin_name_ + ".simulate_ahead_time", simulate_ahead_time_);
+
+  primary_controller = node->get_parameter(plugin_name_ + ".primary_controller").as_string();
+  node->get_parameter("controller_frequency", control_frequency);
+  control_duration_ = 1.0 / control_frequency;
+
+  node->get_parameter(plugin_name_ + ".rotate_to_goal_heading", rotate_to_goal_heading_);
+  node->get_parameter(plugin_name_ + ".rotate_to_heading_once", rotate_to_heading_once_);
+  node->get_parameter(plugin_name_ + ".closed_loop", closed_loop_);
+  node->get_parameter(plugin_name_ + ".use_path_orientations", use_path_orientations_);
+>>>>>>> jazzy
 
   try {
     primary_controller_ = lp_loader_.createUniqueInstance(params_->primary_controller);
@@ -88,7 +139,17 @@ void RotationShimController::activate()
   primary_controller_->activate();
   in_rotation_ = false;
   last_angular_vel_ = std::numeric_limits<double>::max();
+<<<<<<< HEAD
   param_handler_->activate();
+=======
+
+  auto node = node_.lock();
+  dyn_params_handler_ = node->add_on_set_parameters_callback(
+    std::bind(
+      &RotationShimController::dynamicParametersCallback,
+      this, std::placeholders::_1));
+  position_goal_checker_->reset();
+>>>>>>> jazzy
 }
 
 void RotationShimController::deactivate()
@@ -100,7 +161,15 @@ void RotationShimController::deactivate()
     plugin_name_.c_str());
 
   primary_controller_->deactivate();
+<<<<<<< HEAD
   param_handler_->deactivate();
+=======
+
+  if (auto node = node_.lock()) {
+    node->remove_on_set_parameters_callback(dyn_params_handler_.get());
+  }
+  dyn_params_handler_.reset();
+>>>>>>> jazzy
 }
 
 void RotationShimController::cleanup()
@@ -113,6 +182,7 @@ void RotationShimController::cleanup()
 
   primary_controller_->cleanup();
   primary_controller_.reset();
+  position_goal_checker_.reset();
 }
 
 geometry_msgs::msg::TwistStamped RotationShimController::computeVelocityCommands(
@@ -130,9 +200,27 @@ geometry_msgs::msg::TwistStamped RotationShimController::computeVelocityCommands
     std::lock_guard<std::mutex> lock_reinit(param_handler_->getMutex());
 
     try {
+<<<<<<< HEAD
       if (goal_checker->isGoalXYReached(pose.pose, global_goal.pose, velocity,
         transformed_global_plan))
       {
+=======
+      geometry_msgs::msg::PoseStamped sampled_pt_goal = getSampledPathGoal();
+
+      if (!nav2_util::transformPoseInTargetFrame(
+          sampled_pt_goal, sampled_pt_goal, *tf_,
+          pose.header.frame_id))
+      {
+        throw nav2_core::ControllerTFError("Failed to transform pose to base frame!");
+      }
+
+      geometry_msgs::msg::Pose pose_tolerance;
+      geometry_msgs::msg::Twist vel_tolerance;
+      goal_checker->getTolerances(pose_tolerance, vel_tolerance);
+      position_goal_checker_->setXYGoalTolerance(pose_tolerance.position.x);
+
+      if (position_goal_checker_->isGoalReached(pose.pose, sampled_pt_goal.pose, velocity)) {
+>>>>>>> jazzy
         double pose_yaw = tf2::getYaw(pose.pose.orientation);
         double goal_yaw = tf2::getYaw(global_goal.pose.orientation);
 
@@ -157,9 +245,15 @@ geometry_msgs::msg::TwistStamped RotationShimController::computeVelocityCommands
 
     std::lock_guard<std::mutex> lock_reinit(param_handler_->getMutex());
     try {
+<<<<<<< HEAD
       auto sampled_pt = getSampledPathPt(global_goal);
       double angular_distance_to_heading;
       if (params_->use_path_orientations) {
+=======
+      auto sampled_pt = getSampledPathPt();
+      double angular_distance_to_heading;
+      if (use_path_orientations_) {
+>>>>>>> jazzy
         angular_distance_to_heading = angles::shortest_angular_distance(
           tf2::getYaw(pose.pose.orientation),
           tf2::getYaw(sampled_pt.pose.orientation));
@@ -171,7 +265,11 @@ geometry_msgs::msg::TwistStamped RotationShimController::computeVelocityCommands
       }
 
       double angular_thresh =
+<<<<<<< HEAD
         in_rotation_ ? params_->angular_disengage_threshold : params_->angular_dist_threshold;
+=======
+        in_rotation_ ? angular_disengage_threshold_ : angular_dist_threshold_;
+>>>>>>> jazzy
       if (abs(angular_distance_to_heading) > angular_thresh) {
         RCLCPP_DEBUG(
           logger_,
@@ -198,8 +296,12 @@ geometry_msgs::msg::TwistStamped RotationShimController::computeVelocityCommands
 
   // If at this point, use the primary controller to path track
   in_rotation_ = false;
+<<<<<<< HEAD
   auto cmd_vel = primary_controller_->computeVelocityCommands(pose, velocity, goal_checker,
     transformed_global_plan, global_goal);
+=======
+  auto cmd_vel = primary_controller_->computeVelocityCommands(pose, velocity, goal_checker);
+>>>>>>> jazzy
   last_angular_vel_ = cmd_vel.twist.angular.z;
   return cmd_vel;
 }
@@ -227,6 +329,21 @@ geometry_msgs::msg::PoseStamped RotationShimController::getSampledPathPt(
     }
   }
 
+<<<<<<< HEAD
+=======
+  auto goal = current_path_.poses.back();
+  goal.header.frame_id = current_path_.header.frame_id;
+  goal.header.stamp = clock_->now();
+  return goal;
+}
+
+geometry_msgs::msg::PoseStamped RotationShimController::getSampledPathGoal()
+{
+  if (current_path_.poses.empty()) {
+    throw nav2_core::InvalidPath("Path is empty - cannot find a goal point");
+  }
+
+>>>>>>> jazzy
   auto goal = current_path_.poses.back();
   goal.header.frame_id = current_path_.header.frame_id;
   goal.header.stamp = clock_->now();
@@ -258,7 +375,11 @@ RotationShimController::computeRotateToHeadingCommand(
   const geometry_msgs::msg::PoseStamped & pose,
   const geometry_msgs::msg::Twist & velocity)
 {
+<<<<<<< HEAD
   auto current = params_->closed_loop ? velocity.angular.z : last_angular_vel_;
+=======
+  auto current = closed_loop_ ? velocity.angular.z : last_angular_vel_;
+>>>>>>> jazzy
   if (current == std::numeric_limits<double>::max()) {
     current = 0.0;
   }
@@ -266,16 +387,27 @@ RotationShimController::computeRotateToHeadingCommand(
   geometry_msgs::msg::TwistStamped cmd_vel;
   cmd_vel.header = pose.header;
   const double sign = angular_distance_to_heading > 0.0 ? 1.0 : -1.0;
+<<<<<<< HEAD
   const double angular_vel = sign * params_->rotate_to_heading_angular_vel;
   const double & dt = params_->control_duration;
   const double min_feasible_angular_speed = current - params_->max_angular_accel * dt;
   const double max_feasible_angular_speed = current + params_->max_angular_accel * dt;
+=======
+  const double angular_vel = sign * rotate_to_heading_angular_vel_;
+  const double & dt = control_duration_;
+  const double min_feasible_angular_speed = current - max_angular_accel_ * dt;
+  const double max_feasible_angular_speed = current + max_angular_accel_ * dt;
+>>>>>>> jazzy
   cmd_vel.twist.angular.z =
     std::clamp(angular_vel, min_feasible_angular_speed, max_feasible_angular_speed);
 
   // Check if we need to slow down to avoid overshooting
+<<<<<<< HEAD
   double max_vel_to_stop = std::sqrt(2 * params_->max_angular_accel *
     fabs(angular_distance_to_heading));
+=======
+  double max_vel_to_stop = std::sqrt(2 * max_angular_accel_ * fabs(angular_distance_to_heading));
+>>>>>>> jazzy
   if (fabs(cmd_vel.twist.angular.z) > max_vel_to_stop) {
     cmd_vel.twist.angular.z = sign * max_vel_to_stop;
   }
@@ -318,12 +450,17 @@ void RotationShimController::isCollisionFree(
               "RotationShimController detected a potential collision ahead!");
     }
 
+<<<<<<< HEAD
     if (footprint_cost >= params_->max_cost_threshold) {
+=======
+    if (footprint_cost >= max_cost_threshold_) {
+>>>>>>> jazzy
       throw nav2_core::NoValidControl("RotationShimController detected collision ahead!");
     }
   }
 }
 
+<<<<<<< HEAD
 bool RotationShimController::isGoalChanged(const geometry_msgs::msg::PoseStamped & goal)
 {
   // Return true if rotating or if the goal pose is empty
@@ -338,6 +475,25 @@ bool RotationShimController::isGoalChanged(const geometry_msgs::msg::PoseStamped
 void RotationShimController::newPathReceived(const nav_msgs::msg::Path & raw_global_path)
 {
   primary_controller_->newPathReceived(raw_global_path);
+=======
+bool RotationShimController::isGoalChanged(const nav_msgs::msg::Path & path)
+{
+  // Return true if rotating or if the current path is empty
+  if (in_rotation_ || current_path_.poses.empty()) {
+    return true;
+  }
+
+  // Check if the last pose of the current and new paths differ
+  return current_path_.poses.back().pose != path.poses.back().pose;
+}
+
+void RotationShimController::setPlan(const nav_msgs::msg::Path & path)
+{
+  path_updated_ = rotate_to_heading_once_ ? isGoalChanged(path) : true;
+  current_path_ = path;
+  primary_controller_->setPlan(path);
+  position_goal_checker_->reset();
+>>>>>>> jazzy
 }
 
 void RotationShimController::setSpeedLimit(const double & speed_limit, const bool & percentage)
@@ -346,9 +502,57 @@ void RotationShimController::setSpeedLimit(const double & speed_limit, const boo
 }
 
 void RotationShimController::reset()
+<<<<<<< HEAD
 {
   last_angular_vel_ = std::numeric_limits<double>::max();
   primary_controller_->reset();
+=======
+{
+  last_angular_vel_ = std::numeric_limits<double>::max();
+  primary_controller_->reset();
+  position_goal_checker_->reset();
+}
+
+rcl_interfaces::msg::SetParametersResult
+RotationShimController::dynamicParametersCallback(std::vector<rclcpp::Parameter> parameters)
+{
+  rcl_interfaces::msg::SetParametersResult result;
+  std::lock_guard<std::mutex> lock_reinit(mutex_);
+
+  for (auto parameter : parameters) {
+    const auto & type = parameter.get_type();
+    const auto & name = parameter.get_name();
+
+    if (type == ParameterType::PARAMETER_DOUBLE) {
+      if (name == plugin_name_ + ".angular_dist_threshold") {
+        angular_dist_threshold_ = parameter.as_double();
+      } else if (name == plugin_name_ + ".forward_sampling_distance") {
+        forward_sampling_distance_ = parameter.as_double();
+      } else if (name == plugin_name_ + ".rotate_to_heading_angular_vel") {
+        rotate_to_heading_angular_vel_ = parameter.as_double();
+      } else if (name == plugin_name_ + ".max_angular_accel") {
+        max_angular_accel_ = parameter.as_double();
+      } else if (name == plugin_name_ + ".simulate_ahead_time") {
+        simulate_ahead_time_ = parameter.as_double();
+      } else if (name == plugin_name_ + ".max_cost_threshold") {
+        max_cost_threshold_ = parameter.as_double();
+      }
+    } else if (type == ParameterType::PARAMETER_BOOL) {
+      if (name == plugin_name_ + ".rotate_to_goal_heading") {
+        rotate_to_goal_heading_ = parameter.as_bool();
+      } else if (name == plugin_name_ + ".rotate_to_heading_once") {
+        rotate_to_heading_once_ = parameter.as_bool();
+      } else if (name == plugin_name_ + ".closed_loop") {
+        closed_loop_ = parameter.as_bool();
+      } else if (name == plugin_name_ + ".use_path_orientations") {
+        use_path_orientations_ = parameter.as_bool();
+      }
+    }
+  }
+
+  result.successful = true;
+  return result;
+>>>>>>> jazzy
 }
 
 }  // namespace nav2_rotation_shim_controller

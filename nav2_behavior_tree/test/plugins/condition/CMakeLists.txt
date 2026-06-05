@@ -24,8 +24,18 @@ plugin_add_test(test_condition_is_battery_low test_is_battery_low.cpp nav2_is_ba
 
 plugin_add_test(test_condition_is_goal_nearby test_is_goal_nearby.cpp nav2_is_goal_nearby_condition_bt_node)
 
+<<<<<<< HEAD
 plugin_add_test(test_condition_is_within_path_tracking_bounds test_is_within_path_tracking_bounds.cpp
   nav2_is_within_path_tracking_bounds_condition_bt_node)
+=======
+ament_add_gtest(test_are_poses_near test_are_poses_near.cpp)
+target_link_libraries(test_are_poses_near nav2_are_poses_near_condition_bt_node)
+ament_target_dependencies(test_are_poses_near ${dependencies})
+
+ament_add_gtest(test_would_a_controller_recovery_help test_would_a_controller_recovery_help.cpp)
+target_link_libraries(test_would_a_controller_recovery_help nav2_would_a_controller_recovery_help_condition_bt_node)
+ament_target_dependencies(test_would_a_controller_recovery_help ${dependencies})
+>>>>>>> jazzy
 
 plugin_add_test(test_are_error_codes_present test_are_error_codes_present.cpp nav2_would_a_controller_recovery_help_condition_bt_node)
 

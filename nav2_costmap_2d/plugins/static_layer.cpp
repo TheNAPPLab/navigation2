@@ -49,6 +49,8 @@
 
 #define EPSILON 1e-5
 
+#define EPSILON 1e-5
+
 PLUGINLIB_EXPORT_CLASS(nav2_costmap_2d::StaticLayer, nav2_costmap_2d::Layer)
 
 using nav2_costmap_2d::NO_INFORMATION;
@@ -124,6 +126,7 @@ void
 StaticLayer::deactivate()
 {
   auto node = node_.lock();
+<<<<<<< HEAD
   if (post_set_params_handler_ && node) {
     node->remove_post_set_parameters_callback(post_set_params_handler_.get());
   }
@@ -132,6 +135,12 @@ StaticLayer::deactivate()
     node->remove_on_set_parameters_callback(on_set_params_handler_.get());
   }
   on_set_params_handler_.reset();
+=======
+  if (dyn_params_handler_ && node) {
+    node->remove_on_set_parameters_callback(dyn_params_handler_.get());
+  }
+  dyn_params_handler_.reset();
+>>>>>>> jazzy
 }
 
 void
@@ -515,6 +524,18 @@ StaticLayer::updateCosts(
   * @param b Second number
   * @param epsilon Tolerance for equality check
   * @return True if numbers are equal within the tolerance, false otherwise
+<<<<<<< HEAD
+=======
+  */
+bool StaticLayer::isEqual(double a, double b, double epsilon)
+{
+  return std::abs(a - b) < epsilon;
+}
+
+/**
+  * @brief Callback executed when a parameter change is detected
+  * @param event ParameterEvent message
+>>>>>>> jazzy
   */
 bool StaticLayer::isEqual(double a, double b, double epsilon)
 {
@@ -575,7 +596,11 @@ StaticLayer::updateParametersCallback(
         width_ = size_x_;
         height_ = size_y_;
         has_updated_data_ = true;
+<<<<<<< HEAD
         setCurrent(false);
+=======
+        current_ = false;
+>>>>>>> jazzy
       } else if (param_name == name_ + "." + "footprint_clearing_enabled") {
         footprint_clearing_enabled_ = parameter.as_bool();
       } else if (param_name == name_ + "." + "restore_cleared_footprint") {

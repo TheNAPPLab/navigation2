@@ -276,7 +276,10 @@ private:
   bool _was_visited;
   bool _is_queued;
   bool _in_collision{false};
+<<<<<<< HEAD
   NodeContext * _ctx = nullptr;
+=======
+>>>>>>> jazzy
 };
 
 }  // namespace nav2_smac_planner

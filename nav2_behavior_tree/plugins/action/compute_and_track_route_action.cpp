@@ -63,7 +63,10 @@ BT::NodeStatus ComputeAndTrackRouteAction::on_success()
   resetFeedbackAndOutputPorts();
   setOutput("execution_duration", result_.result->execution_duration);
   setOutput("error_code_id", ActionResult::NONE);
+<<<<<<< HEAD
   setOutput("error_msg", "");
+=======
+>>>>>>> jazzy
   return BT::NodeStatus::SUCCESS;
 }
 
@@ -72,7 +75,10 @@ BT::NodeStatus ComputeAndTrackRouteAction::on_aborted()
   resetFeedbackAndOutputPorts();
   setOutput("execution_duration", builtin_interfaces::msg::Duration());
   setOutput("error_code_id", result_.result->error_code);
+<<<<<<< HEAD
   setOutput("error_msg", result_.result->error_msg);
+=======
+>>>>>>> jazzy
   return BT::NodeStatus::FAILURE;
 }
 
@@ -82,6 +88,7 @@ BT::NodeStatus ComputeAndTrackRouteAction::on_cancelled()
   // Set empty error code, action was cancelled
   setOutput("execution_duration", builtin_interfaces::msg::Duration());
   setOutput("error_code_id", ActionResult::NONE);
+<<<<<<< HEAD
   setOutput("error_msg", "");
   return BT::NodeStatus::SUCCESS;
 }
@@ -92,6 +99,11 @@ void ComputeAndTrackRouteAction::on_timeout()
   setOutput("error_msg", "Behavior Tree action client timed out waiting.");
 }
 
+=======
+  return BT::NodeStatus::SUCCESS;
+}
+
+>>>>>>> jazzy
 void ComputeAndTrackRouteAction::on_wait_for_result(
   std::shared_ptr<const Action::Feedback> feedback)
 {

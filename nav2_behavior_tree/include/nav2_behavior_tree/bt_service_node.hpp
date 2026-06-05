@@ -21,11 +21,18 @@
 
 #include "behaviortree_cpp/action_node.h"
 #include "behaviortree_cpp/json_export.h"
+<<<<<<< HEAD
 #include "nav2_ros_common/node_utils.hpp"
 #include "nav2_ros_common/lifecycle_node.hpp"
 #include "nav2_behavior_tree/bt_utils.hpp"
 #include "nav2_behavior_tree/json_utils.hpp"
 #include "nav2_ros_common/service_client.hpp"
+=======
+#include "nav2_util/node_utils.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "nav2_behavior_tree/bt_utils.hpp"
+#include "nav2_behavior_tree/json_utils.hpp"
+>>>>>>> jazzy
 
 namespace nav2_behavior_tree
 {
@@ -54,7 +61,32 @@ public:
   : BT::ActionNodeBase(service_node_name, conf), service_name_(service_name), service_node_name_(
       service_node_name)
   {
+<<<<<<< HEAD
     initialize();
+=======
+    node_ = config().blackboard->template get<rclcpp::Node::SharedPtr>("node");
+    callback_group_ = node_->create_callback_group(
+      rclcpp::CallbackGroupType::MutuallyExclusive,
+      false);
+    callback_group_executor_.add_callback_group(callback_group_, node_->get_node_base_interface());
+
+    // Get the required items from the blackboard
+    auto bt_loop_duration =
+      config().blackboard->template get<std::chrono::milliseconds>("bt_loop_duration");
+    getInputOrBlackboard("server_timeout", server_timeout_);
+    wait_for_service_timeout_ =
+      config().blackboard->template get<std::chrono::milliseconds>("wait_for_service_timeout");
+
+    // timeout should be less than bt_loop_duration to be able to finish the current tick
+    max_timeout_ = std::chrono::duration_cast<std::chrono::milliseconds>(bt_loop_duration * 0.5);
+
+    // Now that we have node_ to use, create the service client for this BT service
+    getInput("service_name", service_name_);
+    service_client_ = node_->create_client<ServiceT>(
+      service_name_,
+      rclcpp::SystemDefaultsQoS(),
+      callback_group_);
+>>>>>>> jazzy
 
     // Make a request for the service without parameter
     request_ = std::make_shared<typename ServiceT::Request>();

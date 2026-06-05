@@ -20,11 +20,18 @@
 #include <unordered_map>
 #include <set>
 
+<<<<<<< HEAD
 #include "nav2_ros_common/lifecycle_node.hpp"
 #include "nav2_route/interfaces/edge_cost_function.hpp"
 #include "nav2_msgs/srv/dynamic_edges.hpp"
 #include "nav2_ros_common/node_utils.hpp"
 #include "nav2_ros_common/service_server.hpp"
+=======
+#include "nav2_util/lifecycle_node.hpp"
+#include "nav2_route/interfaces/edge_cost_function.hpp"
+#include "nav2_msgs/srv/dynamic_edges.hpp"
+#include "nav2_util/node_utils.hpp"
+>>>>>>> jazzy
 
 namespace nav2_route
 {
@@ -51,7 +58,11 @@ public:
    * @brief Configure
    */
   void configure(
+<<<<<<< HEAD
     const nav2::LifecycleNode::SharedPtr node,
+=======
+    const nav2_util::LifecycleNode::SharedPtr node,
+>>>>>>> jazzy
     const std::shared_ptr<tf2_ros::Buffer> tf_buffer,
     std::shared_ptr<nav2_costmap_2d::CostmapSubscriber> costmap_subscriber,
     const std::string & name) override;
@@ -88,7 +99,11 @@ protected:
   std::string name_;
   std::set<unsigned int> closed_edges_;
   std::unordered_map<unsigned int, float> dynamic_penalties_;
+<<<<<<< HEAD
   nav2::ServiceServer<nav2_msgs::srv::DynamicEdges>::SharedPtr service_;
+=======
+  rclcpp::Service<nav2_msgs::srv::DynamicEdges>::SharedPtr service_;
+>>>>>>> jazzy
 };
 
 }  // namespace nav2_route

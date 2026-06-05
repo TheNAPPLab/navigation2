@@ -2,6 +2,11 @@
 
 geometry_msgs/PoseStamped pose
 float64 reset_distance
+<<<<<<< HEAD
 string[] plugins
 ---
 bool success
+=======
+---
+std_msgs/Empty response
+>>>>>>> jazzy

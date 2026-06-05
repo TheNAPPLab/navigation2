@@ -24,8 +24,11 @@
 #include "behaviortree_cpp/json_export.h"
 #include "behaviortree_cpp/utils/shared_library.h"
 #include "nav2_behavior_tree/json_utils.hpp"
+<<<<<<< HEAD
 #include "nav2_behavior_tree/utils/loop_rate.hpp"
 #include "nav2_ros_common/rate.hpp"
+=======
+>>>>>>> jazzy
 
 namespace nav2_behavior_tree
 {
@@ -117,6 +120,7 @@ BehaviorTreeEngine::createTreeFromFile(
   return factory_.createTreeFromFile(file_path, blackboard);
 }
 
+<<<<<<< HEAD
 BTInfo BehaviorTreeEngine::parseTreeInfo(const std::string & filename)
 {
   BTInfo info;
@@ -186,6 +190,8 @@ void BehaviorTreeEngine::registerTreeFromFile(
   factory_.registerBehaviorTreeFromFile(file_path);
 }
 
+=======
+>>>>>>> jazzy
 void
 BehaviorTreeEngine::addGrootMonitoring(
   BT::Tree * tree,

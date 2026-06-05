@@ -504,7 +504,7 @@ _environments:
 executors:
   release_exec:
     docker:
-      - image: ghcr.io/ros-navigation/navigation2:main
+      - image: ghcr.io/ros-navigation/navigation2:jazzy
     resource_class: large
     working_directory: /opt/overlay_ws
     environment:
@@ -571,6 +571,7 @@ jobs:
       - report_coverage
 
 _parameters:
+<<<<<<< HEAD
   core_build_parameters: &core_build_parameters
     packages_skip_regex: ""
     packages_select: "nav2_common nav2_voxel_grid nav_2d_msgs dwb_msgs nav2_msgs nav2_ros_common nav2_simple_commander nav2_util nav2_amcl nav2_lifecycle_manager nav2_map_server nav_2d_utils nav2_velocity_smoother nav2_costmap_2d costmap_queue"
@@ -582,6 +583,10 @@ _parameters:
     packages_select: ""
   release_test_parameters: &release_test_parameters
     packages_skip_regex: ""
+=======
+  release_parameters: &release_parameters
+    packages_skip_regex: "'(nav2_system_tests|nav2_smac_planner|nav2_mppi_controller|nav2_route|nav2_rviz_plugins|nav2_rotation_shim_controller|nav2_waypoint_follower|nav2_smoother|opennav_docking|nav2_behaviors|nav2_bringup|navigation2)'"
+>>>>>>> jazzy
 
 workflows:
   version: 2

@@ -28,7 +28,12 @@
 #include "nav2_core/controller.hpp"
 #include "nav2_core/controller_exceptions.hpp"
 #include "nav2_costmap_2d/footprint_collision_checker.hpp"
+<<<<<<< HEAD
 #include "nav2_rotation_shim_controller/parameter_handler.hpp"
+=======
+#include "nav2_controller/plugins/position_goal_checker.hpp"
+#include "angles/angles.h"
+>>>>>>> jazzy
 
 namespace nav2_rotation_shim_controller
 {
@@ -155,8 +160,19 @@ protected:
 
   /**
    * @brief Checks if the goal has changed based on the given path.
+<<<<<<< HEAD
    * @param goal The goal to compare with the last goal.
    * @return True if the goal has changed, false otherwise.
+=======
+   * @param path The path to compare with the current goal.
+   * @return True if the goal has changed, false otherwise.
+   */
+  bool isGoalChanged(const nav_msgs::msg::Path & path);
+
+  /**
+   * @brief Callback executed when a parameter change is detected
+   * @param event ParameterEvent message
+>>>>>>> jazzy
    */
   bool isGoalChanged(const geometry_msgs::msg::PoseStamped & goal);
 
@@ -173,11 +189,27 @@ protected:
   nav2_core::Controller::Ptr primary_controller_;
   bool path_updated_;
   nav_msgs::msg::Path current_path_;
+<<<<<<< HEAD
   geometry_msgs::msg::PoseStamped current_goal_;
   Parameters * params_;
   bool in_rotation_;
   double last_angular_vel_ = std::numeric_limits<double>::max();
   std::unique_ptr<nav2_rotation_shim_controller::ParameterHandler> param_handler_;
+=======
+  double forward_sampling_distance_, angular_dist_threshold_, angular_disengage_threshold_;
+  double rotate_to_heading_angular_vel_, max_angular_accel_;
+  double control_duration_, simulate_ahead_time_;
+  double max_cost_threshold_;
+  bool rotate_to_goal_heading_, in_rotation_, rotate_to_heading_once_;
+  bool closed_loop_;
+  bool use_path_orientations_;
+  double last_angular_vel_ = std::numeric_limits<double>::max();
+
+  // Dynamic parameters handler
+  std::mutex mutex_;
+  rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr dyn_params_handler_;
+  std::unique_ptr<nav2_controller::PositionGoalChecker> position_goal_checker_;
+>>>>>>> jazzy
 };
 
 }  // namespace nav2_rotation_shim_controller

@@ -111,7 +111,11 @@ public:
   void reset() override
   {
     matchSize();
+<<<<<<< HEAD
     setCurrent(false);
+=======
+    current_ = false;
+>>>>>>> jazzy
     need_reinflation_ = true;
   }
 

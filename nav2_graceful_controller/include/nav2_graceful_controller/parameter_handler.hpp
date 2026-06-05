@@ -30,8 +30,15 @@ namespace nav2_graceful_controller
 
 struct Parameters
 {
+<<<<<<< HEAD
   double min_lookahead;
   double max_lookahead;
+=======
+  double transform_tolerance;
+  double min_lookahead;
+  double max_lookahead;
+  double max_robot_pose_search_dist;
+>>>>>>> jazzy
   double k_phi;
   double k_delta;
   double beta;
@@ -50,12 +57,15 @@ struct Parameters
   double rotation_scaling_factor;
   bool allow_backward;
   double in_place_collision_resolution;
+<<<<<<< HEAD
   bool use_collision_detection;
   double footprint_scaling_linear_vel;
   double footprint_scaling_factor;
   double footprint_scaling_step;
   int obstacle_cost_margin;
   double final_rotation_search_step;
+=======
+>>>>>>> jazzy
 };
 
 /**
@@ -71,9 +81,24 @@ public:
   ParameterHandler(
     const nav2::LifecycleNode::SharedPtr & node,
     std::string & plugin_name,
+<<<<<<< HEAD
     rclcpp::Logger & logger);
+=======
+    rclcpp::Logger & logger, const double costmap_size_x);
+
+  /**
+   * @brief Destructor for nav2_graceful_controller::ParameterHandler
+   */
+  ~ParameterHandler();
+
+  std::mutex & getMutex() {return mutex_;}
+
+  Parameters * getParams() {return &params_;}
+>>>>>>> jazzy
 
 protected:
+  rclcpp_lifecycle::LifecycleNode::WeakPtr node_;
+
   /**
    * @brief Validate incoming parameter updates before applying them.
    * This callback is triggered when one or more parameters are about to be updated.

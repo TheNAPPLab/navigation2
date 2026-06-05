@@ -39,7 +39,14 @@ void PathAlignCritic::initialize()
 
 void PathAlignCritic::score(CriticData & data)
 {
+<<<<<<< HEAD
   if (!enabled_ || data.state.local_path_length < threshold_to_consider_) {
+=======
+  // Don't apply close to goal, let the goal critics take over
+  if (!enabled_ || utils::withinPositionGoalTolerance(
+      threshold_to_consider_, data.state.pose.pose, data.goal))
+  {
+>>>>>>> jazzy
     return;
   }
 

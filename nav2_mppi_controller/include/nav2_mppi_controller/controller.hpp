@@ -110,8 +110,13 @@ protected:
     * @param optimal_trajectory Optimal trajectory, if already computed
     */
   void visualize(
+<<<<<<< HEAD
     const builtin_interfaces::msg::Time & cmd_stamp,
     const Eigen::ArrayXXf & optimal_trajectory);
+=======
+    nav_msgs::msg::Path transformed_plan,
+    const builtin_interfaces::msg::Time & cmd_stamp);
+>>>>>>> jazzy
 
   std::string name_;
   nav2::LifecycleNode::WeakPtr parent_;

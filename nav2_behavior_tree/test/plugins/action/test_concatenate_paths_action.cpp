@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <gtest/gtest.h>
+<<<<<<< HEAD
 
 #include <memory>
 #include <set>
@@ -31,20 +32,42 @@
 #include "nav2_behavior_tree/plugins/action/concatenate_paths_action.hpp"
 
 
+=======
+#include <memory>
+#include <string>
+#include <vector>
+
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "nav_msgs/msg/path.hpp"
+
+#include "behaviortree_cpp/bt_factory.h"
+
+#include "nav2_behavior_tree/plugins/action/concatenate_paths_action.hpp"
+
+>>>>>>> jazzy
 class ConcatenatePathsTestFixture : public ::testing::Test
 {
 public:
   static void SetUpTestCase()
   {
+<<<<<<< HEAD
     node_ = std::make_shared<nav2::LifecycleNode>("test_fixture");
+=======
+    node_ = std::make_shared<rclcpp::Node>("concatenate_paths_action_test_fixture");
+>>>>>>> jazzy
     factory_ = std::make_shared<BT::BehaviorTreeFactory>();
 
     config_ = new BT::NodeConfiguration();
 
+<<<<<<< HEAD
     // Create the blackboard that will be shared by all of the nodes in the tree
     config_->blackboard = BT::Blackboard::create();
     // Put items on the blackboard
     config_->blackboard->set(
+=======
+    config_->blackboard = BT::Blackboard::create();
+    config_->blackboard->set<rclcpp::Node::SharedPtr>(
+>>>>>>> jazzy
       "node",
       node_);
 
@@ -73,14 +96,22 @@ public:
   }
 
 protected:
+<<<<<<< HEAD
   static nav2::LifecycleNode::SharedPtr node_;
+=======
+  static rclcpp::Node::SharedPtr node_;
+>>>>>>> jazzy
   static BT::NodeConfiguration * config_;
   static std::shared_ptr<BT::BehaviorTreeFactory> factory_;
   static std::shared_ptr<BT::Tree> tree_;
 };
 
+<<<<<<< HEAD
 nav2::LifecycleNode::SharedPtr ConcatenatePathsTestFixture::node_ = nullptr;
 
+=======
+rclcpp::Node::SharedPtr ConcatenatePathsTestFixture::node_ = nullptr;
+>>>>>>> jazzy
 BT::NodeConfiguration * ConcatenatePathsTestFixture::config_ = nullptr;
 std::shared_ptr<BT::BehaviorTreeFactory> ConcatenatePathsTestFixture::factory_ = nullptr;
 std::shared_ptr<BT::Tree> ConcatenatePathsTestFixture::tree_ = nullptr;
@@ -98,7 +129,10 @@ TEST_F(ConcatenatePathsTestFixture, test_tick)
 
   tree_ = std::make_shared<BT::Tree>(factory_->createTreeFromText(xml_txt, config_->blackboard));
 
+<<<<<<< HEAD
   // create new goal and set it on blackboard
+=======
+>>>>>>> jazzy
   nav_msgs::msg::Path path1, path2;
   path1.header.stamp = node_->now();
   path2.header.stamp = node_->now();
@@ -118,7 +152,10 @@ TEST_F(ConcatenatePathsTestFixture, test_tick)
   config_->blackboard->set("path1", path1);
   config_->blackboard->set("path2", path2);
 
+<<<<<<< HEAD
   // tick until node finishes
+=======
+>>>>>>> jazzy
   while (tree_->rootNode()->status() != BT::NodeStatus::SUCCESS &&
     tree_->rootNode()->status() != BT::NodeStatus::FAILURE)
   {
@@ -135,14 +172,27 @@ TEST_F(ConcatenatePathsTestFixture, test_tick)
     EXPECT_EQ(concat_path.poses[x].pose.position.x, static_cast<double>(x));
   }
 
+<<<<<<< HEAD
   tree_ = std::make_shared<BT::Tree>(factory_->createTreeFromText(xml_txt, config_->blackboard));
   config_->blackboard->set("path1", nav_msgs::msg::Path());
   config_->blackboard->set("path2", nav_msgs::msg::Path());
+=======
+  tree_->haltTree();
+
+  tree_ = std::make_shared<BT::Tree>(factory_->createTreeFromText(xml_txt, config_->blackboard));
+  config_->blackboard->set("path1", nav_msgs::msg::Path());
+  config_->blackboard->set("path2", nav_msgs::msg::Path());
+
+>>>>>>> jazzy
   while (tree_->rootNode()->status() != BT::NodeStatus::SUCCESS &&
     tree_->rootNode()->status() != BT::NodeStatus::FAILURE)
   {
     tree_->rootNode()->executeTick();
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> jazzy
   EXPECT_EQ(tree_->rootNode()->status(), BT::NodeStatus::FAILURE);
 }
 
@@ -150,12 +200,18 @@ int main(int argc, char ** argv)
 {
   ::testing::InitGoogleTest(&argc, argv);
 
+<<<<<<< HEAD
   // initialize ROS
+=======
+>>>>>>> jazzy
   rclcpp::init(argc, argv);
 
   int all_successful = RUN_ALL_TESTS();
 
+<<<<<<< HEAD
   // shutdown ROS
+=======
+>>>>>>> jazzy
   rclcpp::shutdown();
 
   return all_successful;

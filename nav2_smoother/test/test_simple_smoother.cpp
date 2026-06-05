@@ -269,6 +269,7 @@ TEST(SmootherTest, test_simple_smoother)
   max_its_path.poses[10].pose.position.x = 0.5;
   max_its_path.poses[10].pose.position.y = 1.0;
   EXPECT_TRUE(smoother->smooth(max_its_path, max_time));
+<<<<<<< HEAD
 }
 
 int main(int argc, char ** argv)
@@ -282,4 +283,6 @@ int main(int argc, char ** argv)
   rclcpp::shutdown();
 
   return result;
+=======
+>>>>>>> jazzy
 }

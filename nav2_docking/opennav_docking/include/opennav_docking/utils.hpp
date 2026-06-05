@@ -146,7 +146,14 @@ inline bool parseDockParams(
     curr_dock.pose.position.y = pose_arr[1];
     curr_dock.pose.orientation = orientationAroundZAxis(pose_arr[2]);
 
+<<<<<<< HEAD
     curr_dock.id = node->declare_or_get_parameter(dock_name + ".id", std::string(""));
+=======
+    if (!node->has_parameter(dock_name + ".id")) {
+      node->declare_parameter(dock_name + ".id", "");
+    }
+    node->get_parameter(dock_name + ".id", curr_dock.id);
+>>>>>>> jazzy
 
     // Insert into dock instance database
     dock_db.emplace(dock_name, curr_dock);

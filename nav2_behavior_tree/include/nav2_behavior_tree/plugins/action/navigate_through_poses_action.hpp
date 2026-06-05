@@ -18,7 +18,13 @@
 #include <string>
 #include <vector>
 
+<<<<<<< HEAD
 #include "nav_msgs/msg/goals.hpp"
+=======
+#include "behaviortree_cpp/json_export.h"
+#include "geometry_msgs/msg/point.hpp"
+#include "geometry_msgs/msg/quaternion.hpp"
+>>>>>>> jazzy
 #include "nav2_msgs/action/navigate_through_poses.hpp"
 #include "nav2_behavior_tree/bt_action_node.hpp"
 #include "nav2_ros_common/lifecycle_node.hpp"
@@ -87,7 +93,11 @@ public:
   static BT::PortsList providedPorts()
   {
     // Register JSON definitions for the types used in the ports
+<<<<<<< HEAD
     BT::RegisterJsonDefinition<nav_msgs::msg::Goals>();
+=======
+    BT::RegisterJsonDefinition<std::vector<geometry_msgs::msg::PoseStamped>>();
+>>>>>>> jazzy
 
     return providedBasicPorts(
       {

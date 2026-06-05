@@ -111,11 +111,19 @@ TEST(CriticManagerTests, BasicCriticOperations)
   models::Trajectories generated_trajectories;
   models::Path path;
   geometry_msgs::msg::Pose goal;
+<<<<<<< HEAD
   Eigen::ArrayXf costs;
   float model_dt = 0.1;
   CriticData data =
   {state, generated_trajectories, path, goal, costs, model_dt, false, nullptr, nullptr,
     std::nullopt, std::nullopt, {}};
+=======
+  xt::xtensor<float, 1> costs;
+  float model_dt = 0.1;
+  CriticData data =
+  {state, generated_trajectories, path, goal, costs, model_dt, false, nullptr, nullptr,
+    std::nullopt, std::nullopt};
+>>>>>>> jazzy
 
   data.fail_flag = true;
   EXPECT_FALSE(critic_manager.getDummyCriticScored());

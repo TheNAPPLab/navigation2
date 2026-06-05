@@ -15,12 +15,20 @@
 #include <memory>
 
 #include "nav2_route/graph_saver.hpp"
+<<<<<<< HEAD
+=======
+#include "ament_index_cpp/get_package_share_directory.hpp"
+>>>>>>> jazzy
 
 namespace nav2_route
 {
 
 GraphSaver::GraphSaver(
+<<<<<<< HEAD
   nav2::LifecycleNode::SharedPtr node,
+=======
+  nav2_util::LifecycleNode::SharedPtr node,
+>>>>>>> jazzy
   std::shared_ptr<tf2_ros::Buffer> tf,
   const std::string frame)
 : plugin_loader_("nav2_route", "nav2_route::GraphFileSaver"),
@@ -30,6 +38,7 @@ GraphSaver::GraphSaver(
   tf_ = tf;
   route_frame_ = frame;
 
+<<<<<<< HEAD
   graph_filepath_ = node->declare_or_get_parameter(
     "graph_filepath", std::string(""));
 
@@ -39,12 +48,29 @@ GraphSaver::GraphSaver(
     "graph_file_saver", default_plugin_id_);
   if (graph_file_saver_id == default_plugin_id_) {
     nav2::declare_parameter_if_not_declared(
+=======
+  nav2_util::declare_parameter_if_not_declared(
+    node, "graph_filepath", rclcpp::ParameterValue(std::string("")));
+  graph_filepath_ = node->get_parameter("graph_filepath").as_string();
+
+  // Default Graph Parser
+  const std::string default_plugin_type = "nav2_route::GeoJsonGraphFileSaver";
+  nav2_util::declare_parameter_if_not_declared(
+    node, "graph_file_saver", rclcpp::ParameterValue(default_plugin_id_));
+  auto graph_file_saver_id = node->get_parameter("graph_file_saver").as_string();
+  if (graph_file_saver_id == default_plugin_id_) {
+    nav2_util::declare_parameter_if_not_declared(
+>>>>>>> jazzy
       node, default_plugin_id_ + ".plugin", rclcpp::ParameterValue(default_plugin_type));
   }
 
   // Create graph file saver plugin
   try {
+<<<<<<< HEAD
     plugin_type_ = nav2::get_plugin_type_param(node, graph_file_saver_id);
+=======
+    plugin_type_ = nav2_util::get_plugin_type_param(node, graph_file_saver_id);
+>>>>>>> jazzy
     graph_file_saver_ = plugin_loader_.createSharedInstance((plugin_type_));
     RCLCPP_INFO(
       logger_, "Created GraphFileSaver %s of type %s",

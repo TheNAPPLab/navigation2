@@ -2,17 +2,25 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>nav2_route</name>
+<<<<<<< HEAD
   <version>1.1.0</version>
+=======
+  <version>1.3.12</version>
+>>>>>>> jazzy
   <description>A Route Graph planner to compliment the Planner Server</description>
   <maintainer email="stevenmacenski@gmail.com">Steve Macenski</maintainer>
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+<<<<<<< HEAD
 
   <build_depend>libnanoflann-dev</build_depend>
   <build_depend>nav2_common</build_depend>
   <build_depend>nlohmann-json-dev</build_depend>
   <build_depend>angles</build_depend>
+=======
+  <build_depend>nav2_common</build_depend>
+>>>>>>> jazzy
 
   <depend>backward_ros</depend>
   <depend>rclcpp</depend>
@@ -25,9 +33,18 @@
   <depend>nav2_msgs</depend>
   <depend>nav_msgs</depend>
   <depend>tf2_ros</depend>
+<<<<<<< HEAD
   <depend>nav2_util</depend>
   <depend>nav2_core</depend>
   <depend>nav2_ros_common</depend>
+=======
+  <depend>tf2</depend>
+  <depend>nav2_util</depend>
+  <depend>nav2_core</depend>
+  <depend>angles</depend>
+  <depend>libnanoflann-dev</depend>
+  <depend>nlohmann-json-dev</depend>
+>>>>>>> jazzy
 
   <test_depend>ament_lint_common</test_depend>
   <test_depend>ament_lint_auto</test_depend>
@@ -35,7 +52,10 @@
   <test_depend>ament_cmake_pytest</test_depend>
   <test_depend>launch</test_depend>
   <test_depend>launch_testing</test_depend>
+<<<<<<< HEAD
   <test_depend>ament_cmake_ros</test_depend>
+=======
+>>>>>>> jazzy
 
   <export>
     <build_type>ament_cmake</build_type>

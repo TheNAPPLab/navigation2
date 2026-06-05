@@ -4,6 +4,7 @@ target_link_libraries(test_bt_utils
   ${geometry_msgs_TARGETS}
 )
 
+<<<<<<< HEAD
 nav2_add_gtest(test_json_utils test_json_utils.cpp)
 target_link_libraries(test_json_utils
   ${library_name}
@@ -29,6 +30,14 @@ function(plugin_add_test target filename plugin)
     PRIVATE
     "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/test>")
 endfunction()
+=======
+ament_add_gtest(test_json_utils test_json_utils.cpp)
+target_link_libraries(test_json_utils
+  ${library_name}
+  ${geometry_msgs_TARGETS})
+
+include_directories(.)
+>>>>>>> jazzy
 
 add_subdirectory(plugins/condition)
 add_subdirectory(plugins/decorator)

@@ -45,7 +45,10 @@ void nav2_behavior_tree::BackUpAction::initialize()
   goal_.target.z = 0.0;
   goal_.speed = speed;
   goal_.time_allowance = rclcpp::Duration::from_seconds(time_allowance);
+<<<<<<< HEAD
   goal_.disable_collision_checks = disable_collision_checks;
+=======
+>>>>>>> jazzy
 }
 
 void BackUpAction::on_tick()

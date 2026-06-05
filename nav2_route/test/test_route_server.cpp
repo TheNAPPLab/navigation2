@@ -19,12 +19,21 @@
 
 #include "gtest/gtest.h"
 #include "rclcpp/rclcpp.hpp"
+<<<<<<< HEAD
 #include "tf2_ros/transform_broadcaster.hpp"
 #include "tf2_ros/create_timer_ros.hpp"
 #include "tf2_ros/transform_listener.hpp"
 #include "nav2_ros_common/lifecycle_node.hpp"
 #include "std_srvs/srv/trigger.hpp"
 #include "nav2_ros_common/service_client.hpp"
+=======
+#include "tf2_ros/transform_broadcaster.h"
+#include "tf2_ros/create_timer_ros.h"
+#include "tf2_ros/transform_listener.h"
+#include "nav2_util/lifecycle_node.hpp"
+#include "std_srvs/srv/trigger.hpp"
+#include "nav2_util/service_client.hpp"
+>>>>>>> jazzy
 #include "nav2_core/route_exceptions.hpp"
 #include "nav2_route/route_tracker.hpp"
 #include "nav2_route/route_server.hpp"
@@ -163,18 +172,30 @@ TEST(RouteServerTest, test_lifecycle)
 
 TEST(RouteServerTest, test_set_srv)
 {
+<<<<<<< HEAD
   std::string pkg_share_dir = nav2::get_package_share_directory("nav2_route");
+=======
+  std::string pkg_share_dir = ament_index_cpp::get_package_share_directory("nav2_route");
+>>>>>>> jazzy
   std::string real_filepath = pkg_share_dir + "/graphs/aws_graph.geojson";
 
   rclcpp::NodeOptions options;
   auto server = std::make_shared<RouteServerWrapper>(options);
   server->declare_parameter("graph_filepath", rclcpp::ParameterValue(real_filepath));
+<<<<<<< HEAD
   auto node_thread = std::make_unique<nav2::NodeThread>(server);
+=======
+  auto node_thread = std::make_unique<nav2_util::NodeThread>(server);
+>>>>>>> jazzy
   auto node2 = std::make_shared<rclcpp::Node>("my_node2");
 
   server->startup();
   auto srv_client =
+<<<<<<< HEAD
     nav2::ServiceClient<nav2_msgs::srv::SetRouteGraph>(
+=======
+    nav2_util::ServiceClient<nav2_msgs::srv::SetRouteGraph>(
+>>>>>>> jazzy
     "route_server/set_route_graph", node2);
   auto req = std::make_shared<nav2_msgs::srv::SetRouteGraph::Request>();
   req->graph_filepath = "non/existent/path.json";
@@ -187,7 +208,11 @@ TEST(RouteServerTest, test_set_srv)
   EXPECT_TRUE(resp2->success);
 
   auto req3 = std::make_shared<nav2_msgs::srv::SetRouteGraph::Request>();
+<<<<<<< HEAD
   req3->graph_filepath = nav2::get_package_share_directory("nav2_route") +
+=======
+  req3->graph_filepath = ament_index_cpp::get_package_share_directory("nav2_route") +
+>>>>>>> jazzy
     "/test/test_graphs/invalid.json";
   auto resp3 = srv_client.invoke(req3, std::chrono::nanoseconds(1000000000));
   EXPECT_FALSE(resp3->success);
@@ -278,13 +303,21 @@ TEST(RouteServerTest, test_request_valid)
 
 TEST(RouteServerTest, test_complete_action_api)
 {
+<<<<<<< HEAD
   std::string pkg_share_dir = nav2::get_package_share_directory("nav2_route");
+=======
+  std::string pkg_share_dir = ament_index_cpp::get_package_share_directory("nav2_route");
+>>>>>>> jazzy
   std::string real_file = pkg_share_dir + "/graphs/aws_graph.geojson";
 
   rclcpp::NodeOptions options;
   auto server = std::make_shared<RouteServerWrapper>(options);
   server->declare_parameter("graph_filepath", rclcpp::ParameterValue(real_file));
+<<<<<<< HEAD
   auto node_thread = std::make_unique<nav2::NodeThread>(server);
+=======
+  auto node_thread = std::make_unique<nav2_util::NodeThread>(server);
+>>>>>>> jazzy
   server->startup();
 
   // Compute a simple route action request
@@ -331,7 +364,11 @@ TEST(RouteServerTest, test_complete_action_api)
   // Request a reroute
   auto node_int = std::make_shared<rclcpp::Node>("my_node2");
   auto srv_client =
+<<<<<<< HEAD
     nav2::ServiceClient<std_srvs::srv::Trigger>(
+=======
+    nav2_util::ServiceClient<std_srvs::srv::Trigger>(
+>>>>>>> jazzy
     "route_server/ReroutingService/reroute", node_int);
   auto req = std::make_shared<std_srvs::srv::Trigger::Request>();
   auto resp = srv_client.invoke(req, std::chrono::nanoseconds(1000000000));
@@ -353,13 +390,21 @@ TEST(RouteServerTest, test_complete_action_api)
 
 TEST(RouteServerTest, test_error_codes)
 {
+<<<<<<< HEAD
   std::string pkg_share_dir = nav2::get_package_share_directory("nav2_route");
+=======
+  std::string pkg_share_dir = ament_index_cpp::get_package_share_directory("nav2_route");
+>>>>>>> jazzy
   std::string real_file = pkg_share_dir + "/test/test_graphs/error_codes.geojson";
 
   rclcpp::NodeOptions options;
   auto server = std::make_shared<RouteServerWrapper>(options);
   server->declare_parameter("graph_filepath", rclcpp::ParameterValue(real_file));
+<<<<<<< HEAD
   auto node_thread = std::make_unique<nav2::NodeThread>(server);
+=======
+  auto node_thread = std::make_unique<nav2_util::NodeThread>(server);
+>>>>>>> jazzy
   server->startup();
 
   // This uses the error code planner rather than the built-in planner

@@ -66,6 +66,14 @@ namespace nav2_costmap_2d
 
 ObstacleLayer::~ObstacleLayer()
 {
+<<<<<<< HEAD
+=======
+  auto node = node_.lock();
+  if (dyn_params_handler_ && node) {
+    node->remove_on_set_parameters_callback(dyn_params_handler_.get());
+  }
+  dyn_params_handler_.reset();
+>>>>>>> jazzy
   for (auto & notifier : observation_notifiers_) {
     notifier.reset();
   }
@@ -376,7 +384,13 @@ ObstacleLayer::updateParametersCallback(
     } else if (param_type == ParameterType::PARAMETER_BOOL) {
       if (param_name == name_ + "." + "enabled" && enabled_ != parameter.as_bool()) {
         enabled_ = parameter.as_bool();
+<<<<<<< HEAD
         setCurrent(false);
+=======
+        if (enabled_) {
+          current_ = false;
+        }
+>>>>>>> jazzy
       } else if (param_name == name_ + "." + "footprint_clearing_enabled") {
         footprint_clearing_enabled_ = parameter.as_bool();
       }

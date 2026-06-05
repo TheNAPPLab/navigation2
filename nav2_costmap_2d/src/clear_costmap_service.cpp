@@ -117,6 +117,18 @@ void ClearCostmapService::clearAroundPoseCallback(
   response->success = clearAroundPose(request->pose, request->reset_distance, request->plugins);
 }
 
+void ClearCostmapService::clearAroundPoseCallback(
+  const shared_ptr<rmw_request_id_t>/*request_header*/,
+  const shared_ptr<ClearAroundPose::Request> request,
+  const shared_ptr<ClearAroundPose::Response>/*response*/)
+{
+  RCLCPP_INFO(
+    logger_, "%s",
+    ("Received request to clear around pose for " + costmap_.getName()).c_str());
+
+  clearAroundPose(request->pose, request->reset_distance);
+}
+
 void ClearCostmapService::clearEntireCallback(
   const std::shared_ptr<rmw_request_id_t>/*request_header*/,
   const std::shared_ptr<ClearEntirely::Request> request,
@@ -131,10 +143,16 @@ void ClearCostmapService::clearEntireCallback(
   response->success = clearEntirely(request->plugins);
 }
 
+<<<<<<< HEAD
 bool ClearCostmapService::clearAroundPose(
   const geometry_msgs::msg::PoseStamped & pose,
   const double reset_distance,
   const std::vector<std::string> & plugins)
+=======
+void ClearCostmapService::clearAroundPose(
+  const geometry_msgs::msg::PoseStamped & pose,
+  const double reset_distance)
+>>>>>>> jazzy
 {
   double x, y;
 
@@ -151,7 +169,11 @@ bool ClearCostmapService::clearAroundPose(
       logger_,
       "Cannot clear map around pose because pose cannot be transformed to costmap frame: %s",
       ex.what());
+<<<<<<< HEAD
     return false;
+=======
+    return;
+>>>>>>> jazzy
   }
 
   x = global_pose.pose.position.x;
@@ -159,6 +181,7 @@ bool ClearCostmapService::clearAroundPose(
 
   auto layers = costmap_.getLayeredCostmap()->getPlugins();
 
+<<<<<<< HEAD
   if (!plugins.empty()) {
     return validateAndClearPlugins(
       plugins, layers,
@@ -181,6 +204,17 @@ bool ClearCostmapService::clearAroundPose(
 bool ClearCostmapService::clearRegion(
   const double reset_distance, bool invert,
   const std::vector<std::string> & plugins)
+=======
+  for (auto & layer : *layers) {
+    if (layer->isClearable()) {
+      auto costmap_layer = std::static_pointer_cast<CostmapLayer>(layer);
+      clearLayerRegion(costmap_layer, x, y, reset_distance, false);
+    }
+  }
+}
+
+void ClearCostmapService::clearRegion(const double reset_distance, bool invert)
+>>>>>>> jazzy
 {
   double x, y;
 

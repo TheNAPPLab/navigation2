@@ -44,7 +44,11 @@ SmootherServer::~SmootherServer()
   smoothers_.clear();
 }
 
+<<<<<<< HEAD
 nav2::CallbackReturn
+=======
+nav2_util::CallbackReturn
+>>>>>>> jazzy
 SmootherServer::on_configure(const rclcpp_lifecycle::State & state)
 {
   RCLCPP_INFO(get_logger(), "Configuring smoother server");
@@ -87,7 +91,11 @@ SmootherServer::on_configure(const rclcpp_lifecycle::State & state)
 
   if (!loadSmootherPlugins()) {
     on_cleanup(state);
+<<<<<<< HEAD
     return nav2::CallbackReturn::FAILURE;
+=======
+    return nav2_util::CallbackReturn::FAILURE;
+>>>>>>> jazzy
   }
 
   // Initialize pubs & subs
@@ -142,7 +150,11 @@ bool SmootherServer::loadSmootherPlugins()
   return true;
 }
 
+<<<<<<< HEAD
 nav2::CallbackReturn
+=======
+nav2_util::CallbackReturn
+>>>>>>> jazzy
 SmootherServer::on_activate(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Activating");
@@ -248,7 +260,11 @@ void SmootherServer::smoothPlan()
   try {
     auto goal = action_server_->get_current_goal();
     if (!goal) {
+<<<<<<< HEAD
       return;  //  if action_server_ is deactivate, goal would be a nullptr
+=======
+      return;  //  if action_server_ is inactivate, goal would be a nullptr
+>>>>>>> jazzy
     }
 
     std::string c_name = goal->smoother_id;

@@ -190,7 +190,10 @@ public:
     const std::chrono::nanoseconds & timeout);
   bool waitActionState(const std::chrono::nanoseconds & timeout);
   bool waitCollisionPointsMarker(const std::chrono::nanoseconds & timeout);
+<<<<<<< HEAD
   bool waitTriggeringPoints(const std::chrono::nanoseconds & timeout);
+=======
+>>>>>>> jazzy
   bool waitToggle(
     rclcpp::Client<nav2_msgs::srv::Toggle>::SharedFuture result_future,
     const std::chrono::nanoseconds & timeout);
@@ -237,10 +240,17 @@ protected:
   visualization_msgs::msg::MarkerArray::ConstSharedPtr triggering_points_msg_;
 
   // Service client for setting CollisionMonitor parameters
+<<<<<<< HEAD
   nav2::ServiceClient<rcl_interfaces::srv::SetParameters>::SharedPtr parameters_client_;
 
   // Service client for toggling collision monitor
   nav2::ServiceClient<nav2_msgs::srv::Toggle>::SharedPtr toggle_client_;
+=======
+  rclcpp::Client<rcl_interfaces::srv::SetParameters>::SharedPtr parameters_client_;
+
+  // Service client for toggling collision monitor
+  rclcpp::Client<nav2_msgs::srv::Toggle>::SharedPtr toggle_client_;
+>>>>>>> jazzy
 };  // Tester
 
 Tester::Tester()
@@ -407,10 +417,20 @@ void Tester::addPolygon(
 
   cm_->declare_parameter(
     polygon_name + ".polygon_pub_topic", rclcpp::ParameterValue(polygon_name));
+<<<<<<< HEAD
+=======
+  cm_->set_parameter(
+    rclcpp::Parameter(polygon_name + ".polygon_pub_topic", polygon_name));
+>>>>>>> jazzy
 
   if (!sources_names.empty()) {
     cm_->declare_parameter(
       polygon_name + ".sources_names", rclcpp::ParameterValue(sources_names));
+<<<<<<< HEAD
+=======
+    cm_->set_parameter(
+      rclcpp::Parameter(polygon_name + ".sources_names", sources_names));
+>>>>>>> jazzy
   }
 }
 
@@ -455,6 +475,11 @@ void Tester::addSource(
       source_name + ".min_height", rclcpp::ParameterValue(0.1));
     cm_->declare_parameter(
       source_name + ".max_height", rclcpp::ParameterValue(1.0));
+<<<<<<< HEAD
+=======
+    cm_->set_parameter(
+      rclcpp::Parameter(source_name + ".max_height", 1.0));
+>>>>>>> jazzy
     cm_->declare_parameter(
       source_name + ".use_global_height", rclcpp::ParameterValue(false));
   } else if (type == RANGE) {
@@ -503,6 +528,12 @@ void Tester::setGlobalHeightParams(const std::string & source_name, const double
 
   cm_->declare_or_get_parameter(
     source_name + ".min_height", min_height);
+  cm_->set_parameter(rclcpp::Parameter(source_name + ".min_height", min_height));
+}
+
+void Tester::setGlobalHeightParams(const std::string & source_name, const double min_height)
+{
+  cm_->set_parameter(rclcpp::Parameter(source_name + ".use_global_height", true));
   cm_->set_parameter(rclcpp::Parameter(source_name + ".min_height", min_height));
 }
 
@@ -773,6 +804,22 @@ bool Tester::waitToggle(
   return false;
 }
 
+bool Tester::waitToggle(
+  rclcpp::Client<nav2_msgs::srv::Toggle>::SharedFuture result_future,
+  const std::chrono::nanoseconds & timeout)
+{
+  rclcpp::Time start_time = cm_->now();
+  while (rclcpp::ok() && cm_->now() - start_time <= rclcpp::Duration(timeout)) {
+    std::future_status status = result_future.wait_for(10ms);
+    if (status == std::future_status::ready) {
+      return true;
+    }
+    rclcpp::spin_some(cm_->get_node_base_interface());
+    std::this_thread::sleep_for(10ms);
+  }
+  return false;
+}
+
 bool Tester::waitActionState(const std::chrono::nanoseconds & timeout)
 {
   rclcpp::Time start_time = cm_->now();
@@ -827,11 +874,14 @@ void Tester::collisionPointsMarkerCallback(visualization_msgs::msg::MarkerArray:
   collision_points_marker_msg_ = msg;
 }
 
+<<<<<<< HEAD
 void Tester::triggeringPointsCallback(visualization_msgs::msg::MarkerArray::ConstSharedPtr msg)
 {
   triggering_points_msg_ = msg;
 }
 
+=======
+>>>>>>> jazzy
 TEST_F(Tester, testToggleService)
 {
   // Set parameters for collision monitor
@@ -840,6 +890,7 @@ TEST_F(Tester, testToggleService)
   addSource(SCAN_NAME, SCAN);
   setVectors({"Stop"}, {SCAN_NAME});
 
+<<<<<<< HEAD
   // Test the parameter in disabled state
   cm_->set_parameter(rclcpp::Parameter("enabled", false));
 
@@ -865,6 +916,29 @@ TEST_F(Tester, testToggleService)
   }
   ASSERT_FALSE(cm_->isEnabled());
 
+=======
+  // Start collision monitor node
+  cm_->start();
+
+  auto request = std::make_shared<nav2_msgs::srv::Toggle::Request>();
+
+  // Disable test
+  request->enable = false;
+  {
+    auto result_future = toggle_client_->async_send_request(request);
+    ASSERT_TRUE(waitToggle(result_future.share(), 2s));
+  }
+  ASSERT_FALSE(cm_->isEnabled());
+
+  // Enable test
+  request->enable = true;
+  {
+    auto result_future = toggle_client_->async_send_request(request);
+    ASSERT_TRUE(waitToggle(result_future.share(), 2s));
+  }
+  ASSERT_TRUE(cm_->isEnabled());
+
+>>>>>>> jazzy
   // Stop the collision monitor
   cm_->stop();
 }
@@ -1731,6 +1805,106 @@ TEST_F(Tester, testVelocityPolygonStop)
   ASSERT_TRUE(waitActionState(500ms));
   ASSERT_EQ(action_state_->action_type, STOP);
   ASSERT_EQ(action_state_->polygon_name, "VelocityPolygon");
+
+  // Stop Collision Monitor node
+  cm_->stop();
+}
+
+TEST_F(Tester, testVelocityPolygonStopGlobalHeight)
+{
+  // Set Collision Monitor parameters.
+  // Add velocity polygon with 2 sub polygon:
+  // 1. Forward:  0 -> 0.5 m/s
+  // 2. Backward: 0 -> -0.5 m/s
+  setCommonParameters();
+  addPolygon("VelocityPolygon", VELOCITY_POLYGON, 1.0, "stop");
+  addPolygonVelocitySubPolygon("VelocityPolygon", "Forward", 0.0, 0.5, 0.0, 1.0, 4.0);
+  addPolygonVelocitySubPolygon("VelocityPolygon", "Backward", -0.5, 0.0, 0.0, 1.0, 2.0);
+  setPolygonVelocityVectors("VelocityPolygon", {"Forward", "Backward"});
+  addSource(POINTCLOUD_NAME, POINTCLOUD);
+  setGlobalHeightParams(POINTCLOUD_NAME, 0.5);
+  setVectors({"VelocityPolygon"}, {POINTCLOUD_NAME});
+
+  cm_->set_parameter(
+    rclcpp::Parameter("source_timeout", 2.0));
+
+  rclcpp::Time curr_time = cm_->now();
+  // Start Collision Monitor node
+  cm_->start();
+  // Check that robot stops when source is enabled
+  sendTransforms(curr_time);
+
+  // 1. Obstacle is in Forward velocity polygon and below global height
+  publishPointCloudWithHeight(3.0, 0.4, curr_time);
+  ASSERT_FALSE(waitData(std::hypot(3.0, 0.01), 500ms, curr_time));
+  publishCmdVel(0.4, 0.0, 0.1);
+  ASSERT_TRUE(waitCmdVel(500ms));
+  ASSERT_NEAR(cmd_vel_out_->linear.x, 0.4, EPSILON);
+  ASSERT_NEAR(cmd_vel_out_->linear.y, 0.0, EPSILON);
+  ASSERT_NEAR(cmd_vel_out_->angular.z, 0.1, EPSILON);
+
+  // 2. Obstacle is in Forward velocity polygon and above global height
+  publishPointCloudWithHeight(3.0, 0.6, curr_time);
+  ASSERT_TRUE(waitData(std::hypot(3.0, 0.01), 500ms, curr_time));
+  publishCmdVel(0.4, 0.0, 0.1);
+  ASSERT_TRUE(waitCmdVel(500ms));
+  ASSERT_NEAR(cmd_vel_out_->linear.x, 0.0, EPSILON);
+  ASSERT_NEAR(cmd_vel_out_->linear.y, 0.0, EPSILON);
+  ASSERT_NEAR(cmd_vel_out_->angular.z, 0.0, EPSILON);
+  ASSERT_TRUE(waitActionState(500ms));
+  ASSERT_EQ(action_state_->action_type, STOP);
+  ASSERT_EQ(action_state_->polygon_name, "VelocityPolygon");
+
+  // 3. Pointcloud without height field, invalid source.
+  publishPointCloud(2.5, curr_time);
+  ASSERT_FALSE(waitData(std::hypot(2.5, 0.01), 100ms, curr_time));
+  publishCmdVel(3.0, 3.0, 3.0);
+  ASSERT_FALSE(waitCmdVel(500ms));
+  ASSERT_TRUE(waitActionState(500ms));
+  ASSERT_EQ(action_state_->action_type, STOP);
+  ASSERT_EQ(action_state_->polygon_name, "invalid source");
+
+  // Stop Collision Monitor node
+  cm_->stop();
+}
+
+TEST_F(Tester, testSourceAssociatedToPolygon)
+{
+  // Set Collision Monitor parameters:
+  // - 2 sources (scan and range)
+  // - 1 stop polygon associated to range source
+  // - 1 slowdown polygon (associated with all sources by default)
+  setCommonParameters();
+  addSource(SCAN_NAME, SCAN);
+  addSource(RANGE_NAME, RANGE);
+  std::vector<std::string> range_only_sources_names = {RANGE_NAME};
+  std::vector<std::string> all_sources_names = {SCAN_NAME, RANGE_NAME};
+  addPolygon("StopOnRangeSource", POLYGON, 1.0, "stop", range_only_sources_names);
+  addPolygon("SlowdownOnAllSources", POLYGON, 1.0, "slowdown");
+  setVectors({"StopOnRangeSource", "SlowdownOnAllSources"}, {SCAN_NAME, RANGE_NAME});
+
+  // Start Collision Monitor node
+  cm_->start();
+
+  // Share TF
+  rclcpp::Time curr_time = cm_->now();
+  sendTransforms(curr_time);
+
+  // Publish sources so that :
+  // - scan obstacle is in polygons
+  // - range obstacle is far away from polygons
+  publishScan(0.5, curr_time);
+  publishRange(4.5, curr_time);
+  ASSERT_TRUE(waitData(0.5, 500ms, curr_time));
+
+  // Publish cmd vel
+  publishCmdVel(0.5, 0.0, 0.0);
+  ASSERT_TRUE(waitCmdVel(500ms));
+
+  // Since the stop polygon is only checking range source, slowdown action should be applied
+  ASSERT_TRUE(waitActionState(500ms));
+  ASSERT_EQ(action_state_->action_type, SLOWDOWN);
+  ASSERT_EQ(action_state_->polygon_name, "SlowdownOnAllSources");
 
   // Stop Collision Monitor node
   cm_->stop();

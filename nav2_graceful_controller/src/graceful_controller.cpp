@@ -70,9 +70,16 @@ void GracefulController::configure(
   }
 
   // Publishers
+<<<<<<< HEAD
   local_plan_pub_ = node->create_publisher<nav_msgs::msg::Path>("local_plan");
   motion_target_pub_ = node->create_publisher<geometry_msgs::msg::PoseStamped>("motion_target");
   slowdown_pub_ = node->create_publisher<visualization_msgs::msg::Marker>("slowdown");
+=======
+  transformed_plan_pub_ = node->create_publisher<nav_msgs::msg::Path>("transformed_global_plan", 1);
+  local_plan_pub_ = node->create_publisher<nav_msgs::msg::Path>("local_plan", 1);
+  motion_target_pub_ = node->create_publisher<geometry_msgs::msg::PoseStamped>("motion_target", 1);
+  slowdown_pub_ = node->create_publisher<visualization_msgs::msg::Marker>("slowdown", 1);
+>>>>>>> jazzy
 
   RCLCPP_INFO(logger_, "Configured Graceful Motion Controller: %s", plugin_name_.c_str());
 }
@@ -127,6 +134,7 @@ geometry_msgs::msg::TwistStamped GracefulController::computeVelocityCommands(
   geometry_msgs::msg::TwistStamped cmd_vel;
   cmd_vel.header = pose.header;
 
+<<<<<<< HEAD
   // Transform the plan from costmap's global frame to robot base frame
   nav_msgs::msg::Path transformed_plan;
   if (!nav2_util::transformPathInTargetFrame(
@@ -135,6 +143,15 @@ geometry_msgs::msg::TwistStamped GracefulController::computeVelocityCommands(
   {
     throw nav2_core::ControllerTFError(
     "Unable to transform plan pose into local frame");
+=======
+  // Update for the current goal checker's state
+  geometry_msgs::msg::Pose pose_tolerance;
+  geometry_msgs::msg::Twist velocity_tolerance;
+  if (!goal_checker->getTolerances(pose_tolerance, velocity_tolerance)) {
+    RCLCPP_WARN(logger_, "Unable to retrieve goal checker's tolerances!");
+  } else {
+    goal_dist_tolerance_ = pose_tolerance.position.x;
+>>>>>>> jazzy
   }
 
   // Update the smooth control law with the new params
@@ -143,9 +160,23 @@ geometry_msgs::msg::TwistStamped GracefulController::computeVelocityCommands(
   control_law_->setSlowdownRadius(params_->slowdown_radius);
   control_law_->setMaxDeceleration(params_->deceleration_max);
   control_law_->setSpeedLimit(params_->v_linear_min, params_->v_linear_max, params_->v_angular_max);
+<<<<<<< HEAD
   // Add proper orientations to plan, if needed
   validateOrientations(transformed_plan.poses);
 
+=======
+
+  // Transform path to robot base frame
+  auto transformed_plan = path_handler_->transformGlobalPlan(
+    pose, params_->max_robot_pose_search_dist);
+
+  // Add proper orientations to plan, if needed
+  validateOrientations(transformed_plan.poses);
+
+  // Publish plan for visualization
+  transformed_plan_pub_->publish(transformed_plan);
+
+>>>>>>> jazzy
   // Transform local frame to global frame to use in collision checking
   geometry_msgs::msg::TransformStamped costmap_transform;
   try {
@@ -162,6 +193,7 @@ geometry_msgs::msg::TwistStamped GracefulController::computeVelocityCommands(
 
   // Compute distance to goal as the path's integrated distance to account for path curvatures
   double dist_to_goal = nav2_util::geometry_utils::calculate_path_length(transformed_plan);
+<<<<<<< HEAD
 
   // If we've reached the XY goal tolerance, just rotate.
   // Feed the goal checker the GLOBAL-frame plan (same frame as `pose` / `global_goal`), not the
@@ -242,6 +274,91 @@ geometry_msgs::msg::TwistStamped GracefulController::computeVelocityCommands(
       // Publish the local plan
       local_plan.header = transformed_plan.header;
       local_plan_pub_->publish(std::make_unique<nav_msgs::msg::Path>(local_plan));
+=======
+
+  // If we've reached the XY goal tolerance, just rotate
+  if (dist_to_goal < goal_dist_tolerance_ || goal_reached_) {
+    goal_reached_ = true;
+    double angle_to_goal = tf2::getYaw(transformed_plan.poses.back().pose.orientation);
+    // Check for collisions between our current pose and goal pose
+    size_t num_steps = fabs(angle_to_goal) / params_->in_place_collision_resolution;
+    // Need to check at least the end pose
+    num_steps = std::max(static_cast<size_t>(1), num_steps);
+    bool collision_free = true;
+    for (size_t i = 1; i <= num_steps; ++i) {
+      double step = static_cast<double>(i) / static_cast<double>(num_steps);
+      double yaw = step * angle_to_goal;
+      geometry_msgs::msg::PoseStamped next_pose;
+      next_pose.header.frame_id = costmap_ros_->getBaseFrameID();
+      next_pose.pose.orientation = nav2_util::geometry_utils::orientationAroundZAxis(yaw);
+      geometry_msgs::msg::PoseStamped costmap_pose;
+      tf2::doTransform(next_pose, costmap_pose, costmap_transform);
+      if (inCollision(
+          costmap_pose.pose.position.x, costmap_pose.pose.position.y,
+          tf2::getYaw(costmap_pose.pose.orientation)))
+      {
+        collision_free = false;
+        break;
+      }
+    }
+    // Compute velocity if rotation is possible
+    if (collision_free) {
+      cmd_vel.twist = rotateToTarget(angle_to_goal);
+      return cmd_vel;
+    }
+    // Else, fall through and see if we should follow control law longer
+  }
+
+  // Precompute distance to candidate poses
+  std::vector<double> target_distances;
+  computeDistanceAlongPath(transformed_plan.poses, target_distances);
+
+  // Work back from the end of plan to find valid target pose
+  for (int i = transformed_plan.poses.size() - 1; i >= 0; --i) {
+    // Underlying control law needs a single target pose, which should:
+    //  * Be as far away as possible from the robot (for smoothness)
+    //  * But no further than the max_lookahed_ distance
+    //  * Be feasible to reach in a collision free manner
+    geometry_msgs::msg::PoseStamped target_pose = transformed_plan.poses[i];
+    double dist_to_target = target_distances[i];
+
+    // Continue if target_pose is too far away from robot
+    if (dist_to_target > params_->max_lookahead) {continue;}
+
+    if (dist_to_goal < params_->max_lookahead) {
+      if (params_->prefer_final_rotation) {
+        // Avoid unstability and big sweeping turns at the end of paths by
+        // ignoring final heading
+        double yaw = std::atan2(target_pose.pose.position.y, target_pose.pose.position.x);
+        target_pose.pose.orientation = nav2_util::geometry_utils::orientationAroundZAxis(yaw);
+      }
+    } else if (dist_to_target < params_->min_lookahead) {
+      // Make sure target is far enough away to avoid instability
+      break;
+    }
+
+    // Flip the orientation of the motion target if the robot is moving backwards
+    bool reversing = false;
+    if (params_->allow_backward && target_pose.pose.position.x < 0.0) {
+      reversing = true;
+      target_pose.pose.orientation = nav2_util::geometry_utils::orientationAroundZAxis(
+        tf2::getYaw(target_pose.pose.orientation) + M_PI);
+    }
+
+    // Actually simulate our path
+    nav_msgs::msg::Path local_plan;
+    if (simulateTrajectory(target_pose, costmap_transform, local_plan, cmd_vel, reversing)) {
+      // Successfully simulated to target_pose - compute velocity at this moment
+      // Publish the selected target_pose
+      motion_target_pub_->publish(target_pose);
+      // Publish marker for slowdown radius around motion target for debugging / visualization
+      auto slowdown_marker = nav2_graceful_controller::createSlowdownMarker(
+        target_pose, params_->slowdown_radius);
+      slowdown_pub_->publish(slowdown_marker);
+      // Publish the local plan
+      local_plan.header = transformed_plan.header;
+      local_plan_pub_->publish(local_plan);
+>>>>>>> jazzy
       // Successfully found velocity command
       return cmd_vel;
     }
@@ -252,8 +369,14 @@ geometry_msgs::msg::TwistStamped GracefulController::computeVelocityCommands(
 
 void GracefulController::newPathReceived(const nav_msgs::msg::Path & /*raw_global_path*/)
 {
+<<<<<<< HEAD
   do_initial_rotation_ = true;
   safe_approach_angle_.reset();
+=======
+  path_handler_->setPlan(path);
+  goal_reached_ = false;
+  do_initial_rotation_ = true;
+>>>>>>> jazzy
 }
 
 void GracefulController::setSpeedLimit(
@@ -280,6 +403,7 @@ void GracefulController::setSpeedLimit(
   }
 }
 
+<<<<<<< HEAD
 bool GracefulController::validateTargetPose(
   geometry_msgs::msg::PoseStamped & target_pose, double dist_to_target,
   nav_msgs::msg::Path & trajectory, geometry_msgs::msg::TransformStamped & costmap_transform,
@@ -357,6 +481,17 @@ bool GracefulController::simulateTrajectory(
 {
   trajectory.poses.clear();
 
+=======
+bool GracefulController::simulateTrajectory(
+  const geometry_msgs::msg::PoseStamped & motion_target,
+  const geometry_msgs::msg::TransformStamped & costmap_transform,
+  nav_msgs::msg::Path & trajectory,
+  geometry_msgs::msg::TwistStamped & cmd_vel,
+  bool backward)
+{
+  trajectory.poses.clear();
+
+>>>>>>> jazzy
   // First pose is robot current pose
   geometry_msgs::msg::PoseStamped next_pose;
   next_pose.header.frame_id = costmap_ros_->getBaseFrameID();
@@ -377,7 +512,11 @@ bool GracefulController::simulateTrajectory(
 
   // Set max iter to avoid infinite loop
   unsigned int max_iter = 3 *
+<<<<<<< HEAD
     std::hypot(motion_target.pose.position.x, motion_target.pose.position.y) / resolution;
+=======
+    std::hypot(motion_target.pose.position.x, motion_target.pose.position.y) / resolution_;
+>>>>>>> jazzy
 
   // Generate path
   do{
@@ -446,9 +585,14 @@ geometry_msgs::msg::Twist GracefulController::rotateToTarget(double angle_to_tar
   geometry_msgs::msg::Twist vel;
   vel.linear.x = 0.0;
   vel.angular.z = params_->rotation_scaling_factor * angle_to_target * params_->v_angular_max;
+<<<<<<< HEAD
   vel.angular.z = std::copysign(1.0, vel.angular.z) * std::max(
     abs(vel.angular.z),
     params_->v_angular_min_in_place);
+=======
+  vel.angular.z = std::copysign(1.0, vel.angular.z) * std::max(abs(vel.angular.z),
+      params_->v_angular_min_in_place);
+>>>>>>> jazzy
   return vel;
 }
 
@@ -560,6 +704,7 @@ void GracefulController::validateOrientations(
   }
 }
 
+<<<<<<< HEAD
 bool GracefulController::findBestApproachTrajectory(
   geometry_msgs::msg::PoseStamped & target_pose, double dist_to_target,
   geometry_msgs::msg::TransformStamped & costmap_transform, double safety_cost,
@@ -630,6 +775,8 @@ bool GracefulController::findBestApproachTrajectory(
   return found_valid;
 }
 
+=======
+>>>>>>> jazzy
 }  // namespace nav2_graceful_controller
 
 // Register this controller as a nav2_core plugin

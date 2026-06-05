@@ -26,6 +26,7 @@ public:
 };
 RclCppFixture g_rclcppfixture;
 
+<<<<<<< HEAD:nav2_ros_common/test/test_lifecycle_node.cpp
 class LifecycleTransitionTestNode : public nav2::LifecycleNode
 {
 public:
@@ -41,6 +42,23 @@ public:
   {
     activated = true;
     return nav2::CallbackReturn::SUCCESS;
+=======
+class LifecycleTransitionTestNode : public nav2_util::LifecycleNode
+{
+public:
+  explicit LifecycleTransitionTestNode(rclcpp::NodeOptions options)
+  : nav2_util::LifecycleNode("test_node", "", options) {}
+
+  nav2_util::CallbackReturn on_configure(const rclcpp_lifecycle::State &) override
+  {
+    configured = true;
+    return nav2_util::CallbackReturn::SUCCESS;
+  }
+  nav2_util::CallbackReturn on_activate(const rclcpp_lifecycle::State &) override
+  {
+    activated = true;
+    return nav2_util::CallbackReturn::SUCCESS;
+>>>>>>> jazzy:nav2_util/test/test_lifecycle_node.cpp
   }
 
   bool configured{false};

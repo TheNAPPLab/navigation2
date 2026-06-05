@@ -700,6 +700,7 @@ void TestNode::testResetFilter()
   publishTransform();
   binary_filter_->process(*master_grid_, min_i, min_j, max_i, max_j, pose);
   binary_state = waitBinaryState();
+<<<<<<< HEAD
   verifyBinaryState(getSign(pose.position.x, pose.position.y, base,
     multiplier, flip_threshold), binary_state);
   binary_state_ = binary_state.data;
@@ -708,6 +709,16 @@ void TestNode::testResetFilter()
   binary_filter_->resetFilter();
   binary_state = waitBinaryState();
   ASSERT_EQ(binary_state.data, binary_state_);
+=======
+  verifyBinaryState(getSign(pose.x, pose.y, base, multiplier, flip_threshold), binary_state);
+  binary_state_ = binary_state->data;
+
+  // Reset binary filter and check its state was resetted to binary_state_
+  binary_filter_->resetFilter();
+  binary_state = waitBinaryState();
+  ASSERT_TRUE(binary_state != nullptr);
+  ASSERT_EQ(binary_state->data, binary_state_);
+>>>>>>> jazzy
 }
 
 

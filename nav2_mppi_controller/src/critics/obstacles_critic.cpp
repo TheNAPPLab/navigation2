@@ -15,7 +15,11 @@
 
 #include <cmath>
 #include "nav2_mppi_controller/critics/obstacles_critic.hpp"
+<<<<<<< HEAD
 #include "nav2_costmap_2d/inflation_layer_interface.hpp"
+=======
+#include "nav2_costmap_2d/inflation_layer.hpp"
+>>>>>>> jazzy
 #include "nav2_core/controller_exceptions.hpp"
 
 namespace mppi::critics
@@ -49,6 +53,7 @@ void ObstaclesCritic::initialize()
 
   if (costmap_ros_->getUseRadius() == consider_footprint_) {
     RCLCPP_WARN(
+<<<<<<< HEAD
       logger_,
       "Inconsistent configuration in collision checking. Please verify the robot's shape settings "
       "in both the costmap and the obstacle critic.");
@@ -56,6 +61,15 @@ void ObstaclesCritic::initialize()
       throw nav2_core::ControllerException(
               "Considering footprint in collision checking but no robot footprint provided in the "
               "costmap.");
+=======
+    logger_,
+    "Inconsistent configuration in collision checking. Please verify the robot's shape settings "
+    "in both the costmap and the obstacle critic.");
+    if (costmap_ros_->getUseRadius()) {
+      throw nav2_core::ControllerException(
+      "Considering footprint in collision checking but no robot footprint provided in the "
+      "costmap.");
+>>>>>>> jazzy
     }
   }
 
@@ -130,7 +144,11 @@ void ObstaclesCritic::score(CriticData & data)
 
   // If near the goal, don't apply the preferential term since the goal is near obstacles
   bool near_goal = false;
+<<<<<<< HEAD
   if (data.state.local_path_length < near_goal_distance_) {
+=======
+  if (utils::withinPositionGoalTolerance(near_goal_distance_, data.state.pose.pose, data.goal)) {
+>>>>>>> jazzy
     near_goal = true;
   }
 

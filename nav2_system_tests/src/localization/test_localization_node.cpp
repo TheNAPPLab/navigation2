@@ -113,7 +113,11 @@ TEST_F(TestAmclPose, SimpleAmclTest)
   EXPECT_EQ(true, defaultAmclTest());
 }
 
+<<<<<<< HEAD
 int main(int argc, char ** argv)
+=======
+int main(int argc, char **argv)
+>>>>>>> jazzy
 {
   ::testing::InitGoogleTest(&argc, argv);
 
