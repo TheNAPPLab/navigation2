@@ -22,13 +22,22 @@
 #include "rclcpp/rclcpp.hpp"
 #include "nav2_costmap_2d/costmap_2d.hpp"
 #include "nav2_costmap_2d/costmap_subscriber.hpp"
-#include "nav2_ros_common/lifecycle_node.hpp"
+#include "nav2_util/lifecycle_node.hpp"
 #include "nav2_smac_planner/node_hybrid.hpp"
 #include "nav2_smac_planner/a_star.hpp"
 #include "nav2_smac_planner/collision_checker.hpp"
 #include "nav2_smac_planner/smoother.hpp"
+#include "ament_index_cpp/get_package_share_directory.hpp"
 
 using namespace nav2_smac_planner;  // NOLINT
+
+class RclCppFixture
+{
+public:
+  RclCppFixture() {rclcpp::init(0, nullptr);}
+  ~RclCppFixture() {rclcpp::shutdown();}
+};
+RclCppFixture g_rclcppfixture;
 
 class SmootherWrapper : public nav2_smac_planner::Smoother
 {
@@ -36,12 +45,17 @@ public:
   explicit SmootherWrapper(const SmootherParams & params)
   : nav2_smac_planner::Smoother(params)
   {}
+
+  std::vector<PathSegment> findDirectionalPathSegmentsWrapper(nav_msgs::msg::Path path)
+  {
+    return findDirectionalPathSegments(path);
+  }
 };
 
 TEST(SmootherTest, test_full_smoother)
 {
-  nav2::LifecycleNode::SharedPtr node =
-    std::make_shared<nav2::LifecycleNode>("SmacSmootherTest");
+  rclcpp_lifecycle::LifecycleNode::SharedPtr node =
+    std::make_shared<rclcpp_lifecycle::LifecycleNode>("SmacSmootherTest");
   nav2_smac_planner::SmootherParams params;
   params.get(node, "test");
   double maxtime = 1.0;
@@ -127,6 +141,10 @@ TEST(SmootherTest, test_full_smoother)
     y_m = path[i].y;
   }
 
+  // Check that we accurately detect that this path has a reversing segment
+  auto path_segs = smoother->findDirectionalPathSegmentsWrapper(plan);
+  EXPECT_TRUE(path_segs.size() == 2u || path_segs.size() == 3u);
+
   // Test smoother, should succeed with same number of points
   // and shorter overall length, while still being collision free.
   auto path_size_in = plan.poses.size();
@@ -178,17 +196,5 @@ TEST(SmootherTest, test_full_smoother)
   EXPECT_NEAR(plan.poses.end()[-2].pose.orientation.w, 0.0, 1e-3);
 
   delete costmap;
-}
-
-int main(int argc, char ** argv)
-{
-  ::testing::InitGoogleTest(&argc, argv);
-
-  rclcpp::init(0, nullptr);
-
-  int result = RUN_ALL_TESTS();
-
-  rclcpp::shutdown();
-
-  return result;
+  nav2_smac_planner::NodeHybrid::destroyStaticAssets();
 }

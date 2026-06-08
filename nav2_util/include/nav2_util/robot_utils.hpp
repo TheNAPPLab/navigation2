@@ -24,9 +24,9 @@
 #include "geometry_msgs/msg/twist.hpp"
 #include "geometry_msgs/msg/twist_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
-#include "tf2/time.hpp"
-#include "tf2/transform_datatypes.hpp"
-#include "tf2_ros/buffer.hpp"
+#include "tf2/time.h"
+#include "tf2/transform_datatypes.h"
+#include "tf2_ros/buffer.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 #include "rclcpp/rclcpp.hpp"
 
@@ -38,7 +38,7 @@ namespace nav2_util
 * @param tf_buffer TF buffer to use for the transformation
 * @param global_frame Frame to transform into
 * @param robot_frame Frame to transform from
-* @param transform_timeout How long to wait for the target frame. When value is zero the functions does not block.
+* @param transform_timeout TF Timeout to use for transformation
 * @return bool Whether it could be transformed successfully
 */
 bool getCurrentPose(
@@ -53,7 +53,7 @@ bool getCurrentPose(
 * @param transformed_pose Output transformation
 * @param tf_buffer TF buffer to use for the transformation
 * @param target_frame Frame to transform into
-* @param transform_timeout How long to wait for the target frame. When value is zero the functions does not block.
+* @param transform_timeout TF Timeout to use for transformation
 * @return bool Whether it could be transformed successfully
 */
 bool transformPoseInTargetFrame(
@@ -146,6 +146,7 @@ bool getTransform(
  * @return True if valid, false if contains unactionable values
  */
 [[nodiscard]] bool validateTwist(const geometry_msgs::msg::Twist & msg);
+[[nodiscard]] bool validateTwist(const geometry_msgs::msg::TwistStamped & msg);
 
 }  // end namespace nav2_util
 

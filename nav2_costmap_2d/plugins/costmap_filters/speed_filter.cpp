@@ -43,7 +43,6 @@
 #include <string>
 
 #include "nav2_costmap_2d/costmap_filters/filter_values.hpp"
-#include "nav2_util/occ_grid_utils.hpp"
 
 namespace nav2_costmap_2d
 {
@@ -60,33 +59,32 @@ void SpeedFilter::initializeFilter(
 {
   std::lock_guard<CostmapFilter::mutex_t> guard(*getMutex());
 
-  nav2::LifecycleNode::SharedPtr node = node_.lock();
+  rclcpp_lifecycle::LifecycleNode::SharedPtr node = node_.lock();
   if (!node) {
     throw std::runtime_error{"Failed to lock node"};
   }
 
   // Declare "speed_limit_topic" parameter specific to SpeedFilter only
-  std::string speed_limit_topic = node->declare_or_get_parameter(name_ + "." + "speed_limit_topic",
-    std::string("speed_limit"));
-  speed_limit_topic = joinWithParentNamespace(speed_limit_topic);
+  std::string speed_limit_topic;
+  declareParameter("speed_limit_topic", rclcpp::ParameterValue("speed_limit"));
+  node->get_parameter(name_ + "." + "speed_limit_topic", speed_limit_topic);
 
-  filter_info_topic_ = joinWithParentNamespace(filter_info_topic);
+  filter_info_topic_ = filter_info_topic;
   // Setting new costmap filter info subscriber
   RCLCPP_INFO(
     logger_,
     "SpeedFilter: Subscribing to \"%s\" topic for filter info...",
     filter_info_topic_.c_str());
   filter_info_sub_ = node->create_subscription<nav2_msgs::msg::CostmapFilterInfo>(
-    filter_info_topic_,
-    std::bind(&SpeedFilter::filterInfoCallback, this, std::placeholders::_1),
-    nav2::qos::LatchedSubscriptionQoS());
+    filter_info_topic_, rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable(),
+    std::bind(&SpeedFilter::filterInfoCallback, this, std::placeholders::_1));
 
   // Get global frame required for speed limit publisher
   global_frame_ = layered_costmap_->getGlobalFrameID();
 
   // Create new speed limit publisher
   speed_limit_pub_ = node->create_publisher<nav2_msgs::msg::SpeedLimit>(
-    speed_limit_topic);
+    speed_limit_topic, rclcpp::QoS(10));
   speed_limit_pub_->on_activate();
 
   // Reset speed conversion states
@@ -96,11 +94,11 @@ void SpeedFilter::initializeFilter(
 }
 
 void SpeedFilter::filterInfoCallback(
-  const nav2_msgs::msg::CostmapFilterInfo::ConstSharedPtr & msg)
+  const nav2_msgs::msg::CostmapFilterInfo::SharedPtr msg)
 {
   std::lock_guard<CostmapFilter::mutex_t> guard(*getMutex());
 
-  nav2::LifecycleNode::SharedPtr node = node_.lock();
+  rclcpp_lifecycle::LifecycleNode::SharedPtr node = node_.lock();
   if (!node) {
     throw std::runtime_error{"Failed to lock node"};
   }
@@ -141,7 +139,7 @@ void SpeedFilter::filterInfoCallback(
     return;
   }
 
-  mask_topic_ = joinWithParentNamespace(msg->filter_mask_topic);
+  mask_topic_ = msg->filter_mask_topic;
 
   // Setting new filter mask subscriber
   RCLCPP_INFO(
@@ -149,13 +147,12 @@ void SpeedFilter::filterInfoCallback(
     "SpeedFilter: Subscribing to \"%s\" topic for filter mask...",
     mask_topic_.c_str());
   mask_sub_ = node->create_subscription<nav_msgs::msg::OccupancyGrid>(
-    mask_topic_,
-    std::bind(&SpeedFilter::maskCallback, this, std::placeholders::_1),
-    nav2::qos::LatchedSubscriptionQoS(3));
+    mask_topic_, rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable(),
+    std::bind(&SpeedFilter::maskCallback, this, std::placeholders::_1));
 }
 
 void SpeedFilter::maskCallback(
-  const nav_msgs::msg::OccupancyGrid::ConstSharedPtr & msg)
+  const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
 {
   std::lock_guard<CostmapFilter::mutex_t> guard(*getMutex());
 
@@ -177,7 +174,7 @@ void SpeedFilter::maskCallback(
 void SpeedFilter::process(
   nav2_costmap_2d::Costmap2D & /*master_grid*/,
   int /*min_i*/, int /*min_j*/, int /*max_i*/, int /*max_j*/,
-  const geometry_msgs::msg::Pose & pose)
+  const geometry_msgs::msg::Pose2D & pose)
 {
   std::lock_guard<CostmapFilter::mutex_t> guard(*getMutex());
 
@@ -189,7 +186,7 @@ void SpeedFilter::process(
     return;
   }
 
-  geometry_msgs::msg::Pose mask_pose;  // robot coordinates in mask frame
+  geometry_msgs::msg::Pose2D mask_pose;  // robot coordinates in mask frame
 
   // Transforming robot pose from current layer frame to mask frame
   if (!transformPose(global_frame_, pose, filter_mask_->header.frame_id, mask_pose)) {
@@ -198,10 +195,7 @@ void SpeedFilter::process(
 
   // Converting mask_pose robot position to filter_mask_ indexes (mask_robot_i, mask_robot_j)
   unsigned int mask_robot_i, mask_robot_j;
-  if (!nav2_util::worldToMap(
-      filter_mask_, mask_pose.position.x, mask_pose.position.y,
-      mask_robot_i, mask_robot_j))
-  {
+  if (!worldToMask(filter_mask_, mask_pose.x, mask_pose.y, mask_robot_i, mask_robot_j)) {
     return;
   }
 

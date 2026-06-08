@@ -36,7 +36,6 @@
 #include "nav2_voxel_grid/voxel_grid.hpp"
 #include "nav2_msgs/msg/voxel_grid.hpp"
 #include "nav2_util/execution_timer.hpp"
-#include "nav2_ros_common/lifecycle_node.hpp"
 
 static inline void mapToWorld3D(
   const unsigned int mx,
@@ -219,11 +218,11 @@ int main(int argc, char ** argv)
   RCLCPP_DEBUG(g_node->get_logger(), "Starting up costmap_2d_cloud");
 
   pub_marked = g_node->create_publisher<sensor_msgs::msg::PointCloud2>(
-    "voxel_marked_cloud", nav2::qos::StandardTopicQoS());
+    "voxel_marked_cloud", 1);
   pub_unknown = g_node->create_publisher<sensor_msgs::msg::PointCloud2>(
-    "voxel_unknown_cloud", nav2::qos::StandardTopicQoS());
+    "voxel_unknown_cloud", 1);
   auto sub = g_node->create_subscription<nav2_msgs::msg::VoxelGrid>(
-    "voxel_grid", nav2::qos::StandardTopicQoS(), voxelCallback);
+    "voxel_grid", rclcpp::SystemDefaultsQoS(), voxelCallback);
 
   rclcpp::spin(g_node->get_node_base_interface());
 

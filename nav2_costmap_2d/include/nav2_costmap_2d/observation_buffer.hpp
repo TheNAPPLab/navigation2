@@ -43,11 +43,11 @@
 
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 #include "rclcpp/time.hpp"
-#include "tf2_ros/buffer.hpp"
+#include "tf2_ros/buffer.h"
 #include "tf2_sensor_msgs/tf2_sensor_msgs.hpp"
 #include "sensor_msgs/msg/point_cloud2.hpp"
 #include "nav2_costmap_2d/observation.hpp"
-#include "nav2_ros_common/lifecycle_node.hpp"
+#include "nav2_util/lifecycle_node.hpp"
 
 
 namespace nav2_costmap_2d
@@ -76,7 +76,7 @@ public:
    * @param  tf_tolerance The amount of time to wait for a transform to be available when setting a new global frame
    */
   ObservationBuffer(
-    const nav2::LifecycleNode::WeakPtr & parent,
+    const nav2_util::LifecycleNode::WeakPtr & parent,
     std::string topic_name,
     double observation_keep_time,
     double expected_update_rate,
@@ -86,6 +86,11 @@ public:
     std::string global_frame,
     std::string sensor_frame,
     tf2::Duration tf_tolerance);
+
+  /**
+   * @brief  Destructor... cleans up
+   */
+  ~ObservationBuffer();
 
   /**
    * @brief  Transforms a PointCloud to the global frame and buffers it
@@ -98,7 +103,7 @@ public:
    * @brief  Pushes copies of all current observations onto the end of the vector passed in
    * @param  observations The vector to be filled
    */
-  void getObservations(std::vector<Observation::ConstSharedPtr> & observations);
+  void getObservations(std::vector<Observation> & observations);
 
   /**
    * @brief  Check if the observation buffer is being update at its expected rate
@@ -141,7 +146,7 @@ private:
   rclcpp::Time last_updated_;
   std::string global_frame_;
   std::string sensor_frame_;
-  std::list<Observation::ConstSharedPtr> observation_list_;
+  std::list<Observation> observation_list_;
   std::string topic_name_;
   double min_obstacle_height_, max_obstacle_height_;
   std::recursive_mutex lock_;  ///< @brief A lock for accessing data in callbacks safely

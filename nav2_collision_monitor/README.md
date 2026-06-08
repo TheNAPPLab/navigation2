@@ -36,7 +36,7 @@ The zones around the robot can take the following shapes:
 * Arbitrary user-defined polygon relative to the robot base frame, which can be static in a configuration file or dynamically changing via a topic interface.
 * Robot footprint polygon, which is used in the approach behavior model only. Will use the static user-defined polygon or the footprint topic to allow it to be dynamically adjusted over time.
 * Circle: is made for the best performance and could be used in the cases where the zone or robot footprint could be approximated by round shape.
-* VelocityPolygon: allow switching of polygons based on the command velocity. When the velocity is covered by multiple sub polygons, the first sub polygon in the `velocity_polygons` list will be used. This is useful for robots to set different safety zones based on their velocity (e.g. a robot that has a larger safety zone when moving at 1.0 m/s than when moving at 0.5 m/s).
+* VelocityPolygon: allow switching of polygons based on the command velocity. When the velocity is covered by multiple sub polygons, the first sub polygon in the `velocity_polygons` list will be used. This is useful for robots to set different safety zones based on their velocity (e.g. a robot that has a larger safety zone when moving at 1.0 m/s than when moving at 0.5 m/s). 
 
 
 The data may be obtained from different data sources:
@@ -44,12 +44,6 @@ The data may be obtained from different data sources:
 * Laser scanners (`sensor_msgs::msg::LaserScan` messages)
 * PointClouds (`sensor_msgs::msg::PointCloud2` messages)
 * IR/Sonars (`sensor_msgs::msg::Range` messages)
-* Costmap (`nav2_msgs::msg::Costmap` messages)
-
-> **⚠️ when using CostmapSource**
-> Collision Monitor normally **bypasses the costmap** to minimize reaction latency using fresh sensor data.
-> Use at your own caution or when using external costmap sources from derived sources.
-
 
 ### Design
 
@@ -66,13 +60,6 @@ The following diagram is showing the high-level design of Collision Monitor modu
 ### Configuration
 
 Detailed configuration parameters, their description and how to setup a Collision Monitor could be found at its [Configuration Guide](https://docs.nav2.org/configuration/packages/configuring-collision-monitor.html) and [Using Collision Monitor tutorial](https://docs.nav2.org/tutorials/docs/using_collision_monitor.html) pages.
-
-
-For `stop`, `slowdown`, and `limit` polygons, temporal debounce can be tuned with:
-- `trigger_consecutive_points`: number of consecutive cycles required to trigger.
-- `release_consecutive_points`: number of consecutive cycles required to release.
-
-A value of `1/1` behaves like the historical behavior (single-cycle trigger/release). In practice, values larger than `1` are recommended to reduce sensor noise flicker while keeping response times reasonable.
 
 
 ### Metrics

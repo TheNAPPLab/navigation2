@@ -18,13 +18,13 @@
 #include <cmath>
 #include <exception>
 
-#include "nav2_ros_common/node_utils.hpp"
+#include "nav2_util/node_utils.hpp"
 
 namespace nav2_collision_monitor
 {
 
 Circle::Circle(
-  const nav2::LifecycleNode::WeakPtr & node,
+  const nav2_util::LifecycleNode::WeakPtr & node,
   const std::string & polygon_name,
   const std::shared_ptr<tf2_ros::Buffer> tf_buffer,
   const std::string & base_frame_id,
@@ -58,33 +58,15 @@ void Circle::getPolygon(std::vector<Point> & poly) const
   }
 }
 
-int Circle::getPointsInside(
-  const std::vector<Point> & points,
-  std::vector<Point> & out_triggering_points) const
+int Circle::getPointsInside(const std::vector<Point> & points) const
 {
   int num = 0;
   for (Point point : points) {
     if (point.x * point.x + point.y * point.y < radius_squared_) {
-      out_triggering_points.push_back(point);
       num++;
     }
   }
 
-  return num;
-}
-
-int Circle::getPointsInside(
-  const std::vector<Point> & points,
-  std::vector<std::size_t> & out_triggering_indices) const
-{
-  int num = 0;
-  for (std::size_t i = 0; i < points.size(); ++i) {
-    const Point & point = points[i];
-    if (point.x * point.x + point.y * point.y < radius_squared_) {
-      out_triggering_indices.push_back(i);
-      num++;
-    }
-  }
   return num;
 }
 
@@ -113,10 +95,12 @@ bool Circle::getParameters(
   bool use_dynamic_sub = true;  // if getting parameter radius fails, use dynamic subscription
   try {
     // Leave it not initialized: the will cause an error if it will not set
-    radius_ = node->declare_or_get_parameter<double>(polygon_name_ + ".radius");
+    nav2_util::declare_parameter_if_not_declared(
+      node, polygon_name_ + ".radius", rclcpp::PARAMETER_DOUBLE);
+    radius_ = node->get_parameter(polygon_name_ + ".radius").as_double();
     radius_squared_ = radius_ * radius_;
     use_dynamic_sub = false;
-  } catch (const rclcpp::exceptions::InvalidParameterValueException &) {
+  } catch (const rclcpp::exceptions::ParameterUninitializedException &) {
     RCLCPP_INFO(
       logger_,
       "[%s]: Polygon circle radius is not defined. Using dynamic subscription instead.",
@@ -154,14 +138,13 @@ void Circle::createSubscription(std::string & polygon_sub_topic)
       logger_,
       "[%s]: Subscribing on %s topic for polygon",
       polygon_name_.c_str(), polygon_sub_topic.c_str());
-    rclcpp::QoS polygon_qos = nav2::qos::StandardTopicQoS();  // set to default
+    rclcpp::QoS polygon_qos = rclcpp::SystemDefaultsQoS();  // set to default
     if (polygon_subscribe_transient_local_) {
       polygon_qos.transient_local();
     }
     radius_sub_ = node->create_subscription<std_msgs::msg::Float32>(
-      polygon_sub_topic,
-      std::bind(&Circle::radiusCallback, this, std::placeholders::_1),
-      polygon_qos);
+      polygon_sub_topic, polygon_qos,
+      std::bind(&Circle::radiusCallback, this, std::placeholders::_1));
   }
 }
 

@@ -21,14 +21,12 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "tf2/time.hpp"
-#include "tf2_ros/buffer.hpp"
+#include "tf2/time.h"
+#include "tf2_ros/buffer.h"
 
 #include "nav2_collision_monitor/types.hpp"
-#include "nav2_ros_common/lifecycle_node.hpp"
+#include "nav2_util/lifecycle_node.hpp"
 #include "std_msgs/msg/header.hpp"
-
-using rcl_interfaces::msg::ParameterType;
 
 namespace nav2_collision_monitor
 {
@@ -52,7 +50,7 @@ public:
    * considering the difference between current time and latest source time
    */
   Source(
-    const nav2::LifecycleNode::WeakPtr & node,
+    const nav2_util::LifecycleNode::WeakPtr & node,
     const std::string & source_name,
     const std::shared_ptr<tf2_ros::Buffer> tf_buffer,
     const std::string & base_frame_id,
@@ -119,23 +117,11 @@ protected:
     const rclcpp::Time & curr_time) const;
 
   /**
-   * @brief Validate incoming parameter updates before applying them.
-   * This callback is triggered when one or more parameters are about to be updated.
-   * It checks the validity of parameter values and rejects updates that would lead
-   * to invalid or inconsistent configurations
-   * @param parameters List of parameters that are being updated.
-   * @return rcl_interfaces::msg::SetParametersResult Result indicating whether the update is accepted.
+   * @brief Callback executed when a parameter change is detected
+   * @param event ParameterEvent message
    */
-  rcl_interfaces::msg::SetParametersResult validateParameterUpdatesCallback(
-    const std::vector<rclcpp::Parameter> & parameters);
-
-  /**
-   * @brief Apply parameter updates after validation
-   * This callback is executed when parameters have been successfully updated.
-   * It updates the internal configuration of the node with the new parameter values.
-   * @param parameters List of parameters that have been updated.
-   */
-  void updateParametersCallback(const std::vector<rclcpp::Parameter> & parameters);
+  rcl_interfaces::msg::SetParametersResult dynamicParametersCallback(
+    std::vector<rclcpp::Parameter> parameters);
 
   /**
    * @brief Obtain the transform to get data from source frame and time where it was received to the
@@ -155,13 +141,11 @@ protected:
   // ----- Variables -----
 
   /// @brief Collision Monitor node
-  nav2::LifecycleNode::WeakPtr node_;
+  nav2_util::LifecycleNode::WeakPtr node_;
   /// @brief Collision monitor node logger stored for further usage
   rclcpp::Logger logger_{rclcpp::get_logger("collision_monitor")};
   /// @brief Dynamic parameters handler
-  mutable std::mutex mutex_;
-  rclcpp::node_interfaces::PostSetParametersCallbackHandle::SharedPtr post_set_params_handler_;
-  rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr on_set_params_handler_;
+  rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr dyn_params_handler_;
 
   // Basic parameters
   /// @brief Name of data source

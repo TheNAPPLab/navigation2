@@ -20,7 +20,7 @@
 
 #include "behaviortree_cpp/bt_factory.h"
 
-#include "nav2_behavior_tree/utils/test_action_server.hpp"
+#include "utils/test_action_server.hpp"
 #include "nav2_behavior_tree/plugins/action/wait_action.hpp"
 
 class WaitActionServer : public TestActionServer<nav2_msgs::action::Wait>
@@ -32,13 +32,9 @@ public:
 
 protected:
   void execute(
-    const typename std::shared_ptr<rclcpp_action::ServerGoalHandle<nav2_msgs::action::Wait>>
-    goal_handle)
+    const typename std::shared_ptr<rclcpp_action::ServerGoalHandle<nav2_msgs::action::Wait>>)
   override
-  {
-    auto result = std::make_shared<nav2_msgs::action::Wait::Result>();
-    goal_handle->succeed(result);
-  }
+  {}
 };
 
 class WaitActionTestFixture : public ::testing::Test
@@ -46,7 +42,7 @@ class WaitActionTestFixture : public ::testing::Test
 public:
   static void SetUpTestCase()
   {
-    node_ = std::make_shared<nav2::LifecycleNode>("wait_action_test_fixture");
+    node_ = std::make_shared<rclcpp::Node>("wait_action_test_fixture");
     factory_ = std::make_shared<BT::BehaviorTreeFactory>();
 
     config_ = new BT::NodeConfiguration();
@@ -101,13 +97,13 @@ public:
   static std::shared_ptr<WaitActionServer> action_server_;
 
 protected:
-  static nav2::LifecycleNode::SharedPtr node_;
+  static rclcpp::Node::SharedPtr node_;
   static BT::NodeConfiguration * config_;
   static std::shared_ptr<BT::BehaviorTreeFactory> factory_;
   static std::shared_ptr<BT::Tree> tree_;
 };
 
-nav2::LifecycleNode::SharedPtr WaitActionTestFixture::node_ = nullptr;
+rclcpp::Node::SharedPtr WaitActionTestFixture::node_ = nullptr;
 std::shared_ptr<WaitActionServer> WaitActionTestFixture::action_server_ = nullptr;
 BT::NodeConfiguration * WaitActionTestFixture::config_ = nullptr;
 std::shared_ptr<BT::BehaviorTreeFactory> WaitActionTestFixture::factory_ = nullptr;

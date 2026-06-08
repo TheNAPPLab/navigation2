@@ -20,23 +20,14 @@
 
 #include "behaviortree_cpp/json_export.h"
 #include "nav2_msgs/action/smooth_path.hpp"
-#include "nav_msgs/msg/path.hpp"
+#include "nav_msgs/msg/path.h"
 #include "nav2_behavior_tree/bt_action_node.hpp"
-#include "nav2_ros_common/lifecycle_node.hpp"
 
 namespace nav2_behavior_tree
 {
 
 /**
  * @brief A nav2_behavior_tree::BtActionNode class that wraps nav2_msgs::action::SmoothPath
- *
- * Usage in XML:
- * @code
- * <SmoothPath unsmoothed_path="{path}" smoothed_path="{path}" max_smoothing_duration="3.0"
- *             smoother_id="simple_smoother" check_for_collisions="false"
- *             smoothing_duration="{smoothing_duration_used}" was_completed="{smoothing_completed}"
- *             error_code_id="{smoothing_path_error_code}" error_msg="{smoothing_path_error_msg}"/>
- * @endcode
  */
 class SmoothPathAction : public nav2_behavior_tree::BtActionNode<nav2_msgs::action::SmoothPath>
 {
@@ -76,12 +67,6 @@ public:
   BT::NodeStatus on_cancelled() override;
 
   /**
-   * @brief Function to perform work in a BT Node when the action server times out
-   * Such as setting the error code ID status to timed out for action clients.
-   */
-  void on_timeout() override;
-
-  /**
    * @brief Creates list of BT ports
    * @return BT::PortsList Containing basic ports along with node-specific ports
    */
@@ -106,8 +91,6 @@ public:
           "was_completed", "True if smoothing was not interrupted by time limit"),
         BT::OutputPort<ActionResult::_error_code_type>(
           "error_code_id", "The smooth path error code"),
-        BT::OutputPort<std::string>(
-          "error_msg", "The smooth path error msg"),
       });
   }
 };

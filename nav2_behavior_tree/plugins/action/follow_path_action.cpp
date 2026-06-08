@@ -34,42 +34,29 @@ void FollowPathAction::on_tick()
   getInput("controller_id", goal_.controller_id);
   getInput("goal_checker_id", goal_.goal_checker_id);
   getInput("progress_checker_id", goal_.progress_checker_id);
-  getInput("path_handler_id", goal_.path_handler_id);
 }
 
 BT::NodeStatus FollowPathAction::on_success()
 {
-  resetFeedbackAndOutputPorts();
   setOutput("error_code_id", ActionResult::NONE);
-  setOutput("error_msg", "");
   return BT::NodeStatus::SUCCESS;
 }
 
 BT::NodeStatus FollowPathAction::on_aborted()
 {
-  resetFeedbackAndOutputPorts();
   setOutput("error_code_id", result_.result->error_code);
-  setOutput("error_msg", result_.result->error_msg);
   return BT::NodeStatus::FAILURE;
 }
 
 BT::NodeStatus FollowPathAction::on_cancelled()
 {
-  resetFeedbackAndOutputPorts();
   // Set empty error code, action was cancelled
   setOutput("error_code_id", ActionResult::NONE);
-  setOutput("error_msg", "");
   return BT::NodeStatus::SUCCESS;
 }
 
-void FollowPathAction::on_timeout()
-{
-  setOutput("error_code_id", ActionResult::CONTROLLER_TIMED_OUT);
-  setOutput("error_msg", "Behavior Tree action client timed out waiting.");
-}
-
 void FollowPathAction::on_wait_for_result(
-  std::shared_ptr<const Action::Feedback> feedback)
+  std::shared_ptr<const Action::Feedback>/*feedback*/)
 {
   // Grab the new path
   nav_msgs::msg::Path new_path;
@@ -105,24 +92,6 @@ void FollowPathAction::on_wait_for_result(
     goal_.progress_checker_id = new_progress_checker_id;
     goal_updated_ = true;
   }
-
-  std::string new_path_handler_id;
-  getInput("path_handler_id", new_path_handler_id);
-
-  if (goal_.path_handler_id != new_path_handler_id) {
-    goal_.path_handler_id = new_path_handler_id;
-    goal_updated_ = true;
-  }
-
-  if (feedback) {
-    setOutput("tracking_feedback", feedback->tracking_feedback);
-  }
-}
-
-void FollowPathAction::resetFeedbackAndOutputPorts()
-{
-  nav2_msgs::msg::TrackingFeedback empty_feedback;
-  setOutput("tracking_feedback", empty_feedback);
 }
 
 }  // namespace nav2_behavior_tree

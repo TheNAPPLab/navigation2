@@ -24,11 +24,6 @@ namespace nav2_behavior_tree
 /**
  * @brief A BT::ConditionNode that returns SUCCESS if initial pose
  * has been received and FAILURE otherwise
- *
- * Usage in XML:
- * @code
- * <InitialPoseReceived/>
- * @endcode
  */
 class InitialPoseReceived : public BT::ConditionNode
 {

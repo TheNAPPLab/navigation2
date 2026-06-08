@@ -14,7 +14,7 @@
 
 import unittest
 
-from nav2_smac_planner.lattice_primitives.lattice_generator import ConfigDict, LatticeGenerator
+from lattice_generator import LatticeGenerator
 import numpy as np
 
 MOTION_MODEL = 'ackermann'
@@ -22,27 +22,25 @@ TURNING_RADIUS = 0.5
 GRID_RESOLUTION = 0.05
 STOPPING_THRESHOLD = 5
 NUM_OF_HEADINGS = 16
-TRAJECTORY_DISTINCTNESS_RATIO = 0.9
 
 
 class TestLatticeGenerator(unittest.TestCase):
     """Contains the unit tests for the TrajectoryGenerator."""
 
     def setUp(self) -> None:
-        config: ConfigDict = {
+        config = {
             'motion_model': MOTION_MODEL,
             'turning_radius': TURNING_RADIUS,
             'grid_resolution': GRID_RESOLUTION,
             'stopping_threshold': STOPPING_THRESHOLD,
             'num_of_headings': NUM_OF_HEADINGS,
-            'trajectory_distinctness_ratio': TRAJECTORY_DISTINCTNESS_RATIO,
         }
 
         lattice_gen = LatticeGenerator(config)
 
         self.minimal_set = lattice_gen.run()
 
-    def test_minimal_set_lengths_are_positive(self) -> None:
+    def test_minimal_set_lengths_are_positive(self):
         # Test that lengths are all positive
 
         for start_angle in self.minimal_set.keys():
@@ -53,7 +51,7 @@ class TestLatticeGenerator(unittest.TestCase):
                 self.assertGreaterEqual(trajectory.parameters.end_straight_length, 0)
                 self.assertGreaterEqual(trajectory.parameters.total_length, 0)
 
-    def test_minimal_set_end_points_lie_on_grid(self) -> None:
+    def test_minimal_set_end_points_lie_on_grid(self):
         # Test that end points lie on the grid resolution
 
         for start_angle in self.minimal_set.keys():
@@ -68,7 +66,7 @@ class TestLatticeGenerator(unittest.TestCase):
                 self.assertAlmostEqual(div_x, np.round(div_x), delta=0.00001)
                 self.assertAlmostEqual(div_y, np.round(div_y), delta=0.00001)
 
-    def test_minimal_set_end_angle_is_correct(self) -> None:
+    def test_minimal_set_end_angle_is_correct(self):
         # Test that end angle agrees with the end angle parameter
 
         for start_angle in self.minimal_set.keys():
@@ -78,7 +76,7 @@ class TestLatticeGenerator(unittest.TestCase):
 
                 self.assertEqual(end_point_angle, trajectory.parameters.end_angle)
 
-    def test_output_angles_in_correct_range(self) -> None:
+    def test_output_angles_in_correct_range(self):
         # Test that the outputted angles always lie within 0 to 2*pi
 
         for start_angle in self.minimal_set.keys():

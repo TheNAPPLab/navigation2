@@ -50,12 +50,7 @@ namespace nav2_behavior_tree
  * If any children at any time had returned FAILURE. PipelineSequence would have returned FAILURE
  * and halted all children, ending the sequence.
  *
- * Usage in XML:
- * @code
- * <PipelineSequence>
- *     <!--Add tree components here-->
- * </PipelineSequence>
- * @endcode
+ * Usage in XML: <PipelineSequence>
  */
 class PipelineSequence : public BT::ControlNode
 {

@@ -23,9 +23,8 @@
 #include "behaviortree_cpp/loggers/abstract_logger.h"
 #include "rclcpp/rclcpp.hpp"
 #include "nav2_msgs/msg/behavior_tree_log.hpp"
-#include "nav2_msgs/msg/behavior_tree_status_change.hpp"
-#include "tf2/time.hpp"
-#include "tf2_ros/buffer_interface.hpp"
+#include "nav2_msgs/msg/behavior_tree_status_change.h"
+#include "tf2_ros/buffer_interface.h"
 
 namespace nav2_behavior_tree
 {
@@ -38,22 +37,18 @@ class RosTopicLogger : public BT::StatusChangeLogger
 public:
   /**
    * @brief A constructor for nav2_behavior_tree::RosTopicLogger
-   * @param ros_node Weak pointer to parent nav2::LifecycleNode
+   * @param ros_node Weak pointer to parent rclcpp::Node
    * @param tree BT to monitor
-   * @param log_idle Whether to enable logging transitions to IDLE state
    */
-  RosTopicLogger(
-    const nav2::LifecycleNode::WeakPtr & ros_node,
-    const BT::Tree & tree,
-    bool log_idle = true)
+  RosTopicLogger(const rclcpp::Node::WeakPtr & ros_node, const BT::Tree & tree)
   : StatusChangeLogger(tree.rootNode())
   {
     auto node = ros_node.lock();
     clock_ = node->get_clock();
     logger_ = node->get_logger().get_child("ros_topic_logger");
     log_pub_ = node->create_publisher<nav2_msgs::msg::BehaviorTreeLog>(
-      "behavior_tree_log");
-    enableTransitionToIdle(log_idle);
+      "behavior_tree_log",
+      rclcpp::QoS(10));
   }
 
   /**

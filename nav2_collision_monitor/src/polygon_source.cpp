@@ -18,9 +18,9 @@
 #include <functional>
 
 #include "geometry_msgs/msg/polygon_stamped.hpp"
-#include "tf2/transform_datatypes.hpp"
+#include "tf2/transform_datatypes.h"
 
-#include "nav2_ros_common/node_utils.hpp"
+#include "nav2_util/node_utils.hpp"
 #include "nav2_util/robot_utils.hpp"
 
 
@@ -28,7 +28,7 @@ namespace nav2_collision_monitor
 {
 
 PolygonSource::PolygonSource(
-  const nav2::LifecycleNode::WeakPtr & node,
+  const nav2_util::LifecycleNode::WeakPtr & node,
   const std::string & source_name,
   const std::shared_ptr<tf2_ros::Buffer> tf_buffer,
   const std::string & base_frame_id,
@@ -59,10 +59,10 @@ void PolygonSource::configure()
 
   getParameters(source_topic);
 
+  rclcpp::QoS qos = rclcpp::SensorDataQoS();  // set to default
   data_sub_ = node->create_subscription<geometry_msgs::msg::PolygonInstanceStamped>(
-    source_topic,
-    std::bind(&PolygonSource::dataCallback, this, std::placeholders::_1),
-    nav2::qos::SensorDataQoS());
+    source_topic, qos,
+    std::bind(&PolygonSource::dataCallback, this, std::placeholders::_1));
 }
 
 bool PolygonSource::getData(
@@ -146,7 +146,6 @@ void PolygonSource::convertPolygonStampedToPoints(
       Point p;
       p.x = current_point.x + j * dx;
       p.y = current_point.y + j * dy;
-      p.source = source_name_;
       data.push_back(p);
     }
   }
@@ -161,8 +160,9 @@ void PolygonSource::getParameters(std::string & source_topic)
 
   getCommonParameters(source_topic);
 
-  sampling_distance_ = node->declare_or_get_parameter(
-    source_name_ + ".sampling_distance", 0.1);
+  nav2_util::declare_parameter_if_not_declared(
+    node, source_name_ + ".sampling_distance", rclcpp::ParameterValue(0.1));
+  sampling_distance_ = node->get_parameter(source_name_ + ".sampling_distance").as_double();
 }
 
 void PolygonSource::dataCallback(geometry_msgs::msg::PolygonInstanceStamped::ConstSharedPtr msg)

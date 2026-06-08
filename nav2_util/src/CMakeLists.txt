@@ -1,12 +1,14 @@
 add_library(${library_name} SHARED
   costmap.cpp
+  node_utils.cpp
   lifecycle_service_client.cpp
   string_utils.cpp
+  lifecycle_utils.cpp
+  lifecycle_node.cpp
   robot_utils.cpp
-  controller_utils.cpp
+  node_thread.cpp
   odometry_utils.cpp
   array_parser.cpp
-  path_utils.cpp
 )
 target_include_directories(${library_name}
   PUBLIC
@@ -25,15 +27,9 @@ target_link_libraries(${library_name} PUBLIC
   tf2_ros::tf2_ros
   tf2::tf2
   ${tf2_geometry_msgs_TARGETS}
-  pluginlib::pluginlib
-  nav2_ros_common::nav2_ros_common
-  angles::angles
 )
 target_link_libraries(${library_name} PRIVATE
   ${bond_TARGETS}
-)
-target_include_directories(${library_name} PUBLIC
-  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
 )
 
 add_executable(lifecycle_bringup

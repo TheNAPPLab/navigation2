@@ -22,21 +22,12 @@
 #include "geometry_msgs/msg/quaternion.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "nav2_behavior_tree/bt_action_node.hpp"
-#include "nav2_ros_common/lifecycle_node.hpp"
 
 namespace nav2_behavior_tree
 {
 
 /**
  * @brief A nav2_behavior_tree::BtActionNode class that wraps nav2_msgs::action::NavigateToPose
- * @note It will re-initialize when halted.
- *
- * Usage in XML:
- * @code
- * <NavigateToPose goal="{goal}" server_name="NavigateToPose" server_timeout="10"
- *                 error_code_id="{navigate_to_pose_error_code}" error_msg="{navigate_to_pose_error_msg}"
- *                 behavior_tree="NavigateThroughPosesWReplanningAndRecovery"/>
- * @endcode
  */
 class NavigateToPoseAction : public BtActionNode<nav2_msgs::action::NavigateToPose>
 {
@@ -76,12 +67,6 @@ public:
   BT::NodeStatus on_cancelled() override;
 
   /**
-   * @brief Function to perform work in a BT Node when the action server times out
-   * Such as setting the error code ID status to timed out for action clients.
-   */
-  void on_timeout() override;
-
-  /**
    * @brief Creates list of BT ports
    * @return BT::PortsList Containing basic ports along with node-specific ports
    */
@@ -96,8 +81,6 @@ public:
         BT::InputPort<std::string>("behavior_tree", "Behavior tree to run"),
         BT::OutputPort<ActionResult::_error_code_type>(
           "error_code_id", "Navigate to pose error code"),
-        BT::OutputPort<std::string>(
-          "error_msg", "Navigate to pose error msg"),
       });
   }
 };

@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <cmath>
 #include <limits>
 #include <memory>
 #include <string>
@@ -23,10 +22,7 @@
 #include "nav2_util/geometry_utils.hpp"
 #include "nav2_util/robot_utils.hpp"
 #include "nav_msgs/msg/path.hpp"
-#include "rclcpp/rclcpp.hpp"
-#include "tf2/LinearMath/Quaternion.hpp"
-#include "tf2_ros/buffer.hpp"
-#include "tf2_ros/create_timer_ros.hpp"
+#include "tf2_ros/create_timer_ros.h"
 
 #include "nav2_behavior_tree/plugins/action/truncate_path_local_action.hpp"
 
@@ -58,9 +54,6 @@ inline BT::NodeStatus TruncatePathLocal::tick()
   getInput("max_robot_pose_search_dist", max_robot_pose_search_dist);
 
   bool path_pruning = std::isfinite(max_robot_pose_search_dist);
-  if (distance_forward < 0.0) {
-    distance_forward = std::numeric_limits<double>::max();
-  }
   nav_msgs::msg::Path new_path;
   getInput("input_path", new_path);
   if (!path_pruning || new_path != path_) {
@@ -119,7 +112,7 @@ inline bool TruncatePathLocal::getRobotPose(
     std::string robot_frame;
     if (!getInput("robot_frame", robot_frame)) {
       RCLCPP_ERROR(
-        config().blackboard->get<nav2::LifecycleNode::SharedPtr>("node")->get_logger(),
+        config().blackboard->get<rclcpp::Node::SharedPtr>("node")->get_logger(),
         "Neither pose nor robot_frame specified for %s", name().c_str());
       return false;
     }
@@ -129,7 +122,7 @@ inline bool TruncatePathLocal::getRobotPose(
         pose, *tf_buffer_, path_frame_id, robot_frame, transform_tolerance))
     {
       RCLCPP_WARN(
-        config().blackboard->get<nav2::LifecycleNode::SharedPtr>("node")->get_logger(),
+        config().blackboard->get<rclcpp::Node::SharedPtr>("node")->get_logger(),
         "Failed to lookup current robot pose for %s", name().c_str());
       return false;
     }

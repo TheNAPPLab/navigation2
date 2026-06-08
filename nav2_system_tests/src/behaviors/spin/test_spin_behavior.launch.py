@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
-
-# Copyright (c) 2025 Open Navigation LLC
+#! /usr/bin/env python3
+# Copyright (c) 2019 Samsung Research America
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +19,6 @@ import sys
 
 from ament_index_python.packages import get_package_share_directory
 
-
 from launch import LaunchDescription
 from launch import LaunchService
 from launch.actions import (
@@ -36,7 +34,6 @@ from launch_testing.legacy import LaunchTestService
 from nav2_common.launch import RewrittenYaml
 
 
-
 def generate_launch_description():
     bringup_dir = get_package_share_directory('nav2_bringup')
     sim_dir = get_package_share_directory('nav2_minimal_tb3_sim')
@@ -47,24 +44,19 @@ def generate_launch_description():
     with open(urdf, 'r') as infp:
         robot_description = infp.read()
 
-
     # Create our own temporary YAML files that include substitutions
     param_substitutions = {'use_sim_time': 'True'}
     configured_params = RewrittenYaml(
         source_file=params_file,
         root_key='',
         param_rewrites=param_substitutions,
-
         convert_types=True,
     )
-
-    new_yaml = configured_params.perform(context)
 
     return LaunchDescription(
         [
             SetEnvironmentVariable('RCUTILS_LOGGING_BUFFERED_STREAM', '1'),
             SetEnvironmentVariable('RCUTILS_LOGGING_USE_STDOUT', '1'),
-
             DeclareLaunchArgument(
                 'params_file',
                 default_value=os.path.join(bringup_dir, 'params', 'nav2_params.yaml'),
@@ -124,7 +116,7 @@ def generate_launch_description():
                     {'use_sim_time': True, 'robot_description': robot_description}
                 ],
             ),
-  # Server under test
+            # Server under test
             Node(
                 package='nav2_behaviors',
                 executable='behavior_server',
@@ -147,22 +139,20 @@ def generate_launch_description():
     )
 
 
-def main(argv: list[str] = sys.argv[1:]):  # type: ignore[no-untyped-def]
+def main(argv=sys.argv[1:]):
     ld = generate_launch_description()
 
     test1_action = ExecuteProcess(
-
         cmd=[os.path.join(
             os.getenv('TEST_DIR'), 'spin_tester.py'), '--ros-args', '-p', 'use_sim_time:=True'],
         name='tester_node',
         output='screen',
     )
 
-    lts = LaunchTestService()  # type: ignore[no-untyped-call]
-    lts.add_test_action(ld, test1_action)  # type: ignore[no-untyped-call]
+    lts = LaunchTestService()
+    lts.add_test_action(ld, test1_action)
     ls = LaunchService(argv=argv)
     ls.include_launch_description(ld)
-
     return_code = lts.run(ls)
     return return_code
 

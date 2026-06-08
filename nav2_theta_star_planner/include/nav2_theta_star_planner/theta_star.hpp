@@ -22,7 +22,6 @@
 #include <algorithm>
 #include "rclcpp/rclcpp.hpp"
 #include "nav2_costmap_2d/costmap_2d_ros.hpp"
-#include "nav2_theta_star_planner/parameter_handler.hpp"
 
 const double INF_COST = DBL_MAX;
 const int UNKNOWN_COST = 255;
@@ -57,17 +56,30 @@ struct comp
   }
 };
 
-namespace nav2_theta_star_planner
+namespace theta_star
 {
 class ThetaStar
 {
 public:
   coordsM src_{}, dst_{};
   nav2_costmap_2d::Costmap2D * costmap_{};
+
+  /// weight on the costmap traversal cost
+  double w_traversal_cost_;
+  /// weight on the euclidean distance cost (used for calculations of g_cost)
+  double w_euc_cost_;
+  /// weight on the heuristic cost (used for h_cost calculations)
+  double w_heuristic_cost_;
+  /// parameter to set the number of adjacent nodes to be searched on
+  int how_many_corners_;
+  /// parameter to set weather the planner can plan through unknown space
+  bool allow_unknown_;
   /// the x-directional and y-directional lengths of the map respectively
   int size_x_, size_y_;
+  /// the interval at which the planner checks if it has been cancelled
+  int terminal_checking_interval_;
 
-  explicit ThetaStar(Parameters * params);
+  ThetaStar();
 
   ~ThetaStar() = default;
 
@@ -132,8 +144,6 @@ protected:
   /// such that the data for all the nodes (in open and closed lists) could be stored
   /// consecutively in nodes_data_
   int index_generated_;
-
-  Parameters * params_;
 
   const coordsM moves[8] = {{0, 1},
     {0, -1},
@@ -229,7 +239,7 @@ protected:
    */
   inline double getEuclideanCost(const int & ax, const int & ay, const int & bx, const int & by)
   {
-    return params_->w_euc_cost * std::hypot(ax - bx, ay - by);
+    return w_euc_cost_ * std::hypot(ax - bx, ay - by);
   }
 
   /**
@@ -239,7 +249,7 @@ protected:
    */
   inline double getHCost(const int & cx, const int & cy)
   {
-    return params_->w_heuristic_cost * std::hypot(cx - dst_.x, cy - dst_.y);
+    return w_heuristic_cost_ * std::hypot(cx - dst_.x, cy - dst_.y);
   }
 
   /**
@@ -310,6 +320,6 @@ protected:
     queue_ = std::priority_queue<tree_node *, std::vector<tree_node *>, comp>();
   }
 };
-}   //  namespace nav2_theta_star_planner
+}   //  namespace theta_star
 
 #endif  //  NAV2_THETA_STAR_PLANNER__THETA_STAR_HPP_

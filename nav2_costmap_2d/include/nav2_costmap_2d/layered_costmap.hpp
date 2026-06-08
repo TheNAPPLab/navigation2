@@ -216,12 +216,13 @@ private:
   // combined_costmap_ is a final costmap where all results produced by plugins and filters (if any)
   // to be merged.
   // The separation is aimed to avoid interferences of work between plugins and filters.
-  // primary_costmap_ and combined_costmap_ have the same sizes, origins and default values.
+  // primay_costmap_ and combined_costmap_ have the same sizes, origins and default values.
   Costmap2D primary_costmap_, combined_costmap_;
   std::string global_frame_;
 
   bool rolling_window_;  /// < @brief Whether or not the costmap should roll with the robot
 
+  bool current_;
   double minx_, miny_, maxx_, maxy_;
   unsigned int bx0_, bxn_, by0_, byn_;
 

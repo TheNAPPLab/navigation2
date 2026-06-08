@@ -17,14 +17,20 @@
 
 #include "base_footprint_publisher.hpp"
 #include "gtest/gtest.h"
-#include "tf2/exceptions.hpp"
+#include "tf2/exceptions.h"
+
+class RclCppFixture
+{
+public:
+  RclCppFixture() {rclcpp::init(0, nullptr);}
+  ~RclCppFixture() {rclcpp::shutdown();}
+};
+RclCppFixture g_rclcppfixture;
 
 TEST(TestBaseFootprintPublisher, TestBaseFootprintPublisher)
 {
   auto node = std::make_shared<nav2_util::BaseFootprintPublisher>();
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node->get_node_base_interface());
-  executor.spin_some();
+  rclcpp::spin_some(node->get_node_base_interface());
 
   auto tf_broadcaster = std::make_shared<tf2_ros::TransformBroadcaster>(node);
   auto buffer = std::make_shared<tf2_ros::Buffer>(node->get_clock());
@@ -43,7 +49,7 @@ TEST(TestBaseFootprintPublisher, TestBaseFootprintPublisher)
   transform.header.frame_id = "test1_1";
   transform.child_frame_id = "test1";
   tf_broadcaster->sendTransform(transform);
-  executor.spin_some();
+  rclcpp::spin_some(node->get_node_base_interface());
   EXPECT_THROW(
     buffer->lookupTransform(base_link, base_footprint, tf2::TimePointZero),
     tf2::TransformException);
@@ -58,22 +64,9 @@ TEST(TestBaseFootprintPublisher, TestBaseFootprintPublisher)
   tf_broadcaster->sendTransform(transform);
   rclcpp::Rate r(1.0);
   r.sleep();
-  executor.spin_some();
+  rclcpp::spin_some(node->get_node_base_interface());
   auto t = buffer->lookupTransform(base_link, base_footprint, tf2::TimePointZero);
   EXPECT_EQ(t.transform.translation.x, 1.0);
   EXPECT_EQ(t.transform.translation.y, 1.0);
   EXPECT_EQ(t.transform.translation.z, 0.0);
-}
-
-int main(int argc, char ** argv)
-{
-  ::testing::InitGoogleTest(&argc, argv);
-
-  rclcpp::init(0, nullptr);
-
-  int result = RUN_ALL_TESTS();
-
-  rclcpp::shutdown();
-
-  return result;
 }

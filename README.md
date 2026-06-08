@@ -8,16 +8,15 @@
 </p>
 
 For detailed instructions on how to:
-- [Concepts](https://docs.nav2.org/concepts/index.html) and [Getting Started](https://docs.nav2.org/getting_started/index.html)
-- [First Time Setup Guide](https://docs.nav2.org/setup_guides/index.html)
-- [ROS Distribution Statuses](https://docs.nav2.org/#distributions)
-- [Build & Install](https://docs.nav2.org/development_guides/build_docs/index.html#build) and [Docker Containers](https://github.com/orgs/ros-navigation/packages/container/package/navigation2)
+- [Getting Started](https://docs.nav2.org/getting_started/index.html)
+- [Concepts](https://docs.nav2.org/concepts/index.html)
+- [Build](https://docs.nav2.org/development_guides/build_docs/index.html#build)
+- [Install](https://docs.nav2.org/development_guides/build_docs/index.html#install)
 - [General Tutorials](https://docs.nav2.org/tutorials/index.html) and [Algorithm Developer Tutorials](https://docs.nav2.org/plugin_tutorials/index.html)
-- [Configuration Guide](https://docs.nav2.org/configuration/index.html)
+- [Configure](https://docs.nav2.org/configuration/index.html)
 - [Navigation Plugins](https://docs.nav2.org/plugins/index.html)
-- [API Docs](https://api.nav2.org/)
-- [ROSCon Talks](https://docs.nav2.org/about/roscon.html) and [Citations](https://docs.nav2.org/citations.html)
 - [Migration Guides](https://docs.nav2.org/migration/index.html)
+- [Container Images for Building Nav2](https://github.com/orgs/ros-navigation/packages/container/package/navigation2)
 - [Contribute](https://docs.nav2.org/development_guides/involvement_docs/index.html)
 
 Please visit our [documentation site](https://docs.nav2.org/). [Please visit our community Slack here](https://join.slack.com/t/navigation2/shared_invite/zt-uj428p0x-jKx8U7OzK1IOWp5TnDS2rA) (if this link does not work, please contact maintainers to reactivate).
@@ -26,96 +25,93 @@ Please visit our [documentation site](https://docs.nav2.org/). [Please visit our
 
 ## Our Sponsors
 
-Please thank our amazing sponsors for their generous support of Nav2 on behalf of the community to allow the project to continue to be professionally maintained, developed, and supported for the long-haul! [Open Navigation LLC](https://www.opennav.org/) provides project leadership, maintenance, development, and support services to the Nav2 & ROS community.
+Please thank our amazing sponsors for their generous support of Nav2 on behalf of the community to allow the project to continue to be professionally maintained, developed, and supported for the long-haul! [Open Navigation LLC](https://www.opennav.org/) provides project leadership, maintenance, development, and support services to the Nav2 & ROS community. 
 
 <p align="center">
-  <img src="doc/sponsors_oct_2025.png" />
+  <img src="doc/sponsors_feb_2024.png" />
 </p>
 
 ### [Dexory](https://www.dexory.com/) develops robotics and AI logistics solutions to drive better business decisions using a digital twin of warehouses to provide inventory insights.
 
 ### [Nvidia](https://www.nvidia.com/en-us/deep-learning-ai/industries/robotics/) develops GPU and AI technologies that power modern robotics, autonomous driving, data centers, gaming, and more.
 
-### [AMD](https://www.amd.com/en/solutions/industrial/robotics.html) provides high-performance and adaptive computing solutions that empower robotics and autonomous systems with embedded SoCs, FPGAs, and Ryzen CPUs, and Radeon GPUs.
-
 ### [Polymath Robotics](https://www.polymathrobotics.com/) creates safety-critical navigation systems for industrial vehicles that are radically simple to enable and deploy.
 
 ### [Stereolabs](https://www.stereolabs.com/) produces the high-quality ZED stereo cameras with a complete vision pipeline from neural depth to SLAM, 3D object tracking, AI and more.
 
-### [3Laws Robotics](https://3laws.io/) provide Supervisor ROS and Pro, easy-to-use dynamic collision avoidance solutions to improve safety and application throughput.
+### Confidential is just happy to support Nav2's mission!
 
-### [Staer](https://staer.ai/) makes mobile robots truly autonomous and gives them the ability to map new environments, understand space, plan their movements, and continuously improve.
 
 ## Citation
 
 If you use the navigation framework, an algorithm from this repository, or ideas from it
 please cite this work in your papers!
 
-- S. Macenski, F. Martín, R. White, J. Clavero. [**The Marathon 2: A Navigation System**](https://arxiv.org/abs/2003.00368). IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), 2020.
-
-  ```bibtex
-  @inproceedings{macenski2020marathon2,
-    title     = {The Marathon 2: A Navigation System},
-    author    = {Macenski, Steve and Martín, Francisco and White, Ruffin and Ginés Clavero, Jonatan},
-    year      = {2020},
-    booktitle = {2020 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
-    url       = {https://github.com/ros-planning/navigation2},
-    pdf       = {https://arxiv.org/abs/2003.00368}
-  }
-  ```
+ - S. Macenski, F. Martín, R. White, J. Clavero. [**The Marathon 2: A Navigation System**](https://arxiv.org/abs/2003.00368). IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), 2020.
+ 
+ ```bibtex
+ @InProceedings{macenski2020marathon2,
+   title = {The Marathon 2: A Navigation System},
+   author = {Macenski, Steve and Martín, Francisco and White, Ruffin and Ginés Clavero, Jonatan},
+   year = {2020},
+   booktitle = {2020 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+   url = {https://github.com/ros-planning/navigation2},
+   pdf = {https://arxiv.org/abs/2003.00368}
+ }
+```
 
 If you use **any** of the algorithms in Nav2 or the analysis of the algorithms in your work, please cite this work in your papers!
 
 - S. Macenski, T. Moore, DV Lu, A. Merzlyakov, M. Ferguson, [**From the desks of ROS maintainers: A survey of modern & capable mobile robotics algorithms in the robot operating system 2**](https://arxiv.org/pdf/2307.15236.pdf), Robotics and Autonomous Systems, 2023.
 
-  ```bibtex
+```bibtex
   @article{macenski2023survey,
-    title   = {From the desks of ROS maintainers: A survey of modern & capable mobile robotics algorithms in the robot operating system 2},
-    author  = {S. Macenski, T. Moore, DV Lu, A. Merzlyakov, M. Ferguson},
-    year    = {2023},
-    journal = {Robotics and Autonomous Systems}
+        title={From the desks of ROS maintainers: A survey of modern & capable mobile robotics algorithms in the robot operating system 2}, 
+        author={S. Macenski, T. Moore, DV Lu, A. Merzlyakov, M. Ferguson},
+        year={2023},
+        journal = {Robotics and Autonomous Systems}
   }
-  ```
+```
 
 If you use the Smac Planner (Hybrid A*, State Lattice, 2D), please cite this work in your papers!
 
-- S. Macenski, M. Booker, J. Wallace, T. Fischer, [**Cost-Aware Kinematically Feasible Planning for Mobile and Surface Robotics**](https://arxiv.org/abs/2401.13078). IEEE Robotics and Automation Practice 2026.
+- S. Macenski, M. Booker, J. Wallace, [**Open-Source, Cost-Aware Kinematically Feasible Planning for Mobile and Surface Robotics**](https://arxiv.org/abs/2401.13078). 2024.
 
-  ```bibtex
-  @article{macenski2024smac,
-    title   = {Cost-Aware Kinematically Feasible Planning for Mobile and Surface Robotics},
-    author  = {Steve Macenski and Matthew Booker and Josh Wallace and Tobias Fischer},
-    journal = {IEEE Robotics and Automation Practice}
-    year    = {2026},
-  }
-  ```
+```bibtex
+@article{macenski2024smac,
+      title={Open-Source, Cost-Aware Kinematically Feasible Planning for Mobile and Surface Robotics}, 
+      author={Steve Macenski and Matthew Booker and Josh Wallace},
+      year={2024},
+      journal = {Arxiv}
+}
+```
 
 If you use the Regulated Pure Pursuit Controller algorithm or software from this repository, please cite this work in your papers!
 
 - S. Macenski, S. Singh, F. Martin, J. Gines, [**Regulated Pure Pursuit for Robot Path Tracking**](https://arxiv.org/abs/2305.20026). Autonomous Robots, 2023.
 
-  ```bibtex
-  @article{macenski2023regulated,
-    title   = {Regulated Pure Pursuit for Robot Path Tracking},
-    author  = {Steve Macenski and Shrijit Singh and Francisco Martin and Jonatan Gines},
-    year    = {2023},
-    journal = {Autonomous Robots}
-  }
-  ```
+```bibtex
+@article{macenski2023regulated,
+      title={Regulated Pure Pursuit for Robot Path Tracking}, 
+      author={Steve Macenski and Shrijit Singh and Francisco Martin and Jonatan Gines},
+      year={2023},
+      journal = {Autonomous Robots}
+}
+```
 
-If you use our work on VSLAM and formal comparisons for service robot needs, please cite the paper:
+ If you use our work on VSLAM and formal comparisons for service robot needs, please cite the paper:
 
-- A. Merzlyakov, S. Macenski. [**A Comparison of Modern General-Purpose Visual SLAM Approaches**](https://arxiv.org/abs/2107.07589). IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), 2021.
+ - A. Merzlyakov, S. Macenski. [**A Comparison of Modern General-Purpose Visual SLAM Approaches**](https://arxiv.org/abs/2107.07589). IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), 2021.
 
-  ```bibtex
-  @inproceedings{vslamComparison2021,
-    title     = {A Comparison of Modern General-Purpose Visual SLAM Approaches},
-    author    = {Merzlyakov, Alexey and Macenski, Steven},
-    year      = {2021},
-    booktitle = {2021 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
-    pdf       = {https://arxiv.org/abs/2107.07589}
-  }
-  ```
+ ```bibtex
+ @InProceedings{vslamComparison2021,
+   title = {A Comparison of Modern General-Purpose Visual SLAM Approaches},
+   author = {Merzlyakov, Alexey and Macenski, Steven},
+   year = {2021},
+   booktitle = {2021 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+   pdf = {https://arxiv.org/abs/2107.07589}
+ }
+```
 
 ## Build Status
 

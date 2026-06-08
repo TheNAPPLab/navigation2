@@ -24,12 +24,6 @@
 namespace nav2_behavior_tree
 {
 
-/**
- * Usage in XML:
- * @code
- * <WouldASmootherRecoveryHelp error_code="{smoother_error_code}"/>
- * @endcode
- */
 class WouldASmootherRecoveryHelp : public AreErrorCodesPresent
 {
   using Action = nav2_msgs::action::SmoothPath;

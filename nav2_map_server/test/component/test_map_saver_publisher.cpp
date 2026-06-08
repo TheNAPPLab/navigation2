@@ -16,7 +16,6 @@
 #include <string>
 #include <memory>
 
-#include "nav2_ros_common/qos_profiles.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "nav2_map_server/map_io.hpp"
 #include "test_constants/test_constants.h"
@@ -42,7 +41,7 @@ public:
 
     map_pub_ = create_publisher<nav_msgs::msg::OccupancyGrid>(
       "map",
-      nav2::qos::LatchedPublisherQoS());
+      rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable());
     map_pub_->publish(msg);
   }
 

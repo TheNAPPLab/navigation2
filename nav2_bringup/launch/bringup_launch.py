@@ -23,7 +23,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
 from launch_ros.descriptions import ParameterFile
-from nav2_common.launch import LaunchConfigAsBool, RewrittenYaml
+from nav2_common.launch import RewrittenYaml
 
 
 def generate_launch_description() -> LaunchDescription:
@@ -33,22 +33,22 @@ def generate_launch_description() -> LaunchDescription:
 
     # Create the launch configuration variables
     namespace = LaunchConfiguration('namespace')
-    slam = LaunchConfigAsBool('slam')
+    slam = LaunchConfiguration('slam')
     map_yaml_file = LaunchConfiguration('map')
     keepout_mask_yaml_file = LaunchConfiguration('keepout_mask')
     speed_mask_yaml_file = LaunchConfiguration('speed_mask')
     graph_filepath = LaunchConfiguration('graph')
-    use_sim_time = LaunchConfigAsBool('use_sim_time')
+    use_sim_time = LaunchConfiguration('use_sim_time')
     params_file = LaunchConfiguration('params_file')
-    autostart = LaunchConfigAsBool('autostart')
-    use_composition = LaunchConfigAsBool('use_composition')
-    use_intra_process_comms = LaunchConfigAsBool('use_intra_process_comms')
+    autostart = LaunchConfiguration('autostart')
+    use_composition = LaunchConfiguration('use_composition')
+    use_intra_process_comms = LaunchConfiguration('use_intra_process_comms')
     container_name = LaunchConfiguration('container_name')
-    use_respawn = LaunchConfigAsBool('use_respawn')
+    use_respawn = LaunchConfiguration('use_respawn')
     log_level = LaunchConfiguration('log_level')
-    use_localization = LaunchConfigAsBool('use_localization')
-    use_keepout_zones = LaunchConfigAsBool('use_keepout_zones')
-    use_speed_zones = LaunchConfigAsBool('use_speed_zones')
+    use_localization = LaunchConfiguration('use_localization')
+    use_keepout_zones = LaunchConfiguration('use_keepout_zones')
+    use_speed_zones = LaunchConfiguration('use_speed_zones')
 
     # Map fully qualified names to relative ones so the node's namespace can be prepended.
     # In case of the transforms (tf), currently, there doesn't seem to be a better alternative
@@ -58,17 +58,13 @@ def generate_launch_description() -> LaunchDescription:
     #              https://github.com/ros2/launch_ros/issues/56
     remappings = [('/tf', '/j100_0288/tf'), ('/tf_static', '/j100_0288/tf_static')]
 
-    yaml_substitutions = {
-        'KEEPOUT_ZONE_ENABLED': use_keepout_zones,
-        'SPEED_ZONE_ENABLED': use_speed_zones,
-    }
+    yaml_substitutions = {}
 
     configured_params = ParameterFile(
         RewrittenYaml(
             source_file=params_file,
             root_key=namespace,
-            param_rewrites={},
-            value_rewrites=yaml_substitutions,
+            param_rewrites=yaml_substitutions,
             convert_types=True,
         ),
         allow_substs=True,
@@ -175,7 +171,7 @@ def generate_launch_description() -> LaunchDescription:
                 namespace=namespace,
                 package='rclcpp_components',
                 executable='component_container_isolated',
-                parameters=[configured_params, {'autostart': autostart}],
+                parameters=[configured_params, {'autostart': True}],
                 arguments=['--ros-args', '--log-level', log_level],
                 remappings=remappings,
                 output='screen',
@@ -211,39 +207,7 @@ def generate_launch_description() -> LaunchDescription:
                 }.items(),
             ),
 
-            IncludeLaunchDescription(
-                PythonLaunchDescriptionSource(
-                    os.path.join(launch_dir, 'keepout_zone_launch.py')
-                ),
-                condition=IfCondition(use_keepout_zones),
-                launch_arguments={
-                    'namespace': namespace,
-                    'keepout_mask': keepout_mask_yaml_file,
-                    'use_sim_time': use_sim_time,
-                    'params_file': params_file,
-                    'use_composition': use_composition,
-                    'use_intra_process_comms': use_intra_process_comms,
-                    'use_respawn': use_respawn,
-                    'container_name': container_name,
-                }.items(),
-            ),
 
-            IncludeLaunchDescription(
-                PythonLaunchDescriptionSource(
-                    os.path.join(launch_dir, 'speed_zone_launch.py')
-                ),
-                condition=IfCondition(use_speed_zones),
-                launch_arguments={
-                    'namespace': namespace,
-                    'speed_mask': speed_mask_yaml_file,
-                    'use_sim_time': use_sim_time,
-                    'params_file': params_file,
-                    'use_composition': use_composition,
-                    'use_intra_process_comms': use_intra_process_comms,
-                    'use_respawn': use_respawn,
-                    'container_name': container_name,
-                }.items(),
-            ),
 
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
@@ -258,8 +222,7 @@ def generate_launch_description() -> LaunchDescription:
                     'use_composition': use_composition,
                     'use_intra_process_comms': use_intra_process_comms,
                     'use_respawn': use_respawn,
-                    'use_keepout_zones': use_keepout_zones,
-                    'use_speed_zones': use_speed_zones,
+
                     'container_name': container_name,
                 }.items(),
             ),

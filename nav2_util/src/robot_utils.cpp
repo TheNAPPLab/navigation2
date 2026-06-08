@@ -18,10 +18,7 @@
 #include <cmath>
 #include <memory>
 
-#include "tf2/convert.hpp"
-#include "tf2/utils.hpp"
-#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
-
+#include "tf2/convert.h"
 #include "nav2_util/robot_utils.hpp"
 #include "rclcpp/logger.hpp"
 
@@ -49,11 +46,6 @@ bool transformPoseInTargetFrame(
   const double transform_timeout)
 {
   static rclcpp::Logger logger = rclcpp::get_logger("transformPoseInTargetFrame");
-
-  if (input_pose.header.frame_id == target_frame) {
-    transformed_pose = input_pose;
-    return true;
-  }
 
   try {
     transformed_pose = tf_buffer.transform(
@@ -208,6 +200,11 @@ bool validateTwist(const geometry_msgs::msg::Twist & msg)
   }
 
   return true;
+}
+
+bool validateTwist(const geometry_msgs::msg::TwistStamped & msg)
+{
+  return validateTwist(msg.twist);
 }
 
 }  // end namespace nav2_util

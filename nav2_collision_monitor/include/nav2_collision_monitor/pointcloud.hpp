@@ -20,7 +20,6 @@
 #include <string>
 
 #include "sensor_msgs/msg/point_cloud2.hpp"
-#include "point_cloud_transport/point_cloud_transport.hpp"
 
 #include "nav2_collision_monitor/source.hpp"
 
@@ -46,7 +45,7 @@ public:
    * considering the difference between current time and latest source time
    */
   PointCloud(
-    const nav2::LifecycleNode::WeakPtr & node,
+    const nav2_util::LifecycleNode::WeakPtr & node,
     const std::string & source_name,
     const std::shared_ptr<tf2_ros::Buffer> tf_buffer,
     const std::string & base_frame_id,
@@ -89,37 +88,10 @@ protected:
    */
   void dataCallback(sensor_msgs::msg::PointCloud2::ConstSharedPtr msg);
 
-  /**
-   * @brief Validate incoming parameter updates before applying them.
-   * This callback is triggered when one or more parameters are about to be updated.
-   * It checks the validity of parameter values and rejects updates that would lead
-   * to invalid or inconsistent configurations
-   * @param parameters List of parameters that are being updated.
-   * @return rcl_interfaces::msg::SetParametersResult Result indicating whether the update is accepted.
-   */
-  rcl_interfaces::msg::SetParametersResult validateParameterUpdatesCallback(
-    const std::vector<rclcpp::Parameter> & parameters);
-
-  /**
-   * @brief Apply parameter updates after validation
-   * This callback is executed when parameters have been successfully updated.
-   * It updates the internal configuration of the node with the new parameter values.
-   * @param parameters List of parameters that have been updated.
-   */
-  void updateParametersCallback(const std::vector<rclcpp::Parameter> & parameters);
-
   // ----- Variables -----
 
   /// @brief PointCloud data subscriber
-  #if RCLCPP_VERSION_GTE(30, 0, 0)
-  std::shared_ptr<point_cloud_transport::PointCloudTransport> pct_;
-  point_cloud_transport::Subscriber data_sub_;
-  #else
-  nav2::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr data_sub_;
-  #endif
-
-  // Transport type used for PointCloud messages (e.g., raw or compressed)
-  std::string transport_type_;
+  rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr data_sub_;
 
   // Minimum and maximum height of PointCloud projected to 2D space
   double min_height_, max_height_;

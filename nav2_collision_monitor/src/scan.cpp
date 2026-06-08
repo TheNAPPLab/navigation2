@@ -17,7 +17,7 @@
 #include <cmath>
 #include <functional>
 
-#include "tf2/transform_datatypes.hpp"
+#include "tf2/transform_datatypes.h"
 
 #include "nav2_util/robot_utils.hpp"
 
@@ -25,7 +25,7 @@ namespace nav2_collision_monitor
 {
 
 Scan::Scan(
-  const nav2::LifecycleNode::WeakPtr & node,
+  const nav2_util::LifecycleNode::WeakPtr & node,
   const std::string & source_name,
   const std::shared_ptr<tf2_ros::Buffer> tf_buffer,
   const std::string & base_frame_id,
@@ -60,10 +60,10 @@ void Scan::configure()
   // Laser scanner has no own parameters
   getCommonParameters(source_topic);
 
+  rclcpp::QoS scan_qos = rclcpp::SensorDataQoS();  // set to default
   data_sub_ = node->create_subscription<sensor_msgs::msg::LaserScan>(
-    source_topic,
-    std::bind(&Scan::dataCallback, this, std::placeholders::_1),
-    nav2::qos::SensorDataQoS());
+    source_topic, scan_qos,
+    std::bind(&Scan::dataCallback, this, std::placeholders::_1));
 }
 
 bool Scan::getData(
@@ -96,7 +96,7 @@ bool Scan::getData(
       tf2::Vector3 p_v3_b = tf_transform * p_v3_s;
 
       // Refill data array
-      data.push_back({p_v3_b.x(), p_v3_b.y(), p_v3_b.z(), source_name_});
+      data.push_back({p_v3_b.x(), p_v3_b.y()});
     }
     angle += data_->angle_increment;
   }
