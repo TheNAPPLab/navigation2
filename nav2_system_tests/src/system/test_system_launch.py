@@ -64,17 +64,6 @@ def generate_launch_description() -> LaunchDescription:
     if (os.getenv('GROOT_MONITORING') == 'True'):
         param_substitutions.update({'enable_groot_monitoring': 'True'})
 
-    inflation_layer_plugin = os.getenv('INFLATION_LAYER', '')
-    if inflation_layer_plugin:
-        param_substitutions.update({
-            'local_costmap.local_costmap.ros__parameters.inflation_layer.plugin':
-                inflation_layer_plugin
-        })
-        param_substitutions.update({
-            'global_costmap.global_costmap.ros__parameters.inflation_layer.plugin':
-                inflation_layer_plugin
-        })
-
     param_substitutions.update(
         {'planner_server.ros__parameters.GridBased.plugin': os.getenv('PLANNER', '')}
     )
@@ -170,7 +159,7 @@ def main(argv: list[str] = sys.argv[1:]):  # type: ignore[no-untyped-def]
     lts.add_test_action(ld, test1_action)  # type: ignore[no-untyped-call]
     ls = LaunchService(argv=argv)
     ls.include_launch_description(ld)
-    return_code = lts.run(ls)  # type: ignore[no-untyped-call]
+    return_code = lts.run(ls)
     return return_code
 
 

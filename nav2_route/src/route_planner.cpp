@@ -25,11 +25,13 @@ namespace nav2_route
 {
 
 void RoutePlanner::configure(
-  nav2::LifecycleNode::SharedPtr node,
+  nav2_util::LifecycleNode::SharedPtr node,
   const std::shared_ptr<tf2_ros::Buffer> tf_buffer,
   const std::shared_ptr<nav2_costmap_2d::CostmapSubscriber> costmap_subscriber)
 {
-  max_iterations_ = node->declare_or_get_parameter("max_iterations", 0);
+  nav2_util::declare_parameter_if_not_declared(
+    node, "max_iterations", rclcpp::ParameterValue(0));
+  max_iterations_ = node->get_parameter("max_iterations").as_int();
 
   if (max_iterations_ <= 0) {
     max_iterations_ = std::numeric_limits<int>::max();

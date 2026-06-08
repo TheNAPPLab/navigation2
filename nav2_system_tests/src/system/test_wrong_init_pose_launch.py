@@ -159,7 +159,7 @@ def main(argv: list[str] = sys.argv[1:]):  # type: ignore[no-untyped-def]
     lts.add_test_action(ld, test1_action)  # type: ignore[no-untyped-call]
     ls = LaunchService(argv=argv)
     ls.include_launch_description(ld)
-    return_code = lts.run(ls)  # type: ignore[no-untyped-call]
+    return_code = lts.run(ls)
     return return_code
 
 

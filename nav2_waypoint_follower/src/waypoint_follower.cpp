@@ -41,7 +41,7 @@ WaypointFollower::~WaypointFollower()
 {
 }
 
-nav2::CallbackReturn
+nav2_util::CallbackReturn
 WaypointFollower::on_configure(const rclcpp_lifecycle::State & state)
 {
   RCLCPP_INFO(get_logger(), "Configuring");
@@ -115,6 +115,8 @@ WaypointFollower::on_deactivate(const rclcpp_lifecycle::State & /*state*/)
 
   xyz_action_server_->deactivate();
   gps_action_server_->deactivate();
+  remove_on_set_parameters_callback(dyn_params_handler_.get());
+  dyn_params_handler_.reset();
   // destroy bond connection
   destroyBond();
 

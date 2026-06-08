@@ -20,26 +20,18 @@
 #include <string>
 #include <limits>
 
+#include "nav_msgs/msg/path.hpp"
+
 #include "behaviortree_cpp/action_node.h"
 #include "behaviortree_cpp/json_export.h"
-#include "nav_msgs/msg/path.hpp"
-#include "nav2_behavior_tree/bt_utils.hpp"
 #include "nav2_behavior_tree/json_utils.hpp"
-#include "tf2_ros/buffer.hpp"
-#include "nav2_ros_common/lifecycle_node.hpp"
-
+#include "tf2_ros/buffer.h"
 
 namespace nav2_behavior_tree
 {
 
 /**
  * @brief A BT::ActionNodeBase to shorten path to some distance around robot
- *
- * Usage in XML:
- * @code
- * <TruncatePathLocal input_path="{path}" output_path="{path_local}"
- *                    distance_forward="3.5" distance_backward="2.0" robot_frame="base_link"/>
- * @endcode
  */
 class TruncatePathLocal : public BT::ActionNodeBase
 {

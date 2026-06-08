@@ -85,7 +85,7 @@ public:
    */
   inline bool isSafe(const int & cx, const int & cy) const
   {
-    return (costmap_->getCost(cx, cy) == UNKNOWN_COST && params_->allow_unknown) ||
+    return (costmap_->getCost(cx, cy) == UNKNOWN_COST && allow_unknown_) ||
            costmap_->getCost(cx, cy) <= MAX_NON_OBSTACLE_COST;
   }
 
@@ -187,13 +187,13 @@ protected:
   bool isSafe(const int & cx, const int & cy, double & cost) const
   {
     double curr_cost = getCost(cx, cy);
-    if ((costmap_->getCost(cx, cy) == UNKNOWN_COST && params_->allow_unknown) ||
+    if ((costmap_->getCost(cx, cy) == UNKNOWN_COST && allow_unknown_) ||
       curr_cost <= MAX_NON_OBSTACLE_COST)
     {
       if (costmap_->getCost(cx, cy) == UNKNOWN_COST) {
         curr_cost = OCCUPIED_COST - 1;
       }
-      cost += params_->w_traversal_cost * curr_cost * curr_cost / MAX_NON_OBSTACLE_COST /
+      cost += w_traversal_cost_ * curr_cost * curr_cost / MAX_NON_OBSTACLE_COST /
         MAX_NON_OBSTACLE_COST;
       return true;
     } else {
@@ -218,7 +218,7 @@ protected:
   inline double getTraversalCost(const int & cx, const int & cy)
   {
     double curr_cost = getCost(cx, cy);
-    return params_->w_traversal_cost * curr_cost * curr_cost / MAX_NON_OBSTACLE_COST /
+    return w_traversal_cost_ * curr_cost * curr_cost / MAX_NON_OBSTACLE_COST /
            MAX_NON_OBSTACLE_COST;
   }
 

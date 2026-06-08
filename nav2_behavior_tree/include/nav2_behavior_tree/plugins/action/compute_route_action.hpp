@@ -20,20 +20,13 @@
 #include "nav2_msgs/action/compute_route.hpp"
 #include "nav_msgs/msg/path.hpp"
 #include "nav2_behavior_tree/bt_action_node.hpp"
-#include "nav2_ros_common/lifecycle_node.hpp"
+#include "nav2_util/lifecycle_node.hpp"
 
 namespace nav2_behavior_tree
 {
 
 /**
  * @brief A nav2_behavior_tree::BtActionNode class that wraps nav2_msgs::action::ComputeRoute
- *
- * Usage in XML:
- * @code
- * <ComputeRoute start="{start}" goal="{goal}" use_poses="{true}" use_start="{true}" path="{path}"
- *               server_name="ComputeRoute" server_timeout="10"
- *               error_code_id="{compute_route_error_code}" error_msg="{compute_route_error_msg}"/>
- * @endcode
  */
 class ComputeRouteAction : public BtActionNode<nav2_msgs::action::ComputeRoute>
 {
@@ -73,12 +66,6 @@ public:
   BT::NodeStatus on_cancelled() override;
 
   /**
-   * @brief Function to perform work in a BT Node when the action server times out
-   * Such as setting the error code ID status to timed out for action clients.
-   */
-  void on_timeout() override;
-
-  /**
    * \brief Override required by the a BT action. Cancel the action and set the path output
    */
   void halt() override;
@@ -110,14 +97,11 @@ public:
           "use_poses", false, "Whether to use poses or IDs for start and goal"),
         BT::OutputPort<ActionResult::_route_type>(
           "route", "The route computed by ComputeRoute node"),
-        BT::OutputPort<builtin_interfaces::msg::Duration>(
-          "planning_time",
+        BT::OutputPort<builtin_interfaces::msg::Duration>("planning_time",
           "Time taken to compute route"),
         BT::OutputPort<nav_msgs::msg::Path>("path", "Path created by ComputeRoute node"),
         BT::OutputPort<ActionResult::_error_code_type>(
           "error_code_id", "The compute route error code"),
-        BT::OutputPort<std::string>(
-          "error_msg", "The compute route error msg"),
       });
   }
 };
