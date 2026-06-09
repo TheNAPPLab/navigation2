@@ -1,0 +1,1 @@
+Robot.yaml copy the robot.yaml files to the clerar path
